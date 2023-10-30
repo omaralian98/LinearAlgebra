@@ -5,8 +5,7 @@ namespace Mr_Sure21
     {
         public static void Main(string[] args)
         {
-            string n = Console.ReadLine();
-            
+
         }
     }
 }
