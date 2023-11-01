@@ -54,5 +54,37 @@ namespace Unit
             string[] coe = { "0", "39/5" };
             Assert.Throws<ArgumentException>(() => matrix.REFAsString(coe));
         }
+        [Fact]
+        public void Test8()
+        {
+            decimal[,] matrix =  { { 1, 3 }, { 9, 3 }, { 1, 9 } };
+            decimal[,] expectedValue = { { 1, 3 }, { 0, -24 }, { 0, 0 } }; 
+            var realValue = matrix.REF();
+            Assert.Equal(expectedValue, realValue);
+        }
+        [Fact]
+        public void Test9()
+        {
+            decimal[,] matrix = { { 3, 5 }, { 8, 5 }, { 9, 8 }, { 1, 6 } };
+            string[,] expectedValue = { { "3", "5" }, { "0", "-25/3" }, { "0", "0" }, { "0", "0" } }; 
+            var realValue = matrix.REFAsString();
+            Assert.Equal(expectedValue, realValue);
+        }
+        [Fact]
+        public void Test10()
+        {
+            decimal[,] matrix = 
+            {
+                { 2, 2, 1, 7 },
+                { 7, 0, 9, 7 }
+            };
+            string[,] expectedValue =             
+            {
+                { "2", "2", "1", "7" },
+                { "0", "-7", "11/2", "-35/2" }
+            };
+            var realValue = matrix.REFAsString();
+            Assert.Equal(expectedValue, realValue);
+        }
     }
 }

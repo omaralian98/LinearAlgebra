@@ -1,14 +1,23 @@
 ﻿using System.Runtime.InteropServices;
+using static LinearAlgebra.Linear;
 
 namespace LinearAlgebra;
 public static class Linear
 {
+    
+    private class MatrixStep
+    {
+        public string? StepDescription { get; set; }
+        public Fraction[,]? Matrix { get; set; }
+    }
+    private static List<MatrixStep> steps = new List<MatrixStep>();
     public struct Fraction
     {
         public decimal Numerator;
         public decimal Denominator;
         public Fraction(decimal num, decimal den = 1)
         {
+            if (den == 0) throw new DivideByZeroException();
             decimal gcd = GCD(Math.Abs(num), Math.Abs(den));
             Denominator = den / gcd;
             Numerator = num / gcd;
@@ -38,153 +47,30 @@ public static class Linear
             if (a == 0) return b;
             return a;
         }
-        public void Print()
+        public static Fraction operator *(Fraction a, Fraction b) => 
+            new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+        public static Fraction operator /(Fraction a, Fraction b) => 
+            new Fraction(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
+        public static Fraction operator +(Fraction a, Fraction b)
         {
-            Console.WriteLine("{0}/{1}", Numerator, Denominator);
+            decimal dividend = (a.Numerator * b.Denominator) + (b.Numerator * a.Denominator);
+            decimal divisor = a.Denominator * b.Denominator;
+            return new Fraction(dividend, divisor);
         }
-    }
-    private static string[,] Fraction2String(this Fraction[,] t)
-    {
-        string[,] answer = new string[t.GetLength(0), t.GetLength(1)];
-        for (int i = 0; i < answer.GetLength(0); i++)
+        public static Fraction operator -(Fraction a, Fraction b)
         {
-            for (int j = 0; j < answer.GetLength(1); j++)
-            {
-                if (t[i, j].Denominator == 1)
-                {
-                    answer[i, j] = String.Format("{0}", t[i, j].Numerator);
-                }
-                else if (t[i, j].Quotient.IsDecimal() == false)
-                {
-                    answer[i, j] = String.Format("{0}", t[i, j].Quotient);
-                }
-                else
-                {
-                    answer[i, j] = String.Format("{0}/{1}", t[i, j].Numerator, t[i, j].Denominator);
-                }
-            }
+            decimal dividend = (a.Numerator * b.Denominator) - (b.Numerator * a.Denominator);
+            decimal divisor = a.Denominator * b.Denominator;
+            return new Fraction(dividend, divisor);
         }
-        return answer;
-    }
-    private static string[] Fraction2String(this Fraction[] t)
-    {
-        string[] answer = new string[t.GetLength(0)];
-        for (int i = 0; i < answer.GetLength(0); i++)
-        {
-            if (t[i].Denominator == 1)
-            {
-                answer[i] = String.Format("{0}", t[i].Numerator);
-            }
-            else if (t[i].Quotient.IsDecimal() == false)
-            {
-                answer[i] = String.Format("{0}", t[i].Quotient);
-            }
-            else
-            {
-                answer[i] = String.Format("{0}/{1}", t[i].Numerator, t[i].Denominator);
-            }
-        }
-        return answer;
-    }
-    private static decimal[,] Fraction2Decimal(this Fraction[,] t)
-    {
-        decimal[,] a = new decimal[t.GetLength(0), t.GetLength(1)];
-        for (int i = 0; i < a.GetLength(0); i++)
-        {
-            for (int j = 0; j < a.GetLength(1); j++)
-            {
-                a[i, j] = t[i, j].Quotient;
-            }
-        }
-        return a;
-    }
-    private static decimal[] Fraction2Decimal(this Fraction[] t)
-    {
-        decimal[] a = new decimal[t.GetLength(0)];
-        for (int i = 0; i < a.GetLength(0); i++)
-        {
-            a[i] = t[i].Quotient;
-        }
-        return a;
-    }
-    private static Fraction[,] GetFractions<T>(this T[,] oldMatrix)
-    {
-        Fraction[,] matrix = new Fraction[oldMatrix.GetLength(0), oldMatrix.GetLength(1)];
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrix.GetLength(1); j++)
-            {
-                string t = oldMatrix[i, j]?.ToString() ?? "0";
-                if (t.Contains('/'))
-                {
-                    Fraction fraction = String2Fraction(t);
-                    if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
-                    matrix[i, j] = fraction;
-                }
-                else
-                {
-                    if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                    matrix[i, j] = new Fraction(Convert.ToDecimal(t));
-                }
-            }
-        }
-        return matrix;
-    }
+        public static Fraction operator +(Fraction a) => a;
+        public static Fraction operator -(Fraction a) => new Fraction(-a.Numerator, a.Denominator);
 
-    private static Fraction[] GetFractions<T>(this T[] oldMatrix)
-    {
-        Fraction[] matrix = new Fraction[oldMatrix.GetLength(0)];
-        for (int i = 0; i < matrix.GetLength(0); i++)
+        public override string ToString()
         {
-            string t = oldMatrix[i]?.ToString() ?? "0";
-            if (t.Contains('/'))
-            {
-                Fraction fraction = String2Fraction(t);
-                if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
-                matrix[i] = fraction;
-            }
-            else
-            {
-                if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                matrix[i] = new Fraction(Convert.ToDecimal(t));
-            }
-        }
-        return matrix;
-    }
-
-    private static bool IsDecimal<T>(this T it)
-    {
-        string item = it?.ToString() ?? ""; 
-        return item.Contains('.');
-    }
-
-    public static Fraction String2Fraction(this string a)
-    {
-        int indexOfSlash = a.IndexOf('/');
-        decimal dividend = Convert.ToDecimal(a[0..indexOfSlash]);
-        decimal divisor = Convert.ToDecimal(a[(indexOfSlash + 1)..a.Length]);
-        return new Fraction(dividend, divisor);
-    }
-
-    public static void PrintMatrix<T>(this T[,] matrix)
-    {
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrix.GetLength(1); j++)
-            {
-                if (j != matrix.GetLength(1) - 1)
-                    Console.Write(" {0} |", matrix[i, j]);
-                else
-                    Console.Write(" {0}", matrix[i, j]);
-            }
-            Console.WriteLine("");
-        }
-    }
-    public static void PrintMatrix<T>(this T[] matrix)
-    {
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            Console.WriteLine(" {0}", matrix[i]);
+            if (Denominator == 1) return Numerator.ToString();
+            else if (!Quotient.IsDecimal()) return Quotient.ToString();
+            return $"{Numerator}/{Denominator}";
         }
     }
 
@@ -264,8 +150,8 @@ public static class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static string[,] REFAsString<T>(this T[,] matrix)
     {
-        Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
         Fraction[,] answer;
+        Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
         (answer, coefficient) = matrix.GetFractions().REFAsFraction(coefficient);
         return answer.Fraction2String();
     }
@@ -286,14 +172,14 @@ public static class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static (Fraction[,], Fraction[]) REFAsFraction(this Fraction[,] matrix, Fraction[] coefficient)
     {
-        string errorMessage = String.Format("The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {0} rows and the coefficient has {1} rows", matrix.GetLength(0), coefficient.Length);
+        //If the matrix and the coefficient matrix has different number of rows throw an exception
+        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
         if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
-        int row = matrix.GetLength(0);
-        int col = matrix.GetLength(1);
-        int y = 0;
-        for (int x = 0; x < Math.Min(row, col); x++)
-        {
-            y = x;
+        int row = matrix.GetLength(0); //Gets the number of rows
+        int col = matrix.GetLength(1); //Gets the number of columns
+        for (int x = 0; x < Math.Min(row, col); x++) //we are getting the min becuase this is the number of the piviots
+        {// if we have 2×4 matrix or 4×2 the number of piviots is 2 aka the min(2, 4)
+            int y = x;
             bool result; int xx, yy;
             (result, xx, yy) = CheckPossibleSwap(x, x, matrix);
             if (result)
@@ -318,11 +204,9 @@ public static class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static (decimal[,], decimal[]) REF<T>(this T[,] matrix, T[] coefficient)
     {
-        string errorMessage = String.Format("The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {0} rows and the coefficient has {1} rows", matrix.GetLength(0), coefficient.Length);
+        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
         if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
-        Fraction[] coe;
-        Fraction[,] result;
-        (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
+        var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2Decimal(), coe.Fraction2Decimal());
     }
     /// <summary>
@@ -336,11 +220,9 @@ public static class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static (string[,], string[]) REFAsString<T>(this T[,] matrix, T[] coefficient)
     {
-        string errorMessage = String.Format("The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {0} rows and the coefficient has {1} rows", matrix.GetLength(0), coefficient.Length);
+        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
         if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
-        Fraction[] coe;
-        Fraction[,] result;
-        (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
+        var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2String(), coe.Fraction2String());
     }
 
@@ -350,51 +232,20 @@ public static class Linear
         for (int i = x + 1; i < matrix.GetLength(0); i++)
         {
             if (matrix[i, y].Quotient == 0) continue;
-            decimal divisor = matrix[i, y].Denominator * matrix[x, y].Numerator;
-            decimal dividend = matrix[i, y].Numerator * matrix[x, y].Denominator;
-            Fraction scalar = new(dividend, divisor);
+            Fraction scalar = matrix[i, y] / matrix[x, y];
             Action(pivotRow: x, targetedRow: i, columnStart: y, scalar, ref matrix);
-            coefficient[i] = SpecialOp(scalar, coefficient[x], coefficient[i]);
+            coefficient[i] = -scalar * coefficient[x] + coefficient[i];
         }
     }
 
-    /// <summary>
-    /// Combines three fractions using a specific operation: scalar times pivot, added to the targeted fraction.
-    /// <br></br>
-    /// The operation can be described as follows:
-    /// <br></br>
-    /// - Multiply the scalar fraction (a/b) by the pivot fraction (c/d).
-    /// <br></br>
-    /// - Add the result to the targeted fraction (e/f).
-    /// </summary>
-    /// <param name="scalar">The scaling factor represented as a fraction (a/b)</param>
-    /// <param name="pivot">The pivot fraction (c/d)</param>
-    /// <param name="targeted">The target fraction (e/f) to which the result is added</param>
-    /// <remarks>- (a/b × c/d) + e/f = (ac/bd) + (e/f) = f(ac/bd) + bd(e/f) = (acf + ebd) / (fbd)</remarks>
-    /// <returns>A new fraction resulting from the combination</returns>
-    private static Fraction SpecialOp(Fraction scalar, Fraction pivot, Fraction targeted)
-    {
-        decimal a = scalar.Numerator, b = scalar.Denominator;
-        decimal c = pivot.Numerator, d = pivot.Denominator;
-        decimal e = targeted.Numerator, f = targeted.Denominator;
-        decimal dividend = -a * c * f + e * b * d;
-        decimal divisor = f * b * d;
-        return new Fraction(dividend, divisor);
-    }
     private static void Action(int pivotRow, int targetedRow, int columnStart, Fraction scalar, ref Fraction[,] matrix)
     {
         matrix[targetedRow, columnStart] = new(0);
         for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
         {
-            decimal testVal = -scalar.Quotient * matrix[pivotRow, y].Quotient + matrix[targetedRow, y].Quotient;
-            if (testVal.IsDecimal())
-            {
-                matrix[targetedRow, y] = SpecialOp(scalar, matrix[pivotRow, y], matrix[targetedRow, y]);
-            }
-            else
-            {
-                matrix[targetedRow, y] = new Fraction(testVal);
-            }
+            var testVal = -scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
+            if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
+            else matrix[targetedRow, y] = new Fraction(testVal.Quotient);
         }
     }
 
@@ -428,5 +279,130 @@ public static class Linear
     private static void SwapCoefficient<T>(int x, int y, ref T[] coefficient)
     {
         if (coefficient is not null) (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
+    }
+}
+public static class Extensions
+{
+    public static string[,] Fraction2String(this Fraction[,] t)
+    {
+        string[,] answer = new string[t.GetLength(0), t.GetLength(1)];
+        for (int i = 0; i < answer.GetLength(0); i++)
+        {
+            for (int j = 0; j < answer.GetLength(1); j++)
+            {
+                answer[i, j] = t[i, j].ToString();
+            }
+        }
+        return answer;
+    }
+    public static string[] Fraction2String(this Fraction[] t)
+    {
+        string[] answer = new string[t.GetLength(0)];
+        for (int i = 0; i < answer.GetLength(0); i++)
+        {
+            answer[i] = t[i].ToString();
+        }
+        return answer;
+    }
+    public static decimal[,] Fraction2Decimal(this Fraction[,] t)
+    {
+        decimal[,] a = new decimal[t.GetLength(0), t.GetLength(1)];
+        for (int i = 0; i < a.GetLength(0); i++)
+        {
+            for (int j = 0; j < a.GetLength(1); j++)
+            {
+                a[i, j] = t[i, j].Quotient;
+            }
+        }
+        return a;
+    }
+    public static decimal[] Fraction2Decimal(this Fraction[] t)
+    {
+        decimal[] a = new decimal[t.GetLength(0)];
+        for (int i = 0; i < a.GetLength(0); i++)
+        {
+            a[i] = t[i].Quotient;
+        }
+        return a;
+    }
+    public static Fraction[,] GetFractions<T>(this T[,] oldMatrix)
+    {
+        Fraction[,] matrix = new Fraction[oldMatrix.GetLength(0), oldMatrix.GetLength(1)];
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                string t = oldMatrix[i, j]?.ToString() ?? "0";
+                if (t.Contains('/'))
+                {
+                    Fraction fraction = String2Fraction(t);
+                    if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
+                    matrix[i, j] = fraction;
+                }
+                else
+                {
+                    if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
+                    matrix[i, j] = new Fraction(Convert.ToDecimal(t));
+                }
+            }
+        }
+        return matrix;
+    }
+
+    public static Fraction[] GetFractions<T>(this T[] oldMatrix)
+    {
+        Fraction[] matrix = new Fraction[oldMatrix.GetLength(0)];
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            string t = oldMatrix[i]?.ToString() ?? "0";
+            if (t.Contains('/'))
+            {
+                Fraction fraction = String2Fraction(t);
+                if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
+                matrix[i] = fraction;
+            }
+            else
+            {
+                if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
+                matrix[i] = new Fraction(Convert.ToDecimal(t));
+            }
+        }
+        return matrix;
+    }
+
+    public static bool IsDecimal<T>(this T it)
+    {
+        string item = it?.ToString() ?? "";
+        return item.Contains('.');
+    }
+
+    public static Fraction String2Fraction(this string a)
+    {
+        int indexOfSlash = a.IndexOf('/');
+        decimal dividend = Convert.ToDecimal(a[0..indexOfSlash]);
+        decimal divisor = Convert.ToDecimal(a[(indexOfSlash + 1)..a.Length]);
+        return new Fraction(dividend, divisor);
+    }
+
+    public static void PrintMatrix<T>(this T[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if (j != matrix.GetLength(1) - 1)
+                    Console.Write(" {0} |", matrix[i, j]);
+                else
+                    Console.Write(" {0}", matrix[i, j]);
+            }
+            Console.WriteLine("");
+        }
+    }
+    public static void PrintMatrix<T>(this T[] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            Console.WriteLine(" {0}", matrix[i]);
+        }
     }
 }

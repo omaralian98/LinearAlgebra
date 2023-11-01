@@ -5,11 +5,10 @@ namespace Mr_Sure21
     {
         public static void Main(string[] args)
         {
-            string[,] matrix =
+            decimal[,] matrix =
             {
-                { "10/2", "1", "2" },
-                { "1", "3", "7" },
-                { "2", "7", "6" }
+                { 2, 2, 1, 7 },
+                { 7, 0, 9, 7 }
             };
             var test = Linear.REFAsString(matrix);
             test.PrintMatrix();
