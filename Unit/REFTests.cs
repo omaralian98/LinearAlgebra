@@ -71,19 +71,19 @@ namespace Unit
             Assert.Equal(expectedValue, realValue);
         }
         [Fact]
-        public void Test10()
+        public void Testa1()
         {
-            decimal[,] matrix = 
-            {
-                { 2, 2, 1, 7 },
-                { 7, 0, 9, 7 }
-            };
-            string[,] expectedValue =             
-            {
-                { "2", "2", "1", "7" },
-                { "0", "-7", "11/2", "-35/2" }
-            };
+            decimal[,] matrix = { { 2, 2, 1, 7 }, { 7, 0, 9, 7 } };
+            string[,] expectedValue = { { "2", "2", "1", "7" }, { "0", "-7", "11/2", "-35/2" } };
             var realValue = matrix.REFAsString();
+            Assert.Equal(expectedValue, realValue);
+        }
+        [Fact]
+        public void Testa2()
+        {
+            decimal[,] matrix = { { 1, 4, 1, 5 }, { 1, 4, 0, 5 }, { 2, 8, 7, 6 } };
+            decimal[,] expectedValue = { { 1, 4, 1, 5 }, { 0, 0, -1, 0 }, { 0, 0, 0, -4 } };
+            var realValue = matrix.REF();
             Assert.Equal(expectedValue, realValue);
         }
     }

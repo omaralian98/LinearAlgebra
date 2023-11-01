@@ -5,12 +5,8 @@ namespace Mr_Sure21
     {
         public static void Main(string[] args)
         {
-            decimal[,] matrix =
-            {
-                { 2, 2, 1, 7 },
-                { 7, 0, 9, 7 }
-            };
-            var test = Linear.REFAsString(matrix);
+            decimal[,] matrix = { { 1, 4, 1, 5 }, { 1, 4, 0, 5 }, { 2, 8, 7, 6 } };
+            var test = Linear.REF(matrix);
             test.PrintMatrix();
         }
     }

@@ -47,10 +47,10 @@ public static class Linear
             if (a == 0) return b;
             return a;
         }
-        public static Fraction operator *(Fraction a, Fraction b) => 
-            new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
-        public static Fraction operator /(Fraction a, Fraction b) => 
-            new Fraction(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
+        public static Fraction operator +(Fraction a) => a;
+        public static Fraction operator -(Fraction a) => new Fraction(-a.Numerator, a.Denominator);
+        public static Fraction operator *(Fraction a, Fraction b) => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+        public static Fraction operator /(Fraction a, Fraction b) => new Fraction(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
         public static Fraction operator +(Fraction a, Fraction b)
         {
             decimal dividend = (a.Numerator * b.Denominator) + (b.Numerator * a.Denominator);
@@ -63,9 +63,6 @@ public static class Linear
             decimal divisor = a.Denominator * b.Denominator;
             return new Fraction(dividend, divisor);
         }
-        public static Fraction operator +(Fraction a) => a;
-        public static Fraction operator -(Fraction a) => new Fraction(-a.Numerator, a.Denominator);
-
         public override string ToString()
         {
             if (Denominator == 1) return Numerator.ToString();
@@ -155,6 +152,7 @@ public static class Linear
         (answer, coefficient) = matrix.GetFractions().REFAsFraction(coefficient);
         return answer.Fraction2String();
     }
+
     /// <summary>
     /// Aka: Row Echelon Form.
     /// </summary>
@@ -179,7 +177,7 @@ public static class Linear
         int col = matrix.GetLength(1); //Gets the number of columns
         for (int x = 0; x < Math.Min(row, col); x++) //we are getting the min becuase this is the number of the piviots
         {// if we have 2×4 matrix or 4×2 the number of piviots is 2 aka the min(2, 4)
-            int y = x;
+            int y = x; //initial value for the y
             bool result; int xx, yy;
             (result, xx, yy) = CheckPossibleSwap(x, x, matrix);
             if (result)
