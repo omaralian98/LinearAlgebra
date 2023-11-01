@@ -9,19 +9,9 @@ public static class Linear
         public decimal Denominator;
         public Fraction(decimal num, decimal den = 1)
         {
-            Numerator = num;
-            Denominator = den;
-            if ((den == 0 && Numerator == 0) || Numerator == 0 || den == 0)
-            {
-                Numerator = 0;
-                Denominator = 1;
-            }
-            else
-            {
-                decimal gcd = GCD(Math.Abs(Numerator), Math.Abs(den));
-                Denominator = den / gcd;
-                Numerator = Numerator / gcd;
-            }
+            decimal gcd = GCD(Math.Abs(num), Math.Abs(den));
+            Denominator = den / gcd;
+            Numerator = num / gcd;
             if (Numerator < 0 && Denominator < 0)
             {
                 Numerator = Math.Abs(Numerator);
@@ -64,7 +54,7 @@ public static class Linear
                 {
                     answer[i, j] = String.Format("{0}", t[i, j].Numerator);
                 }
-                else if (t[i, j].Quotient.ToString().Contains(".") == false)
+                else if (t[i, j].Quotient.IsDecimal() == false)
                 {
                     answer[i, j] = String.Format("{0}", t[i, j].Quotient);
                 }
@@ -85,7 +75,7 @@ public static class Linear
             {
                 answer[i] = String.Format("{0}", t[i].Numerator);
             }
-            else if (t[i].Quotient.ToString().Contains(".") == false)
+            else if (t[i].Quotient.IsDecimal() == false)
             {
                 answer[i] = String.Format("{0}", t[i].Quotient);
             }
@@ -124,27 +114,58 @@ public static class Linear
         {
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                if (oldMatrix[i, j].IsDecimal()) throw new ArithmeticException();
-                matrix[i, j] = new Fraction(Convert.ToDecimal(oldMatrix[i, j]));
+                string t = oldMatrix[i, j]?.ToString() ?? "0";
+                if (t.Contains('/'))
+                {
+                    Fraction fraction = String2Fraction(t);
+                    if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
+                    matrix[i, j] = fraction;
+                }
+                else
+                {
+                    if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
+                    matrix[i, j] = new Fraction(Convert.ToDecimal(t));
+                }
             }
         }
         return matrix;
     }
+
     private static Fraction[] GetFractions<T>(this T[] oldMatrix)
     {
         Fraction[] matrix = new Fraction[oldMatrix.GetLength(0)];
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
-            if (oldMatrix[i].IsDecimal()) throw new ArithmeticException();
-            matrix[i] = new Fraction(Convert.ToDecimal(oldMatrix[i]));
+            string t = oldMatrix[i]?.ToString() ?? "0";
+            if (t.Contains('/'))
+            {
+                Fraction fraction = String2Fraction(t);
+                if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
+                matrix[i] = fraction;
+            }
+            else
+            {
+                if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
+                matrix[i] = new Fraction(Convert.ToDecimal(t));
+            }
         }
         return matrix;
     }
+
     private static bool IsDecimal<T>(this T it)
     {
         string item = it?.ToString() ?? ""; 
         return item.Contains('.');
     }
+
+    public static Fraction String2Fraction(this string a)
+    {
+        int indexOfSlash = a.IndexOf('/');
+        decimal dividend = Convert.ToDecimal(a[0..indexOfSlash]);
+        decimal divisor = Convert.ToDecimal(a[(indexOfSlash + 1)..a.Length]);
+        return new Fraction(dividend, divisor);
+    }
+
     public static void PrintMatrix<T>(this T[,] matrix)
     {
         for (int i = 0; i < matrix.GetLength(0); i++)
@@ -157,6 +178,13 @@ public static class Linear
                     Console.Write(" {0}", matrix[i, j]);
             }
             Console.WriteLine("");
+        }
+    }
+    public static void PrintMatrix<T>(this T[] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            Console.WriteLine(" {0}", matrix[i]);
         }
     }
 
@@ -192,32 +220,74 @@ public static class Linear
     /// Aka: Row Echelon Form.
     /// </summary>
     /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <returns>Returns the REF of the giving matrix</returns>
+    /// <returns>Returns the REF of the giving matrix as decimal array</returns>
     /// <exception cref="ArithmeticException"></exception>
-    public static decimal[,] REF(this decimal[,] matrix)
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static decimal[,] REF<T>(this T[,] matrix)
     {
         Fraction[,] newMatrix = matrix.GetFractions();
         Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
         (newMatrix, coefficient) = REFAsFraction(newMatrix, coefficient);
         return newMatrix.Fraction2Decimal();
     }
-    public static Fraction[,] REFAsFraction(this decimal[,] matrix)
+
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <returns>
+    /// Returns the REF of the giving matrix as Fraction array
+    /// <br></br>
+    /// **Note**: Fraction is a struct that you can access like this:
+    /// <br></br>
+    /// LinearAlgebra.Linear.Fraction
+    /// </returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static Fraction[,] REFAsFraction<T>(this T[,] matrix)
     {
         Fraction[,] answer;
         Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
         (answer, coefficient) = REFAsFraction(matrix.GetFractions() ,coefficient);
         return answer;
     }
-    public static string[,] REFAsString(this decimal[,] matrix)
+
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <returns>Returns the REF of the giving matrix as string array</returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static string[,] REFAsString<T>(this T[,] matrix)
     {
         Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
         Fraction[,] answer;
         (answer, coefficient) = matrix.GetFractions().REFAsFraction(coefficient);
         return answer.Fraction2String();
     }
-
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <param name="coefficient">The coefficient of the matrix</param>
+    /// <returns>
+    /// Returns the REF of the giving matrix, and it's coefficient as Fraction arraies
+    /// <br></br>
+    /// **Note**: Fraction is a struct that you can access like this:
+    /// <br></br>
+    /// LinearAlgebra.Linear.Fraction
+    /// </returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
     public static (Fraction[,], Fraction[]) REFAsFraction(this Fraction[,] matrix, Fraction[] coefficient)
     {
+        string errorMessage = String.Format("The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {0} rows and the coefficient has {1} rows", matrix.GetLength(0), coefficient.Length);
+        if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
         int row = matrix.GetLength(0);
         int col = matrix.GetLength(1);
         int y = 0;
@@ -242,17 +312,32 @@ public static class Linear
     /// </summary>
     /// <param name="matrix">The matrix you want to get it's REF</param>
     /// <param name="coefficient">The coefficient of the matrix</param>
-    /// <returns>Returns the REF of the giving matrix, and it's coefficient</returns>
+    /// <returns>Returns the REF of the giving matrix, and it's coefficient as decimal arraies</returns>
     /// <exception cref="ArithmeticException"></exception>
-    public static (decimal[,], decimal[]) REF(this decimal[,] matrix, decimal[] coefficient)
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static (decimal[,], decimal[]) REF<T>(this T[,] matrix, T[] coefficient)
     {
+        string errorMessage = String.Format("The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {0} rows and the coefficient has {1} rows", matrix.GetLength(0), coefficient.Length);
+        if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
         Fraction[] coe;
         Fraction[,] result;
         (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2Decimal(), coe.Fraction2Decimal());
     }
-    public static (string[,], string[]) REFAsString(this decimal[,] matrix, decimal[] coefficient)
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <param name="coefficient">The coefficient of the matrix</param>
+    /// <returns>Returns the REF of the giving matrix, and it's coefficient as string arraies</returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static (string[,], string[]) REFAsString<T>(this T[,] matrix, T[] coefficient)
     {
+        string errorMessage = String.Format("The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {0} rows and the coefficient has {1} rows", matrix.GetLength(0), coefficient.Length);
+        if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
         Fraction[] coe;
         Fraction[,] result;
         (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
