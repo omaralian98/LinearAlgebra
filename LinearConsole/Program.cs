@@ -5,9 +5,14 @@ namespace Mr_Sure21
     {
         public static void Main(string[] args)
         {
-            decimal[,] matrix = { { 1, 4, 1, 5 }, { 1, 4, 0, 5 }, { 2, 8, 7, 6 } };
+            decimal[,] matrix = { { 5, 1, 2 }, { 1, 3, 7 }, { 2, 7, 6 } };
             var test = Linear.REF(matrix);
-            test.PrintMatrix();
+            foreach (var it in Linear.steps)
+            {
+                Console.WriteLine(it.StepDescription);
+                it.Matrix?.Print();
+                Console.WriteLine("");
+            }
         }
     }
 }

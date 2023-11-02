@@ -1,16 +1,17 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Data.Common;
+using System.Runtime.InteropServices;
 using static LinearAlgebra.Linear;
 
 namespace LinearAlgebra;
 public static class Linear
 {
-    
-    private class MatrixStep
+    public class MatrixStep
     {
         public string? StepDescription { get; set; }
         public Fraction[,]? Matrix { get; set; }
+        public Fraction[]? Coefficient { get; set; }
     }
-    private static List<MatrixStep> steps = new List<MatrixStep>();
+    public static List<MatrixStep> steps = new List<MatrixStep>();
     public struct Fraction
     {
         public decimal Numerator;
@@ -83,6 +84,11 @@ public static class Linear
     /// <exception cref="ArithmeticException"></exception>
     public static int Rank(this decimal[,] matrix)
     {
+        steps.Add(new MatrixStep
+        {
+            StepDescription = "We get the Row Echelon Form(REF) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
+            Matrix = matrix.GetFractions()
+        });
         matrix.REF();
         int rank = 0;
         for (int x = 0; x < matrix.GetLength(0); x++)
@@ -110,8 +116,7 @@ public static class Linear
     public static decimal[,] REF<T>(this T[,] matrix)
     {
         Fraction[,] newMatrix = matrix.GetFractions();
-        Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
-        (newMatrix, coefficient) = REFAsFraction(newMatrix, coefficient);
+        (newMatrix,var coefficient) = REFAsFraction(newMatrix, null);
         return newMatrix.Fraction2Decimal();
     }
 
@@ -131,9 +136,7 @@ public static class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static Fraction[,] REFAsFraction<T>(this T[,] matrix)
     {
-        Fraction[,] answer;
-        Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
-        (answer, coefficient) = REFAsFraction(matrix.GetFractions() ,coefficient);
+        var (answer, coefficient) = REFAsFraction(matrix.GetFractions(), null);
         return answer;
     }
 
@@ -147,9 +150,7 @@ public static class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static string[,] REFAsString<T>(this T[,] matrix)
     {
-        Fraction[,] answer;
-        Fraction[] coefficient = Enumerable.Repeat(new Fraction(0), matrix.GetLength(0)).ToArray();
-        (answer, coefficient) = matrix.GetFractions().REFAsFraction(coefficient);
+        var (answer, coefficient) = matrix.GetFractions().REFAsFraction(null);
         return answer.Fraction2String();
     }
 
@@ -168,25 +169,33 @@ public static class Linear
     /// <exception cref="ArithmeticException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="DivideByZeroException"></exception>
-    public static (Fraction[,], Fraction[]) REFAsFraction(this Fraction[,] matrix, Fraction[] coefficient)
+    public static (Fraction[,], Fraction[]?) REFAsFraction(this Fraction[,] matrix, Fraction[]? coefficient = null)
     {
-        //If the matrix and the coefficient matrix has different number of rows throw an exception
-        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
-        if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
+        if (coefficient is not null)
+        {
+            //If the matrix and the coefficient matrix has different number of rows throw an exception
+            string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
+            if (matrix.GetLength(0) != coefficient?.GetLength(0)) throw new ArgumentException(errorMessage);
+        }
         int row = matrix.GetLength(0); //Gets the number of rows
         int col = matrix.GetLength(1); //Gets the number of columns
         for (int x = 0; x < Math.Min(row, col); x++) //we are getting the min becuase this is the number of the piviots
         {// if we have 2×4 matrix or 4×2 the number of piviots is 2 aka the min(2, 4)
-            int y = x; //initial value for the y
-            bool result; int xx, yy;
-            (result, xx, yy) = CheckPossibleSwap(x, x, matrix);
-            if (result)
-            {
-                SwapMatrix(xx, yy, ref matrix);
-                SwapCoefficient(xx, yy, ref coefficient);
-            }
+            int y = x; //initial value for the y since we will use x,y to determine the piviot
+            //The initial position of the piviot is x,y aka x,x
+            var (result, xx, yy) = MatrixHelpers.CheckPossibleSwap(x, y, matrix);
+            if (result)//If the result is ture => we have to swap the row xx with the row yy
+            {//We swap the matrix and it's coefficient
+                MatrixHelpers.SwapMatrix(xx, yy, ref matrix);
+                if (coefficient is not null) MatrixHelpers.SwapCoefficient(xx, yy, ref coefficient);
+                steps.Add(new MatrixStep
+                {
+                    StepDescription = $"Swap between R{xx + 1} and R{yy + 1}",
+                    Matrix = (Fraction[,])matrix.Clone()
+                });
+            }//If we 
             else if (result == false && xx == -1) y++;
-            Pivot(x, y, ref matrix, ref coefficient);
+            MatrixHelpers.Pivot(x, y, ref matrix, ref coefficient);
         }
         return (matrix, coefficient);
     }
@@ -223,60 +232,67 @@ public static class Linear
         var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2String(), coe.Fraction2String());
     }
-
-    private static void Pivot(int x, int y, ref Fraction[,] matrix, ref Fraction[] coefficient)
+    private class MatrixHelpers
     {
-
-        for (int i = x + 1; i < matrix.GetLength(0); i++)
+        public static void Pivot(int x, int y, ref Fraction[,] matrix, ref Fraction[]? coefficient)
         {
-            if (matrix[i, y].Quotient == 0) continue;
-            Fraction scalar = matrix[i, y] / matrix[x, y];
-            Action(pivotRow: x, targetedRow: i, columnStart: y, scalar, ref matrix);
-            coefficient[i] = -scalar * coefficient[x] + coefficient[i];
-        }
-    }
-
-    private static void Action(int pivotRow, int targetedRow, int columnStart, Fraction scalar, ref Fraction[,] matrix)
-    {
-        matrix[targetedRow, columnStart] = new(0);
-        for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
-        {
-            var testVal = -scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
-            if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
-            else matrix[targetedRow, y] = new Fraction(testVal.Quotient);
-        }
-    }
-
-    private static (bool, int, int) CheckPossibleSwap(int x, int y, Fraction[,] matrix)
-    {
-        if (matrix[x, y].Quotient == 0)
-        {
-            int num = -1;
             for (int i = x + 1; i < matrix.GetLength(0); i++)
             {
-                decimal current = matrix[i, y].Quotient;
-                if (current == 1 || current == -1 || (current != 0 && current.IsDecimal() == false))
+                if (matrix[i, y].Quotient == 0) continue;
+                Fraction scalar = -matrix[i, y] / matrix[x, y];
+                Action(pivotRow: x, targetedRow: i, columnStart: y, scalar, ref matrix);
+                if (coefficient is not null) coefficient[i] = scalar * coefficient[x] + coefficient[i];
+                steps.Add(new MatrixStep
                 {
-                    num = i - x;
-                    break;
-                }
+                    StepDescription = $"{scalar}R{x + 1} + R{i + 1} ----> R{i + 1}",
+                    Matrix = (Fraction[,])matrix.Clone()
+                });
             }
-            if (num == -1) return (false, -1, -1);
-            return (true, x, y + num);
         }
-        return (false, 0, 0);
-    }
-    private static void SwapMatrix<T>(int x, int y, ref T[,] matrix)
-    {
-        int columns = matrix.GetLength(1);
-        for (int i = 0; i < columns; i++)
+
+        public static void Action(int pivotRow, int targetedRow, int columnStart, Fraction scalar, ref Fraction[,] matrix)
         {
-            (matrix[x, i], matrix[y, i]) = (matrix[y, i], matrix[x, i]);
+            matrix[targetedRow, columnStart] = new(0);
+            for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
+            {
+                var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
+                if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
+                else matrix[targetedRow, y] = new Fraction(testVal.Quotient);
+            }
         }
-    }
-    private static void SwapCoefficient<T>(int x, int y, ref T[] coefficient)
-    {
-        if (coefficient is not null) (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
+
+        public static (bool, int, int) CheckPossibleSwap(int x, int y, Fraction[,] matrix)
+        {//if the piviot is 0 than there is a sawp 
+            if (matrix[x, y].Quotient == 0)
+            {
+                int num = -1;
+                for (int i = x + 1; i < matrix.GetLength(0); i++)
+                {//Loops through all the row to find a suitable row to swap
+                    decimal current = matrix[i, y].Quotient;
+                    //If we finds 1 or -1 or any number that's not 0.
+                    if (current == 1 || current == -1 || current != 0)
+                    {
+                        num = i - x;
+                        break;
+                    }
+                }//If num is still -1 that means all this column is 0 so we return false and -1, -1
+                if (num == -1) return (false, -1, -1);
+                return (true, x, y + num); //Else we return true and the coordinate of the row.
+            }//If not we return false because we don't have too swap
+            return (false, 0, 0);
+        }
+        public static void SwapMatrix<T>(int x, int y, ref T[,] matrix)
+        {
+            int columns = matrix.GetLength(1);
+            for (int i = 0; i < columns; i++)
+            {
+                (matrix[x, i], matrix[y, i]) = (matrix[y, i], matrix[x, i]);
+            }
+        }
+        public static void SwapCoefficient<T>(int x, int y, ref T[] coefficient)
+        {
+            (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
+        }
     }
 }
 public static class Extensions
@@ -346,7 +362,6 @@ public static class Extensions
         }
         return matrix;
     }
-
     public static Fraction[] GetFractions<T>(this T[] oldMatrix)
     {
         Fraction[] matrix = new Fraction[oldMatrix.GetLength(0)];
@@ -367,13 +382,11 @@ public static class Extensions
         }
         return matrix;
     }
-
     public static bool IsDecimal<T>(this T it)
     {
         string item = it?.ToString() ?? "";
         return item.Contains('.');
     }
-
     public static Fraction String2Fraction(this string a)
     {
         int indexOfSlash = a.IndexOf('/');
@@ -381,26 +394,114 @@ public static class Extensions
         decimal divisor = Convert.ToDecimal(a[(indexOfSlash + 1)..a.Length]);
         return new Fraction(dividend, divisor);
     }
-
-    public static void PrintMatrix<T>(this T[,] matrix)
+    public static string GetMatix<T>(this T[,] matrix)
     {
-        for (int i = 0; i < matrix.GetLength(0); i++)
+        string[] Lines = new string[matrix.GetLength(0) + 2];
+        AddBeginningBrackets(ref Lines);
+        for (int j = 0; j < matrix.GetLength(1); j++)
         {
-            for (int j = 0; j < matrix.GetLength(1); j++)
+            int index = 1;
+            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                if (j != matrix.GetLength(1) - 1)
-                    Console.Write(" {0} |", matrix[i, j]);
-                else
-                    Console.Write(" {0}", matrix[i, j]);
+                Lines[index++] += String.Format(" {0, " + vart + "}", matrix[i, j]);
             }
-            Console.WriteLine("");
         }
+        AddEndBrackets(ref Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
     }
-    public static void PrintMatrix<T>(this T[] matrix)
+    public static string GetMatix<T>(this T[] matrix)
     {
+        string[] Lines = new string[matrix.GetLength(0) + 2];
+        AddBeginningBrackets(ref Lines);
+        int vart = GetPad(matrix);
+        int index = 1;
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
-            Console.WriteLine(" {0}", matrix[i]);
+            Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i]);
         }
+        AddEndBrackets(ref Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
+    }
+    public static string GetMatix<T>(this (T[,] matrix, T[] coefficient) c)
+    {
+        string[] Lines = new string[c.matrix.GetLength(0) + 2];
+        AddBeginningBrackets(ref Lines);
+        int index = 1;
+        for (int j = 0; j < c.matrix.GetLength(1); j++)
+        {
+            index = 1;
+            int vart = GetPad(c.matrix.GetColumn(j)) + 2;
+            for (int i = 0; i < c.matrix.GetLength(0); i++)
+            {
+                Lines[index++] += String.Format(" {0, " + vart + "} ", c.matrix[i, j]);
+            }
+        }
+        index = 1;
+        for (int i = 0; i < c.coefficient.Length; i++)
+        {
+            int vart = GetPad(c.coefficient);
+            Lines[index++] += String.Format("| {0, " + vart + "}", c.coefficient[i]);
+        }
+        AddEndBrackets(ref Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
+    }
+    public static void Print<T>(this T[,] matrix)
+    {
+        Console.WriteLine(matrix.GetMatix());
+    }
+    public static void Print<T>(this T[] matrix)
+    {
+        Console.WriteLine(matrix.GetMatix());
+    }
+    public static void Print<T>(this (T[,] matrix, T[] coefficient) c)
+    {
+        Console.WriteLine(c.GetMatix());
+    }
+    private static int GetPad<T>(this T[] matrix)
+    {
+        int max = 0;
+        foreach (var it in matrix)
+        {
+            max = Math.Max(max, it?.ToString()?.Length ?? 0);
+        }
+        return max;
+    }
+    private static T[] GetColumn<T>(this T[,] matrix, int columnNumber) => Enumerable.Range(0, matrix.GetLength(0))
+                .Select(x => matrix[x, columnNumber]).ToArray();
+    private static T[] GetRow<T>(this T[,] matrix, int rowNumber) => Enumerable.Range(0, matrix.GetLength(1))
+                .Select(x => matrix[rowNumber, x]).ToArray();
+    private static void AddBeginningBrackets(ref string[] Lines)
+    {
+        Lines[0] += "┌";
+        for (int i = 1; i < Lines.Length - 1; i++)
+        {
+            Lines[i] += "|";
+        }
+        Lines[^1] += "└";
+    }
+    private static void AddEndBrackets(ref string[] Lines)
+    {
+        Lines[0] += String.Format(" {0, " + Lines[1].Length + "}", "┐");
+        for (int i = 1; i < Lines.Length - 1; i++)
+        {
+            Lines[i] += " |";
+        }
+        Lines[^1] += String.Format("{0, " + (Lines[1].Length - 1) + "}", "┘");
     }
 }

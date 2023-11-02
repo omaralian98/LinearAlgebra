@@ -65,7 +65,7 @@ namespace Unit
         [Fact]
         public void Test9()
         {
-            decimal[,] matrix = { { 3, 5 }, { 8, 5 }, { 9, 8 }, { 1, 6 } };
+            decimal[,] matrix = { { 3, 5}, { 8, 5 }, { 9, 8 }, { 1, 6 } };
             string[,] expectedValue = { { "3", "5" }, { "0", "-25/3" }, { "0", "0" }, { "0", "0" } }; 
             var realValue = matrix.REFAsString();
             Assert.Equal(expectedValue, realValue);
@@ -85,6 +85,17 @@ namespace Unit
             decimal[,] expectedValue = { { 1, 4, 1, 5 }, { 0, 0, -1, 0 }, { 0, 0, 0, -4 } };
             var realValue = matrix.REF();
             Assert.Equal(expectedValue, realValue);
+        }
+        [Fact]
+        public void Testa3()
+        {
+            decimal[,] matrix = { { 1, 1, 2 }, { 1, 3, 7 }, { 2, 6, 6 } };
+            decimal[] coefficient = { 1, 1, 1 };
+            decimal[,] expectedValue = { { 1, 1, 2 }, { 0, 2, 5 }, { 0, 0, -8 } };
+            decimal[] expectedValueCoe = { 1, 0, -1 };
+            var (realValue, realValueCoe) = matrix.REF(coefficient);
+            Assert.Equal(expectedValue, realValue);
+            Assert.Equal(expectedValueCoe, realValueCoe);
         }
     }
 }
