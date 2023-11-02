@@ -97,5 +97,13 @@ namespace Unit
             Assert.Equal(expectedValue, realValue);
             Assert.Equal(expectedValueCoe, realValueCoe);
         }
+        [Fact]
+        public void Testa4()
+        {
+            decimal[,] matrix = { { 1, 0, 3, 7, 2 }, { 4, 6, 9, 5, 4 }, { 4, 9, 7, 6, 0 }, { 6, 6, 7, 5, 5 }, { 2, 4, 9, 7, 1 } };
+            decimal[,] expectedValue = { { 1, 0, 3, 7, 2 }, { 0, 6, -3, -23, -4 }, { 0, 0, -1m / 2, 25m / 2, -2 }, { 0, 0, 0, -214, 29 }, { 0, 0, 0, 0, -727m / 321 } };
+            var realValue = matrix.REF();
+            Assert.Equal(expectedValue, realValue);
+        }
     }
 }
