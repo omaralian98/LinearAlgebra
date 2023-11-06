@@ -1,3 +1,4 @@
+C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.exe
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\testhost.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\Unit.deps.json
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\Unit.runtimeconfig.json
@@ -5,11 +6,6 @@ C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\testhost
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\xunit.runner.reporters.netcoreapp10.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\xunit.runner.utility.netcoreapp10.dll
-C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.exe
-C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.deps.json
-C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.runtimeconfig.json
-C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.dll
-C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.pdb
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\Microsoft.TestPlatform.CoreUtilities.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\Microsoft.TestPlatform.PlatformAbstractions.dll
@@ -102,5 +98,9 @@ C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Debug\net6.0\LinearCo
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Debug\net6.0\LinearConsole.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Debug\net6.0\refint\LinearConsole.dll
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Debug\net6.0\LinearConsole.pdb
+C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.deps.json
+C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.runtimeconfig.json
+C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.dll
+C:\Users\User\source\repos\LinearAlgebra\LinearConsole\bin\Debug\net6.0\LinearConsole.pdb
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Debug\net6.0\LinearConsole.genruntimeconfig.cache
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Debug\net6.0\ref\LinearConsole.dll
