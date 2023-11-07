@@ -1,9 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "ipcY/CVc4gl25O7Za+uGuzpuIxATSHJW0SC9jc+y8W9pH6r/fTzmexWjp/I77aAOkM/2Wpt1I+ifwXcFUMh9CQ==",
+  "dgSpecHash": "nAo3zCLLTIF4vgFP4ZI3tKmelzNcazDhjFpBwApKJSogD/2bsocPlUdEk/PRNVZpK4qDqLe0I0k8Ep6Bq2IX3Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\User\\source\\repos\\LinearAlgebra\\LinearConsole\\LinearConsole.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\User\\.nuget\\packages\\fparsec\\1.0.3\\fparsec.1.0.3.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\fractions\\7.3.0\\fractions.7.3.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\fsharp.core\\4.6.0\\fsharp.core.4.6.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.numerics\\4.15.0\\mathnet.numerics.4.15.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.numerics.fsharp\\4.15.0\\mathnet.numerics.fsharp.4.15.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.symbolics\\0.24.0\\mathnet.symbolics.0.24.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.codecoverage\\17.5.0\\microsoft.codecoverage.17.5.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.net.test.sdk\\17.5.0\\microsoft.net.test.sdk.17.5.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

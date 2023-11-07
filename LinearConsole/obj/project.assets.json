@@ -2,6 +2,144 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "FParsec/1.0.3": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.2.3",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.6/FParsec.dll": {
+            "related": ".xml"
+          },
+          "lib/netstandard1.6/FParsecCS.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard1.6/FParsec.dll": {
+            "related": ".xml"
+          },
+          "lib/netstandard1.6/FParsecCS.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Fractions/7.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/Fractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/Fractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "FSharp.Core/4.6.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.6/FSharp.Core.dll": {
+            "related": ".optdata;.sigdata;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard1.6/FSharp.Core.dll": {
+            "related": ".optdata;.sigdata;.xml"
+          }
+        },
+        "resource": {
+          "lib/netstandard1.6/cs/FSharp.Core.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard1.6/de/FSharp.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard1.6/en/FSharp.Core.resources.dll": {
+            "locale": "en"
+          },
+          "lib/netstandard1.6/es/FSharp.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard1.6/fr/FSharp.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard1.6/it/FSharp.Core.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard1.6/ja/FSharp.Core.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard1.6/ko/FSharp.Core.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard1.6/pl/FSharp.Core.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard1.6/pt-BR/FSharp.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard1.6/ru/FSharp.Core.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard1.6/tr/FSharp.Core.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard1.6/zh-Hans/FSharp.Core.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard1.6/zh-Hant/FSharp.Core.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "MathNet.Numerics/4.15.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/MathNet.Numerics.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Numerics.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "MathNet.Numerics.FSharp/4.15.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.3.3",
+          "MathNet.Numerics": "4.15.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MathNet.Numerics.FSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Numerics.FSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "MathNet.Symbolics/0.24.0": {
+        "type": "package",
+        "dependencies": {
+          "FParsec": "1.0.3",
+          "FSharp.Core": "4.6.0",
+          "MathNet.Numerics": "4.15.0",
+          "MathNet.Numerics.FSharp": "4.15.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MathNet.Symbolics.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Symbolics.dll": {}
+        }
+      },
       "Microsoft.CodeCoverage/17.5.0": {
         "type": "package",
         "compile": {
@@ -1694,6 +1832,9 @@
       "LinearAlgebra/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "MathNet.Symbolics": "0.24.0"
+        },
         "compile": {
           "bin/placeholder/LinearAlgebra.dll": {}
         },
@@ -1719,6 +1860,161 @@
     }
   },
   "libraries": {
+    "FParsec/1.0.3": {
+      "sha512": "0VoZapcSUHsNCixYawx8RFZHJMRVykaKsks5OOUXRP0bZCpr7UCP6kIjbVFGHIqqBGPtICUMy7j521sH0ZcmrQ==",
+      "type": "package",
+      "path": "fparsec/1.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fparsec.1.0.3.nupkg.sha512",
+        "fparsec.nuspec",
+        "lib/net40-client/FParsec.dll",
+        "lib/net40-client/FParsec.xml",
+        "lib/net40-client/FParsecCS.dll",
+        "lib/net40-client/FParsecCS.xml",
+        "lib/netstandard1.6/FParsec.dll",
+        "lib/netstandard1.6/FParsec.xml",
+        "lib/netstandard1.6/FParsecCS.dll",
+        "lib/netstandard1.6/FParsecCS.xml",
+        "lib/portable-net45+win8+wp8+wpa81/FParsec.dll",
+        "lib/portable-net45+win8+wp8+wpa81/FParsec.xml",
+        "lib/portable-net45+win8+wp8+wpa81/FParsecCS.dll",
+        "lib/portable-net45+win8+wp8+wpa81/FParsecCS.xml"
+      ]
+    },
+    "Fractions/7.3.0": {
+      "sha512": "2bETFWLBc8b7Ut2SVi+bxhGVwiSpknHYGBh2PADyGWONLkTxT7bKyDRhF8ao+XUv90tq8Fl7GTPxSI5bacIRJw==",
+      "type": "package",
+      "path": "fractions/7.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Fraction.png",
+        "Readme.md",
+        "fractions.7.3.0.nupkg.sha512",
+        "fractions.nuspec",
+        "lib/netstandard2.0/Fractions.dll",
+        "lib/netstandard2.0/Fractions.xml",
+        "lib/netstandard2.1/Fractions.dll",
+        "lib/netstandard2.1/Fractions.xml",
+        "license.txt"
+      ]
+    },
+    "FSharp.Core/4.6.0": {
+      "sha512": "Neg/er6EOaNBrvBS2FrsYdrXW8Jv4CRQhtDfw+0b7usRSDvaJnABTNEWTdh3RqmdyT6K2qOayUsrY0lpiQjBxQ==",
+      "type": "package",
+      "path": "fsharp.core/4.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fsharp.core.4.6.0.nupkg.sha512",
+        "fsharp.core.nuspec",
+        "lib/net45/FSharp.Core.dll",
+        "lib/net45/FSharp.Core.optdata",
+        "lib/net45/FSharp.Core.sigdata",
+        "lib/net45/FSharp.Core.xml",
+        "lib/net45/UnitTests/MockTypeProviders/cs/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/de/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/en/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/es/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/fr/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/it/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/ja/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/ko/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/pl/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/pt-BR/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/ru/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/tr/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/zh-Hans/FSharp.Core.resources.dll",
+        "lib/net45/UnitTests/MockTypeProviders/zh-Hant/FSharp.Core.resources.dll",
+        "lib/net45/cs/FSharp.Core.resources.dll",
+        "lib/net45/de/FSharp.Core.resources.dll",
+        "lib/net45/en/FSharp.Core.resources.dll",
+        "lib/net45/es/FSharp.Core.resources.dll",
+        "lib/net45/fr/FSharp.Core.resources.dll",
+        "lib/net45/it/FSharp.Core.resources.dll",
+        "lib/net45/ja/FSharp.Core.resources.dll",
+        "lib/net45/ko/FSharp.Core.resources.dll",
+        "lib/net45/pl/FSharp.Core.resources.dll",
+        "lib/net45/pt-BR/FSharp.Core.resources.dll",
+        "lib/net45/ru/FSharp.Core.resources.dll",
+        "lib/net45/tr/FSharp.Core.resources.dll",
+        "lib/net45/zh-Hans/FSharp.Core.resources.dll",
+        "lib/net45/zh-Hant/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/FSharp.Core.dll",
+        "lib/netstandard1.6/FSharp.Core.optdata",
+        "lib/netstandard1.6/FSharp.Core.sigdata",
+        "lib/netstandard1.6/FSharp.Core.xml",
+        "lib/netstandard1.6/cs/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/de/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/en/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/es/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/fr/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/it/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/ja/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/ko/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/pl/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/pt-BR/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/ru/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/tr/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/zh-Hans/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/zh-Hant/FSharp.Core.resources.dll"
+      ]
+    },
+    "MathNet.Numerics/4.15.0": {
+      "sha512": "cP4QgPPiU7boMyL8npvuQyVGVYUd/JQY1AWa+Wl2f//fuJN40qwt9ABRazunZIcDLHg3SSlgD/e+3Lnp69jNTg==",
+      "type": "package",
+      "path": "mathnet.numerics/4.15.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/net40/MathNet.Numerics.dll",
+        "lib/net40/MathNet.Numerics.xml",
+        "lib/net461/MathNet.Numerics.dll",
+        "lib/net461/MathNet.Numerics.xml",
+        "lib/netstandard1.3/MathNet.Numerics.dll",
+        "lib/netstandard1.3/MathNet.Numerics.xml",
+        "lib/netstandard2.0/MathNet.Numerics.dll",
+        "lib/netstandard2.0/MathNet.Numerics.xml",
+        "mathnet.numerics.4.15.0.nupkg.sha512",
+        "mathnet.numerics.nuspec"
+      ]
+    },
+    "MathNet.Numerics.FSharp/4.15.0": {
+      "sha512": "PtyywucUehsUxy1YAmjciAgcHcKsRZ8jSOMT29sG2LTZ4FeaSEpfOOHh6Cm0iJn8LhOXqpAMerqJmhygg6IbSQ==",
+      "type": "package",
+      "path": "mathnet.numerics.fsharp/4.15.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/net45/MathNet.Numerics.FSharp.dll",
+        "lib/net45/MathNet.Numerics.FSharp.xml",
+        "lib/netstandard1.6/MathNet.Numerics.FSharp.dll",
+        "lib/netstandard1.6/MathNet.Numerics.FSharp.xml",
+        "lib/netstandard2.0/MathNet.Numerics.FSharp.dll",
+        "lib/netstandard2.0/MathNet.Numerics.FSharp.xml",
+        "mathnet.numerics.fsharp.4.15.0.nupkg.sha512",
+        "mathnet.numerics.fsharp.nuspec"
+      ]
+    },
+    "MathNet.Symbolics/0.24.0": {
+      "sha512": "Aek0P9vx2KwvLdt/VrM0HuEdPrEJSm5nOuWpQV+QhJBWvILnlwLT7ax2v/iueK6XpW23xFF+M4frT9xC8m4ghw==",
+      "type": "package",
+      "path": "mathnet.symbolics/0.24.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/net45/MathNet.Symbolics.dll",
+        "lib/net461/MathNet.Symbolics.dll",
+        "lib/netstandard2.0/MathNet.Symbolics.dll",
+        "mathnet.symbolics.0.24.0.nupkg.sha512",
+        "mathnet.symbolics.nuspec"
+      ]
+    },
     "Microsoft.CodeCoverage/17.5.0": {
       "sha512": "6FQo0O6LKDqbCiIgVQhJAf810HSjFlOj7FunWaeOGDKxy8DAbpHzPk4SfBTXz9ytaaceuIIeR6hZgplt09m+ig==",
       "type": "package",
@@ -5436,7 +5732,9 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "Fractions >= 7.3.0",
       "LinearAlgebra >= 1.0.0",
+      "MathNet.Symbolics >= 0.24.0",
       "Unit >= 1.0.0"
     ]
   },
@@ -5491,6 +5789,16 @@
     "frameworks": {
       "net6.0": {
         "targetAlias": "net6.0",
+        "dependencies": {
+          "Fractions": {
+            "target": "Package",
+            "version": "[7.3.0, )"
+          },
+          "MathNet.Symbolics": {
+            "target": "Package",
+            "version": "[0.24.0, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",

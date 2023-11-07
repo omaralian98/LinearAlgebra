@@ -1,29 +1,23 @@
 ﻿using LinearAlgebra;
 using static LinearAlgebra.Linear;
+using MathNet.Symbolics;
+using Expr = MathNet.Symbolics.SymbolicExpression;
 namespace Mr_Sure21
 {
     class Program
     {
-        public static void Test<T>(T top)
-        {
-
-        }
         public static void Main(string[] args)
         {
             decimal[,] matrix = { { 1, 1, 2 }, { 1, 3, 7 }, { 2, 6, 6 } };
             decimal[] coefficient = { 1, 1, 1 };
-            (matrix, coefficient).Print();
-            var coe1 = Linear.REF(matrix, coefficient);
-            foreach (var it in Linear.steps)
+            var top = Linear.GetREF(matrix.GetFractions(), false, true);
+            foreach (var it in top.Item2)
             {
-                Console.WriteLine(it.StepDescription);
-                if (it.Matrix is not null && it.Coefficient is not null)
-                {
-                    (it.Matrix, SpecialString.Solve(it.Coefficient)).Print();
-                }
-                Console.WriteLine("");
+                Console.WriteLine($"{it.Scalar}R{it.PivotRow + 1} + R{it.EffectedRow + 1} ---> R{it.EffectedRow + 1}");
             }
-            coe1.Print();
+            var top1 = Linear.REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
+            top1.Print();
+
         }
     }
 }

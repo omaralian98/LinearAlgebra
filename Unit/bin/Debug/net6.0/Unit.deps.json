@@ -19,6 +19,108 @@
         }
       },
       "coverlet.collector/3.2.0": {},
+      "FParsec/1.0.3": {
+        "dependencies": {
+          "FSharp.Core": "4.6.0",
+          "NETStandard.Library": "1.6.1"
+        },
+        "runtime": {
+          "lib/netstandard1.6/FParsec.dll": {
+            "assemblyVersion": "1.0.3.0",
+            "fileVersion": "1.0.3.0"
+          },
+          "lib/netstandard1.6/FParsecCS.dll": {
+            "assemblyVersion": "1.0.3.0",
+            "fileVersion": "1.0.3.0"
+          }
+        }
+      },
+      "FSharp.Core/4.6.0": {
+        "runtime": {
+          "lib/netstandard1.6/FSharp.Core.dll": {
+            "assemblyVersion": "4.6.0.0",
+            "fileVersion": "2018.12.7.2"
+          }
+        },
+        "resources": {
+          "lib/netstandard1.6/cs/FSharp.Core.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard1.6/de/FSharp.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard1.6/en/FSharp.Core.resources.dll": {
+            "locale": "en"
+          },
+          "lib/netstandard1.6/es/FSharp.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard1.6/fr/FSharp.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard1.6/it/FSharp.Core.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard1.6/ja/FSharp.Core.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard1.6/ko/FSharp.Core.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard1.6/pl/FSharp.Core.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard1.6/pt-BR/FSharp.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard1.6/ru/FSharp.Core.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard1.6/tr/FSharp.Core.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard1.6/zh-Hans/FSharp.Core.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard1.6/zh-Hant/FSharp.Core.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "MathNet.Numerics/4.15.0": {
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Numerics.dll": {
+            "assemblyVersion": "4.15.0.0",
+            "fileVersion": "4.15.0.0"
+          }
+        }
+      },
+      "MathNet.Numerics.FSharp/4.15.0": {
+        "dependencies": {
+          "FSharp.Core": "4.6.0",
+          "MathNet.Numerics": "4.15.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Numerics.FSharp.dll": {
+            "assemblyVersion": "4.15.0.0",
+            "fileVersion": "4.15.0.0"
+          }
+        }
+      },
+      "MathNet.Symbolics/0.24.0": {
+        "dependencies": {
+          "FParsec": "1.0.3",
+          "FSharp.Core": "4.6.0",
+          "MathNet.Numerics": "4.15.0",
+          "MathNet.Numerics.FSharp": "4.15.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Symbolics.dll": {
+            "assemblyVersion": "0.24.0.0",
+            "fileVersion": "0.24.0.0"
+          }
+        }
+      },
       "Microsoft.CodeCoverage/17.5.0": {
         "runtime": {
           "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {
@@ -1022,6 +1124,9 @@
       },
       "xunit.runner.visualstudio/2.4.5": {},
       "LinearAlgebra/1.0.0": {
+        "dependencies": {
+          "MathNet.Symbolics": "0.24.0"
+        },
         "runtime": {
           "LinearAlgebra.dll": {}
         }
@@ -1040,6 +1145,41 @@
       "sha512": "sha512-xjY8xBigSeWIYs4I7DgUHqSNoGqnHi7Fv7/7RZD02rvZyG3hlsjnQKiVKVWKgr9kRKgmV+dEfu8KScvysiC0Wg==",
       "path": "coverlet.collector/3.2.0",
       "hashPath": "coverlet.collector.3.2.0.nupkg.sha512"
+    },
+    "FParsec/1.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0VoZapcSUHsNCixYawx8RFZHJMRVykaKsks5OOUXRP0bZCpr7UCP6kIjbVFGHIqqBGPtICUMy7j521sH0ZcmrQ==",
+      "path": "fparsec/1.0.3",
+      "hashPath": "fparsec.1.0.3.nupkg.sha512"
+    },
+    "FSharp.Core/4.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Neg/er6EOaNBrvBS2FrsYdrXW8Jv4CRQhtDfw+0b7usRSDvaJnABTNEWTdh3RqmdyT6K2qOayUsrY0lpiQjBxQ==",
+      "path": "fsharp.core/4.6.0",
+      "hashPath": "fsharp.core.4.6.0.nupkg.sha512"
+    },
+    "MathNet.Numerics/4.15.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cP4QgPPiU7boMyL8npvuQyVGVYUd/JQY1AWa+Wl2f//fuJN40qwt9ABRazunZIcDLHg3SSlgD/e+3Lnp69jNTg==",
+      "path": "mathnet.numerics/4.15.0",
+      "hashPath": "mathnet.numerics.4.15.0.nupkg.sha512"
+    },
+    "MathNet.Numerics.FSharp/4.15.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PtyywucUehsUxy1YAmjciAgcHcKsRZ8jSOMT29sG2LTZ4FeaSEpfOOHh6Cm0iJn8LhOXqpAMerqJmhygg6IbSQ==",
+      "path": "mathnet.numerics.fsharp/4.15.0",
+      "hashPath": "mathnet.numerics.fsharp.4.15.0.nupkg.sha512"
+    },
+    "MathNet.Symbolics/0.24.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Aek0P9vx2KwvLdt/VrM0HuEdPrEJSm5nOuWpQV+QhJBWvILnlwLT7ax2v/iueK6XpW23xFF+M4frT9xC8m4ghw==",
+      "path": "mathnet.symbolics/0.24.0",
+      "hashPath": "mathnet.symbolics.0.24.0.nupkg.sha512"
     },
     "Microsoft.CodeCoverage/17.5.0": {
       "type": "package",

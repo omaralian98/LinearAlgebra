@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fractions" Version="7.3.0" />
+    <PackageReference Include="MathNet.Symbolics" Version="0.24.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LinearAlgebra\LinearAlgebra.csproj" />
     <ProjectReference Include="..\Unit\Unit.csproj" />
   </ItemGroup>

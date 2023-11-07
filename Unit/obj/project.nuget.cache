@@ -1,10 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "PHWODlK5fP4tO4LvDgmofXJmSqdGa+jc1hgAfTibx6ZnPPP7WEvSOQ7na+fja7LRwIf0CIihLXSNShlM3Wm+Qw==",
+  "dgSpecHash": "sAqf4epAfw6qIloXXDNVaxJ8nZL+wqRxEZ+4buvXRZGHiDsHdpzMV0YsKlqu+MalSpwA7GaFKaHcUqGXmVU0PA==",
   "success": true,
   "projectFilePath": "C:\\Users\\User\\source\\repos\\LinearAlgebra\\Unit\\Unit.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\coverlet.collector\\3.2.0\\coverlet.collector.3.2.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\fparsec\\1.0.3\\fparsec.1.0.3.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\fsharp.core\\4.6.0\\fsharp.core.4.6.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.numerics\\4.15.0\\mathnet.numerics.4.15.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.numerics.fsharp\\4.15.0\\mathnet.numerics.fsharp.4.15.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.symbolics\\0.24.0\\mathnet.symbolics.0.24.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.codecoverage\\17.5.0\\microsoft.codecoverage.17.5.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.net.test.sdk\\17.5.0\\microsoft.net.test.sdk.17.5.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

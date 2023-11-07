@@ -1,15 +1,13 @@
 ﻿using static LinearAlgebra.Linear;
 
 namespace LinearAlgebra;
-public class Linear
+public partial class Linear
 {
     public struct MatrixStep
     {
         public string? StepDescription { get; set; }
         public Fraction[,]? Matrix { get; set; }
-        public SpecialString[]? Coefficient { get; set; }
     }
-    public static List<MatrixStep> steps = new List<MatrixStep>();
     public struct SpecialString
     {
         public static char[] vari = { 'x', 'y', 'z', 't', 'd', 's', 'h', 'k', 'p', 'v', 'e', 'l', 'a', 'b', 'c', 'f', 'g', 'i', 'j', 'm', 'n', 'o', 'q', 'r', 'u', 'w' };
@@ -159,11 +157,11 @@ public class Linear
     /// <exception cref="ArithmeticException"></exception>
     public static int Rank(decimal[,] matrix)
     {
-        steps.Add(new MatrixStep
-        {
-            StepDescription = "We get the Row Echelon Form(REF) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
-            Matrix = matrix.GetFractions()
-        });
+        //steps.Add(new MatrixStep
+        //{
+        //    StepDescription = "We get the Row Echelon Form(REF) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
+        //    Matrix = matrix.GetFractions()
+        //});
         REF(matrix);
         int rank = 0;
         for (int x = 0; x < matrix.GetLength(0); x++)
@@ -178,231 +176,6 @@ public class Linear
             }
         }
         return rank;
-    }
-
-    /// <summary>
-    /// Aka: Row Echelon Form.
-    /// </summary>
-    /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <returns>Returns the REF of the giving matrix as decimal array</returns>
-    /// <exception cref="ArithmeticException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="DivideByZeroException"></exception>
-    public static decimal[,] REF<T>(T[,] matrix)
-    {
-        Fraction[,] newMatrix = matrix.GetFractions();
-        (newMatrix,var coefficient) = REFAsFraction(newMatrix, null);
-        return newMatrix.Fraction2Decimal();
-    }
-
-    /// <summary>
-    /// Aka: Row Echelon Form.
-    /// </summary>
-    /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <returns>
-    /// Returns the REF of the giving matrix as Fraction array
-    /// <br></br>
-    /// **Note**: Fraction is a struct that you can access like this:
-    /// <br></br>
-    /// LinearAlgebra.Linear.Fraction
-    /// </returns>
-    /// <exception cref="ArithmeticException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="DivideByZeroException"></exception>
-    public static Fraction[,] REFAsFraction<T>(T[,] matrix)
-    {
-        var (answer, coefficient) = REFAsFraction(matrix.GetFractions(), null);
-        return answer;
-    }
-
-    /// <summary>
-    /// Aka: Row Echelon Form.
-    /// </summary>
-    /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <returns>Returns the REF of the giving matrix as string array</returns>
-    /// <exception cref="ArithmeticException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="DivideByZeroException"></exception>
-    public static string[,] REFAsString<T>(T[,] matrix)
-    {
-        var (answer, coefficient) = REFAsFraction(matrix.GetFractions(), null);
-        return answer.Fraction2String();
-    }
-
-    /// <summary>
-    /// Aka: Row Echelon Form.
-    /// </summary>
-    /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <param name="coefficient">The coefficient of the matrix</param>
-    /// <returns>
-    /// Returns the REF of the giving matrix, and it's coefficient as Fraction arraies
-    /// <br></br>
-    /// **Note**: Fraction is a struct that you can access like this:
-    /// <br></br>
-    /// LinearAlgebra.Linear.Fraction
-    /// </returns>
-    /// <exception cref="ArithmeticException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="DivideByZeroException"></exception>
-    public static (Fraction[,], SpecialString[]?) REFAsSpecialString(Fraction[,] matrix, Fraction[]? coefficient = null)
-    {
-        if (coefficient is not null)
-        {
-            //If the matrix and the coefficient matrix has different number of rows throw an exception
-            string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
-            if (matrix.GetLength(0) != coefficient?.GetLength(0)) throw new ArgumentException(errorMessage);
-        }
-        SpecialString[]? specialStrings = coefficient?.GetFraction() ?? null;
-        MatrixHelpers.Pivot(reduced: false, ref matrix, ref specialStrings);
-        return (matrix, specialStrings);
-    }
-    public static (Fraction[,], Fraction[]?) REFAsFraction(Fraction[,] matrix, Fraction[]? coefficient = null)
-    {
-        var (result, coe) = REFAsSpecialString(matrix, coefficient);
-        return (result, coe is null ? null : SpecialString.Solve(coe));
-    }
-
-    public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix, T[] coefficient)
-    {
-        var (result, coe) = REFAsSpecialString(matrix.GetFractions(), coefficient.GetFractions());
-        return coe.SpecialString2String();
-    }
-
-    /// <summary>
-    /// Aka: Row Echelon Form.
-    /// </summary>
-    /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <param name="coefficient">The coefficient of the matrix</param>
-    /// <returns>Returns the REF of the giving matrix, and it's coefficient as decimal arraies</returns>
-    /// <exception cref="ArithmeticException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="DivideByZeroException"></exception>
-    public static (decimal[,], decimal[]) REF<T>(T[,] matrix, T[] coefficient)
-    {
-        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
-        if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
-        var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
-        return (result.Fraction2Decimal(), coe.Fraction2Decimal());
-    }
-    /// <summary>
-    /// Aka: Row Echelon Form.
-    /// </summary>
-    /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <param name="coefficient">The coefficient of the matrix</param>
-    /// <returns>Returns the REF of the giving matrix, and it's coefficient as string arraies</returns>
-    /// <exception cref="ArithmeticException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="DivideByZeroException"></exception>
-    public static (string[,], string[]) REFAsString<T>(T[,] matrix, T[] coefficient)
-    {
-        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
-        if (matrix.GetLength(0) != coefficient.GetLength(0)) throw new ArgumentException(errorMessage);
-        var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
-        return (result.Fraction2String(), coe.Fraction2String());
-    }
-    private class MatrixHelpers
-    {
-        public static void Pivot(bool reduced, ref Fraction[,] matrix, ref SpecialString[]? coefficient)
-        {
-            int matrixRows = matrix.GetLength(0); //Gets the number of rows
-            int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-            for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
-            {
-                ReOrderMatrix(currentRow, ref matrix, ref coefficient);
-                int currentColumn = FindPivot(currentRow, matrix);
-                if (currentColumn == -1) continue;
-                ClearPivotColumn(currentRow, currentColumn, reduced, ref matrix, ref coefficient);
-            }
-        }
-        public static void ReOrderMatrix(int row, ref Fraction[,] matrix, ref SpecialString[]? coefficient)
-        {
-            var (result, x, y) = MatrixHelpers.CheckPossibleSwap(row, row, matrix);
-            if (result)
-            {
-                MatrixHelpers.SwapMatrix(x, y, ref matrix);
-                if (coefficient is not null) MatrixHelpers.SwapCoefficient(x, y, ref coefficient);
-                steps.Add(new MatrixStep
-                {
-                    StepDescription = $"Swap between R{x + 1} and R{y + 1}",
-                    Matrix = (Fraction[,])matrix.Clone(),
-                    Coefficient = coefficient
-                });
-            }
-        }
-        public static int FindPivot(int row, Fraction[,] matrix)
-        {
-            for (int column = 0; column < matrix.GetLength(1); column++)
-            {
-                if (matrix[row, column].Quotient != 0) return column;
-                var elements = Enumerable.Range(0, matrix.GetLength(0)).SkipWhile(x => x <= row)
-                    .Select(x => matrix[x, column]).ToArray();
-                if (elements.All(x => x.Quotient == 0)) continue;
-                return column;
-            }
-            return -1;
-        }
-        public static void ClearPivotColumn(int pivotRow, int column, bool reduced, ref Fraction[,] matrix, ref SpecialString[]? coefficient)
-        {
-            int targetedRow = reduced ? 0 : pivotRow;
-            for (; targetedRow < matrix.GetLength(0); targetedRow++)
-            {
-                if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
-                Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
-                ClearRow(pivotRow, targetedRow, column, scalar, ref matrix);
-                if (coefficient is not null) coefficient[targetedRow] = scalar * coefficient[pivotRow] + coefficient[targetedRow];
-                steps.Add(new MatrixStep
-                {
-                    StepDescription = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
-                    Matrix = (Fraction[,])matrix.Clone(),
-                    Coefficient = coefficient
-                });
-
-            }
-        }
-
-        public static void ClearRow(int pivotRow, int targetedRow, int columnStart, Fraction scalar, ref Fraction[,] matrix)
-        {
-            matrix[targetedRow, columnStart] = new(0);
-            for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
-            {
-                var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
-                if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
-                else matrix[targetedRow, y] = new Fraction(testVal.Quotient);
-            }
-        }
-
-        public static (bool, int, int) CheckPossibleSwap(int x, int y, Fraction[,] matrix)
-        {//if the piviot is 0 than there is a sawp 
-            if (matrix[x, y].Quotient == 0)
-            {
-                int num = -1;
-                for (int i = x + 1; i < matrix.GetLength(0); i++)
-                {//Loops through all the row to find a suitable row to swap
-                    decimal current = matrix[i, y].Quotient;
-                    //If we finds 1 or -1 or any number that's not 0.
-                    if (current == 1 || current == -1 || current != 0)
-                    {
-                        num = i - x;
-                        break;
-                    }
-                }//If num is still -1 that means all this column is 0 so we return false and -1, -1
-                if (num == -1) return (false, -1, -1);
-                return (true, x, y + num); //Else we return true and the coordinate of the row.
-            }//If not we return false because we don't have too swap
-            return (false, 0, 0);
-        }
-        public static void SwapMatrix<T>(int x, int y, ref T[,] matrix)
-        {
-            int columns = matrix.GetLength(1);
-            for (int i = 0; i < columns; i++)
-            {
-                (matrix[x, i], matrix[y, i]) = (matrix[y, i], matrix[x, i]);
-            }
-        }
-        public static void SwapCoefficient<T>(int x, int y, ref T[] coefficient)
-        {
-            (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
-        }
     }
 }
 public static class Extensions
