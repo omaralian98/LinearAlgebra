@@ -26,14 +26,14 @@ public partial class Linear
     {
         CheckCoherence(matrix, coefficient);
         (matrix, var solution) = GetREF(matrix, reduced: false);
-        var special = GetCofficient(coefficient.GetFraction(), solution);
+        var special = GetCoefficient(coefficient.GetFraction(), solution);
         return (matrix, special);
     }
     public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
     {
         CheckCoherence(matrix, coefficient);
         (matrix, var solution) = GetREF(matrix, reduced: false);
-        var special = GetCofficient(coefficient, solution);
+        var special = GetCoefficient(coefficient, solution);
         return (matrix, special);
     }
 

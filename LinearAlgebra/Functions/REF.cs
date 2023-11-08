@@ -1,33 +1,27 @@
 ﻿namespace LinearAlgebra;
 public partial class Linear
 {
-    public static SpecialString[] GetCofficient(SpecialString[] coefficient, Steps[] steps)
+    public static SpecialString[] GetCoefficient(SpecialString[] coefficient, Steps[] steps)
     {
         for (int i = 0; i < steps.Length; i++) 
         {
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
-            Fraction scalar = steps[i].Scalar ?? new(0);
-            if (steps[i].Operation == Operations.Swap) coefficient = SwapCoefficient(pivot, target, coefficient);
-            else if (steps[i].Operation == Operations.Multiply)
-            {
-                coefficient[target] = scalar * coefficient[pivot] + coefficient[target];
-            }
+            Fraction? scalar = steps[i].Scalar;
+            if (scalar is null) coefficient = SwapCoefficient(pivot, target, coefficient);
+            else coefficient[target] = (Fraction)scalar * coefficient[pivot] + coefficient[target];
         }
         return coefficient;
     }
-    public static Fraction[] GetCofficient(Fraction[] coefficient, Steps[] steps)
+    public static Fraction[] GetCoefficient(Fraction[] coefficient, Steps[] steps)
     {
         for (int i = 0; i < steps.Length; i++)
         {
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
-            Fraction scalar = steps[i].Scalar ?? new(0);
-            if (steps[i].Operation == Operations.Swap) coefficient = SwapCoefficient(pivot, target, coefficient);
-            else if (steps[i].Operation == Operations.Multiply)
-            {
-                coefficient[target] = scalar * coefficient[pivot] + coefficient[target];
-            }
+            Fraction? scalar = steps[i].Scalar;
+            if (scalar is null) coefficient = SwapCoefficient(pivot, target, coefficient);
+            else coefficient[target] = (Fraction)scalar * coefficient[pivot] + coefficient[target];
         }
         return coefficient;
     }
@@ -44,11 +38,6 @@ public partial class Linear
             if (currentColumn == -1) continue;
             (matrix, steps) = ClearPivotColumn(matrix, steps, currentRow, currentColumn, reduced, ref matrixSteps);
         }
-        foreach (var it in matrixSteps?? new List<MatrixStep>())
-        {
-            Console.WriteLine(it.StepDescription);
-            it.Matrix?.Print();
-        }
         return (matrix, steps.ToArray());
     }
     private static (Fraction[,], List<Steps>) ReOrderMatrix(Fraction[,] matrix, List<Steps> steps, int row, ref List<MatrixStep>? solution)
@@ -62,7 +51,7 @@ public partial class Linear
                     StepDescription = $"Swap between R{x + 1} and R{y + 1}",
                     Matrix = (Fraction[,])matrix.Clone(),
                 });
-            steps.Add(new Steps(pivotRow: x, effectedRow: y, Operations.Swap));
+            steps.Add(new Steps(pivotRow: x, effectedRow: y));
         }
         return (matrix, steps);
     }
@@ -91,7 +80,7 @@ public partial class Linear
                 StepDescription = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
                 Matrix = (Fraction[,])matrix.Clone(),
             });
-            steps.Add(new Steps(pivotRow, targetedRow, Operations.Multiply, scalar));
+            steps.Add(new Steps(pivotRow, targetedRow, scalar));
         }
         return (matrix, steps);
     }
@@ -103,13 +92,13 @@ public partial class Linear
         {
             var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
             if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
-            else matrix[targetedRow, y] = new Fraction(testVal.Quotient);
+            else matrix[targetedRow, y] = new Fraction((double)testVal.Quotient);
         }
         return matrix;
     }
 
     private static (bool, int, int) CheckPossibleSwap(int x, int y, Fraction[,] matrix)
-    {//if the piviot is 0 than there is a sawp 
+    {//if the pivot is 0 than there is a swap 
         if (matrix[x, y].Quotient == 0)
         {
             int num = -1;

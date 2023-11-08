@@ -118,6 +118,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "BenchmarkDotNet": {
+              "target": "Package",
+              "version": "[0.13.10, )"
+            },
             "Fractions": {
               "target": "Package",
               "version": "[7.3.0, )"

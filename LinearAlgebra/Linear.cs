@@ -3,11 +3,6 @@
 namespace LinearAlgebra;
 public partial class Linear
 {
-    public struct MatrixStep
-    {
-        public string? StepDescription { get; set; }
-        public Fraction[,]? Matrix { get; set; }
-    }
     public struct SpecialString
     {
         public static char[] vari = { 'x', 'y', 'z', 't', 'd', 's', 'h', 'k', 'p', 'v', 'e', 'l', 'a', 'b', 'c', 'f', 'g', 'i', 'j', 'm', 'n', 'o', 'q', 'r', 'u', 'w' };
@@ -57,92 +52,6 @@ public partial class Linear
             return answer;
         }
         public override string ToString() => str;
-    }
-    public struct Fraction
-    {
-        public decimal Numerator;
-        public decimal Denominator;
-        public Fraction(decimal num, decimal den = 1)
-        {
-            if (den == 0) throw new DivideByZeroException();
-            decimal gcd = GCD(Math.Abs(num), Math.Abs(den));
-            Denominator = den / gcd;
-            Numerator = num / gcd;
-            if (Numerator < 0 && Denominator < 0)
-            {
-                Numerator = Math.Abs(Numerator);
-            }
-            else if (Numerator > 0 && Denominator < 0)
-            {
-                Numerator = -Numerator;
-            }
-            Denominator = Math.Abs(Denominator);
-        }
-
-        public decimal Quotient
-        {
-            get { return Numerator / Denominator; }
-        }
-        private static decimal GCD(decimal a, decimal b)
-        {
-            if (a == 1 || b == 1) return 1;
-            while (a > 0 && b > 0)
-            {
-                if (a > b) a %= b;
-                else b %= a;
-            }
-            if (a == 0) return b;
-            return a;
-        }
-        public static Fraction operator +(Fraction a) => a;
-        public static Fraction operator -(Fraction a) => new Fraction(-a.Numerator, a.Denominator);
-        public static Fraction operator *(Fraction a, Fraction b) => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
-        public static Fraction operator /(Fraction a, Fraction b) => new Fraction(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
-        public static Fraction operator +(Fraction a, object b)
-        {
-            if (!b.IsNumber()) throw new Exception($"The operation between {a.GetType().Name} and {b.GetType().Name} is invaild.");
-            decimal num = a.Numerator + (decimal)b * a.Denominator;
-            decimal den = a.Denominator;
-            return new Fraction(num, den);
-        }
-        public static Fraction operator -(Fraction a, object b)
-        {
-            if (!b.IsNumber()) throw new Exception($"The operation between {a.GetType().Name} and {b.GetType().Name} is invaild.");
-            decimal num = a.Numerator - (decimal)b * a.Denominator;
-            decimal den = a.Denominator;
-            return new Fraction(num, den);
-        }
-        public static Fraction operator *(Fraction a, object b)
-        {
-            if (!b.IsNumber()) throw new Exception($"The operation between {a.GetType().Name} and {b.GetType().Name} is invaild.");
-            return new Fraction(a.Numerator * (decimal)b, a.Denominator);
-        }
-        public static Fraction operator /(Fraction a, object b)
-        {
-            if (!b.IsNumber()) throw new Exception($"The operation between {a.GetType().Name} and {b.GetType().Name} is invaild.");
-            return new Fraction(a.Numerator, a.Denominator * (decimal)b);
-        }
-        public static Fraction operator +(Fraction a, Fraction b)
-        {
-            decimal dividend = (a.Numerator * b.Denominator) + (b.Numerator * a.Denominator);
-            decimal divisor = a.Denominator * b.Denominator;
-            return new Fraction(dividend, divisor);
-        }
-        public static Fraction operator -(Fraction a, Fraction b)
-        {
-            decimal dividend = (a.Numerator * b.Denominator) - (b.Numerator * a.Denominator);
-            decimal divisor = a.Denominator * b.Denominator;
-            return new Fraction(dividend, divisor);
-        }
-        //public static bool operator ==(Fraction a, Fraction b) => a.Numerator == b.Numerator && b.Numerator == a.Denominator;
-        //public static bool operator !=(Fraction a, Fraction b) => !(a == b);
-
-        public override string ToString()
-        {
-            if (Denominator == 1) return Numerator.ToString();
-            else if (!Quotient.IsDecimal()) return Quotient.ToString();
-            return $"{Numerator}/{Denominator}";
-        }
     }
 
     /// <summary>
@@ -208,7 +117,7 @@ public static class Extensions
         {
             for (int j = 0; j < a.GetLength(1); j++)
             {
-                a[i, j] = t[i, j].Quotient;
+                a[i, j] = (decimal)t[i, j].Quotient;
             }
         }
         return a;
@@ -218,7 +127,7 @@ public static class Extensions
         decimal[] a = new decimal[t.GetLength(0)];
         for (int i = 0; i < a.GetLength(0); i++)
         {
-            a[i] = t[i].Quotient;
+            a[i] = (decimal)t[i].Quotient;
         }
         return a;
     }
@@ -260,7 +169,7 @@ public static class Extensions
                 else
                 {
                     if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                    matrix[i, j] = new Fraction(Convert.ToDecimal(t));
+                    matrix[i, j] = new Fraction(Convert.ToDouble(t));
                 }
             }
         }
@@ -281,7 +190,7 @@ public static class Extensions
             else
             {
                 if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                matrix[i] = new Fraction(Convert.ToDecimal(t));
+                matrix[i] = new Fraction(Convert.ToDouble(t));
             }
         }
         return matrix;
@@ -303,7 +212,7 @@ public static class Extensions
             else
             {
                 if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                matrix[i] = new(SpecialString.vari[i], new(Convert.ToDecimal(t)));
+                matrix[i] = new(SpecialString.vari[i], new(Convert.ToDouble(t)));
             }
         }
         return matrix;
@@ -316,11 +225,11 @@ public static class Extensions
     public static Fraction String2Fraction(this string a)
     {
         int indexOfSlash = a.IndexOf('/');
-        decimal dividend = Convert.ToDecimal(a[0..indexOfSlash]);
-        decimal divisor = Convert.ToDecimal(a[(indexOfSlash + 1)..a.Length]);
+        double dividend = Convert.ToDouble(a[0..indexOfSlash]);
+        double divisor = Convert.ToDouble(a[(indexOfSlash + 1)..a.Length]);
         return new Fraction(dividend, divisor);
     }
-    public static string GetMatix<T>(this T[,] matrix)
+    public static string GetMatrix<T>(this T[,] matrix)
     {
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(ref Lines);
@@ -341,7 +250,7 @@ public static class Extensions
         }
         return result;
     }
-    public static string GetMatix<T>(this T[] matrix)
+    public static string GetMatrix<T>(this T[] matrix)
     {
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(ref Lines);
@@ -389,11 +298,11 @@ public static class Extensions
     }
     public static void Print<T>(this T[,] matrix)
     {
-        Console.WriteLine(matrix.GetMatix());
+        Console.WriteLine(matrix.GetMatrix());
     }
     public static void Print<T>(this T[] matrix)
     {
-        Console.WriteLine(matrix.GetMatix());
+        Console.WriteLine(matrix.GetMatrix());
     }
     public static void Print<T, S>(this (T[,] matrix, S[] coefficient) c)
     {
@@ -447,7 +356,7 @@ public static class Extensions
 }
 public static class ExpressionHelpers
 {
-    public static char[] opeartions = { '*', '/', '+', '-' };
+    public static char[] operations = { '*', '/', '+', '-' };
     public static Fraction EvaluateAsFraction(string expression, Dictionary<char, Fraction> variables)
     {
         string replaced = ReplaceVariables(expression, variables);
@@ -469,14 +378,14 @@ public static class ExpressionHelpers
         bool first = true;
         for (int i = 0; i < exp.Count; i++)
         {
-            if (opeartions.Contains(exp[i][0]) && exp[i].Length == 1)
+            if (operations.Contains(exp[i][0]) && exp[i].Length == 1)
             {
-                decimal y = Convert.ToDecimal(stack.Pop());
+                double y = Convert.ToDouble(stack.Pop());
                 if (first)
                 {
                     answer = new(y);
                     first = false;
-                    y = Convert.ToDecimal(stack.Pop());
+                    y = Convert.ToDouble(stack.Pop());
                 }
                 if (exp[i][0] == '*') answer *= y;
                 else if (exp[i][0] == '/') answer /= y;

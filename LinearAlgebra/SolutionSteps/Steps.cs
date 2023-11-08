@@ -1,29 +1,25 @@
 ﻿namespace LinearAlgebra;
 public partial class Linear
 {
-    public enum Operations
+    public struct MatrixStep
     {
-        Swap,
-        Add,
-        Multiply
+        public string? StepDescription { get; set; }
+        public Fraction[,]? Matrix { get; set; }
     }
     public struct Steps
     {
         public int PivotRow { get; set; }
         public int EffectedRow { get; set; }
         public Fraction? Scalar { get; set; } = null;
-        public Operations Operation { get; set; }
-        public Steps(int pivotRow, int effectedRow, Operations operation)
+        public Steps(int pivotRow, int effectedRow)
         {
             PivotRow = pivotRow;
             EffectedRow = effectedRow;
-            Operation = operation;
         }
-        public Steps(int piviotRow, int effectedRow, Operations operation, Fraction scalar)
+        public Steps(int pivotRow, int effectedRow, Fraction scalar)
         {
-            PivotRow = piviotRow;
+            PivotRow = pivotRow;
             EffectedRow = effectedRow;
-            Operation = operation;
             Scalar = scalar;
         }
     }

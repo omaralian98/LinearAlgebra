@@ -2,22 +2,26 @@
 using static LinearAlgebra.Linear;
 using MathNet.Symbolics;
 using Expr = MathNet.Symbolics.SymbolicExpression;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using System.Numerics;
+using MathNet.Numerics;
+
 namespace Mr_Sure21
 {
-    class Program
+    
+    [MemoryDiagnoser]
+    public class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
-            decimal[,] matrix = { { 1, 1, 2 }, { 1, 3, 7 }, { 2, 6, 6 } };
-            decimal[] coefficient = { 1, 1, 1 };
-            var top = Linear.GetREF(matrix.GetFractions(), false, true);
-            foreach (var it in top.Item2)
-            {
-                Console.WriteLine($"{it.Scalar}R{it.PivotRow + 1} + R{it.EffectedRow + 1} ---> R{it.EffectedRow + 1}");
-            }
-            var top1 = Linear.REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
-            top1.Print();
-
+            var summary = BenchmarkRunner.Run<Program>();
+        }
+        [Benchmark]
+        public void Test()
+        {
+            decimal[,] matrix = { { 1, 0, 3, 7, 2 , 1, 1, 1 }, { 4, 6, 9, 5, 4, 1, 1, 1 }, { 4, 9, 7, 6, 0, 1, 1, 1 }, { 6, 6, 7, 5, 5, 1, 1, 1 }, { 2, 4, 9, 7, 1, 1, 1, 1 }, { 2, 4, 9, 7, 1, 1, 1, 1 }, { 2, 4, 9, 7, 1, 1, 1, 1 }, { 2, 4, 9, 7, 1, 1, 1, 1 } };
+            var top = Linear.GetREF(matrix.GetFractions(), true, true);
         }
     }
 }
