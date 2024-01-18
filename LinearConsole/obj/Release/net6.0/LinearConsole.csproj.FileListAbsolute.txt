@@ -203,3 +203,4 @@ C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Release\net6.0\refint
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Release\net6.0\LinearConsole.pdb
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Release\net6.0\LinearConsole.genruntimeconfig.cache
 C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Release\net6.0\ref\LinearConsole.dll
+C:\Users\User\source\repos\LinearAlgebra\LinearConsole\obj\Release\net6.0\LinearConsole.sourcelink.json

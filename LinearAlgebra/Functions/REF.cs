@@ -1,10 +1,14 @@
 ﻿namespace LinearAlgebra;
 public partial class Linear
 {
-    public static SpecialString[] GetCoefficient(SpecialString[] coefficient, Steps[] steps)
+    public static SpecialString[] GetCoefficient(SpecialString[] coefficient, Steps[] steps, CancellationToken token = default)
     {
         for (int i = 0; i < steps.Length; i++) 
         {
+            if (token.IsCancellationRequested)
+            {
+                throw new TaskCanceledException("Task was canceled.");
+            }
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
             Fraction? scalar = steps[i].Scalar;
@@ -13,10 +17,15 @@ public partial class Linear
         }
         return coefficient;
     }
-    public static Fraction[] GetCoefficient(Fraction[] coefficient, Steps[] steps)
+
+    public static Fraction[] GetCoefficient(Fraction[] coefficient, Steps[] steps, CancellationToken token = default)
     {
         for (int i = 0; i < steps.Length; i++)
         {
+            if (token.IsCancellationRequested)
+            {
+                throw new TaskCanceledException("Task was canceled.");
+            }
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
             Fraction? scalar = steps[i].Scalar;
@@ -25,7 +34,8 @@ public partial class Linear
         }
         return coefficient;
     }
-    public static (Fraction[,], Steps[]) GetREF(Fraction[,] matrix, bool reduced, bool solution = false)
+
+    public static (Fraction[,], Steps[]) GetREF(Fraction[,] matrix, bool reduced, bool solution = false, CancellationToken token = default)
     {
         int matrixRows = matrix.GetLength(0); //Gets the number of rows
         int matrixColumns = matrix.GetLength(1); //Gets the number of columns
@@ -33,6 +43,10 @@ public partial class Linear
         List<MatrixStep>? matrixSteps = solution == true ? new List<MatrixStep>() : null;
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
+            if (token.IsCancellationRequested)
+            {
+                throw new TaskCanceledException("Task was canceled.");
+            }
             (matrix, steps) = ReOrderMatrix(matrix, steps, currentRow, ref matrixSteps);
             int currentColumn = FindPivot(matrix, currentRow);
             if (currentColumn == -1) continue;

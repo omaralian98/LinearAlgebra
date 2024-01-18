@@ -1,4 +1,5 @@
-﻿using static LinearAlgebra.Linear;
+﻿using System.Linq;
+using static LinearAlgebra.Linear;
 
 namespace LinearAlgebra;
 public partial class Linear
@@ -34,7 +35,12 @@ public partial class Linear
         public static SpecialString operator *(SpecialString a, object b) => new($"{b} * {a}");
         public static SpecialString operator *(object a, SpecialString b) => new($"({a} * {b})");
         public static SpecialString operator *(SpecialString a, Fraction b) => a * b.Numerator / b.Denominator;
-        public static SpecialString operator *(Fraction a, SpecialString b) => b * a.Numerator / a.Denominator;
+        //public static SpecialString operator *(Fraction a, SpecialString b) => b * a.Numerator / a.Denominator;
+        public static SpecialString operator *(Fraction a, SpecialString b)
+        {
+            if (a.Quotient.IsDecimal()) return new SpecialString($"({a}) * {b}");
+            return new SpecialString($"{a} * {b}");
+        }
         public static SpecialString operator /(SpecialString a, SpecialString b) => new($"{a} / {b}");
         public static SpecialString operator /(SpecialString a, object b) => new($"({a} / {b})");
         public static SpecialString operator /(object a, SpecialString b) => new($"({a} / {b})");
@@ -51,6 +57,15 @@ public partial class Linear
             }
             return answer;
         }
+
+        public SpecialString Simplifiy()
+        {
+            foreach (var it in str.Split(' '))
+            {
+            }
+            return new SpecialString(str);
+        }
+
         public override string ToString() => str;
     }
 
@@ -268,7 +283,7 @@ public static class Extensions
         }
         return result;
     }
-    public static string GetMatix<T, S>(this (T[,] matrix, S[] coefficient) c)
+    public static string GetMatrix<T, S>(this (T[,] matrix, S[] coefficient) c)
     {
         string[] Lines = new string[c.matrix.GetLength(0) + 2];
         AddBeginningBrackets(ref Lines);
@@ -306,7 +321,7 @@ public static class Extensions
     }
     public static void Print<T, S>(this (T[,] matrix, S[] coefficient) c)
     {
-        Console.WriteLine(c.GetMatix());
+        Console.WriteLine(c.GetMatrix());
     }
     private static int GetPad<T>(this T[] matrix)
     {
@@ -407,37 +422,175 @@ public static class ExpressionHelpers
         return expression;
     }
 
-    public static List<string> InfixToPostfix(string exp)
+    public static List<string> InfixToPostfix(string expression)
     {
         List<string> result = new List<string>();
-        Stack<string> stack = new Stack<string>();
-        string[] ex = exp.Split();
-        for (int i = 0; i < ex.Length; i++)
+        Stack<char> stack = new Stack<char>();
+        expression = expression.Replace("(", "( ");
+        expression = expression.Replace(")", " )");
+        expression = expression.Replace(" / ", "/");
+        expression = expression.Replace("/", " / ");
+        foreach (var item in expression.Split(' '))
         {
-            string cu = ex[i];
-            if (decimal.TryParse(cu, out _)) result.Add(cu);
-            else if (cu[0] == '(') stack.Push(cu);
-            else if (cu[0] == ')')
+            string current = item.Trim();
+            if (current[0] == '(')
             {
-                while (stack.Count > 0 && stack.Peek() != "(") result.Add(stack.Pop());
-                if (stack.Count > 0 && stack.Peek() != "(") throw new Exception("Invalid Expression");
-                else stack.Pop();
+                stack.Push(current[0]);
+            }
+            else if (current[0] == ')')
+            {
+                while (stack.Count > 0 && stack.Peek() != '(')
+                {
+                    result.Add(stack.Pop().ToString());
+                }
+                stack.Pop();
+            }
+            else if (IsOperator(current))
+            {
+                while (stack.Count > 0 && Prec(stack.Peek()) >= Prec(current[0]))
+                {
+                    result.Add(stack.Pop().ToString());
+                }
+                stack.Push(current[0]);
             }
             else
             {
-                while (stack.Count > 0 && Prec(cu[0]) <= Prec(stack.Peek()[0]))
-                    result.Add(stack.Pop());
-                stack.Push(cu);
+                result.Add(current.ToString());
             }
         }
-        while (stack.Count > 0) result.Add(stack.Pop());
+
+        while (stack.Count > 0)
+        {
+            result.Add(stack.Pop().ToString());
+        }
+
         return result;
     }
+
+    private static bool IsOperator(string c)
+    {
+        return c == "+" || c == "-" || c == "*" || c == "/" || c == "^";
+    }
+
     private static int Prec(char c)
     {
         if (c == '-' || c == '+') return 1;
         if (c == '*' || c == '/') return 2;
         if (c == '^') return 3;
         return -1;
+    }
+}
+
+public class Special
+{
+    Dictionary<string, Fraction> values = new();
+    const string None = "No";
+    public Special()
+    {
+
+    }
+    public Special(string variable)
+    {
+        values.Add(variable, new Fraction(1));
+    }
+    public Special(Fraction fraction)
+    {
+        values.Add(None, new Fraction(1));
+    }
+    public Special(Fraction fraction, string variable)
+    {
+        values.Add(variable, fraction);
+    }
+
+    public static Special operator +(Special a, Special b)
+    {
+        Dictionary<string, Fraction> newValues = a.values
+            .ToDictionary(entry => entry.Key, entry => entry.Value);
+        foreach (var item in b.values)
+        {
+            if (a.values.ContainsKey(item.Key))
+            {
+                newValues[item.Key] = a.values[item.Key] + item.Value;
+            }
+            else
+            {
+                newValues[item.Key] = item.Value;
+            }
+        }
+        return new Special { values = newValues };
+    }
+    public static Special operator -(Special a, Special b)
+    {
+        Dictionary<string, Fraction> newValues = a.values
+            .ToDictionary(entry => entry.Key, entry => entry.Value);
+        foreach (var item in b.values)
+        {
+            if (newValues.ContainsKey(item.Key))
+            {
+                newValues[item.Key] -= item.Value;
+            }
+            else
+            {
+                newValues[item.Key] = -item.Value;
+            }
+        }
+        return new Special { values = newValues };
+    }
+    public static Special operator *(Special a, Special b)
+    {
+        Dictionary<string, Fraction> newValues = new();
+        foreach (var item in a.values)
+        {
+            foreach (var item1 in b.values)
+            {
+                newValues.Add($"{item.Key}{item1.Key}", item.Value * item1.Value);
+            }
+        }
+        return new Special { values = newValues };
+    }
+    public static Special operator /(Special a, Special b)
+    {
+        Dictionary<string, Fraction> newValues = new();
+        foreach (var item in a.values)
+        {
+            foreach (var item1 in b.values)
+            {
+                newValues.Add($"{item.Key}{item1.Key}", item.Value / item1.Value);
+            }
+        }
+        return new Special { values = newValues };
+    }
+    public static Special operator +(Special a, Fraction b)
+    {
+        Dictionary<string, Fraction> newValues = a.values
+            .ToDictionary(entry => entry.Key, entry => entry.Value + b);
+        return new Special { values = newValues };
+    }
+    public static Special operator -(Special a, Fraction b)
+    {
+        Dictionary<string, Fraction> newValues = a.values
+            .ToDictionary(entry => entry.Key, entry => entry.Value - b);
+        return new Special { values = newValues };
+    }
+    public static Special operator *(Special a, Fraction b)
+    {
+        Dictionary<string, Fraction> newValues = a.values
+            .ToDictionary(entry => entry.Key, entry => entry.Value * b);
+        return new Special { values = newValues };
+    }
+    public static Special operator /(Special a, Fraction b)
+    {
+        Dictionary<string, Fraction> newValues = a.values
+            .ToDictionary(entry => entry.Key, entry => entry.Value / b);
+        return new Special { values = newValues };
+    }
+    public override string ToString()
+    {
+        string result = "";
+        foreach (var item in values)
+        {
+            result += $"{item.Value} * {item.Key} + ";
+        }
+        return result[..^3];
     }
 }

@@ -120,3 +120,4 @@ C:\Users\User\source\repos\LinearAlgebra\Unit\obj\Release\net6.0\refint\Unit.dll
 C:\Users\User\source\repos\LinearAlgebra\Unit\obj\Release\net6.0\Unit.pdb
 C:\Users\User\source\repos\LinearAlgebra\Unit\obj\Release\net6.0\Unit.genruntimeconfig.cache
 C:\Users\User\source\repos\LinearAlgebra\Unit\obj\Release\net6.0\ref\Unit.dll
+C:\Users\User\source\repos\LinearAlgebra\Unit\obj\Release\net6.0\Unit.sourcelink.json
