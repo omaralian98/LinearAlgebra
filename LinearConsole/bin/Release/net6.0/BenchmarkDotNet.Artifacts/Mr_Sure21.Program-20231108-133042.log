@@ -1,7 +1,0 @@
-// Validating benchmarks:
-// Benchmark Program.Main: DefaultJob
-//    * Benchmarked method `Main` is static. Benchmarks MUST be instance methods, static methods are not supported.
-
-// Benchmark Program.Test: DefaultJob
-//    * Benchmarked method `Test` is static. Benchmarks MUST be instance methods, static methods are not supported.
-
