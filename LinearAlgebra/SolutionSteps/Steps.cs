@@ -8,19 +8,15 @@ public partial class Linear
     }
     public struct Steps
     {
-        public int PivotRow { get; set; }
-        public int EffectedRow { get; set; }
-        public Fraction? Scalar { get; set; } = null;
-        public Steps(int pivotRow, int effectedRow)
-        {
-            PivotRow = pivotRow;
-            EffectedRow = effectedRow;
-        }
-        public Steps(int pivotRow, int effectedRow, Fraction scalar)
-        {
-            PivotRow = pivotRow;
-            EffectedRow = effectedRow;
-            Scalar = scalar;
-        }
+        public Steps() { }
+        public int PivotRow { get; set; } = -1;
+        public int EffectedRow { get; set; } = -1;
+        public Fraction Scalar { get; set; } = new Fraction();
+        public Operations Operation { get; set; } = Operations.Swap;
     }
+    public enum Operations
+    {
+        Swap,
+        Scale
+    } 
 }

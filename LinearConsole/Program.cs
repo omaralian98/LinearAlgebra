@@ -1,13 +1,5 @@
 ﻿using LinearAlgebra;
 using static LinearAlgebra.Linear;
-using MathNet.Symbolics;
-using Expr = MathNet.Symbolics.SymbolicExpression;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
-using System.Numerics;
-using MathNet.Numerics;
-using System.Linq.Expressions;
-
 namespace Mr_Sure21
 {
 
@@ -21,25 +13,25 @@ namespace Mr_Sure21
                 { 4, 6, 9, 5, 4, 1, 1, 1 },
                 { 4, 9, 7, 6, 0, 1, 1, 1 },
             };
-            decimal[] coe = { 1, 1, 1 };
-            (var top, var topco) = Linear.REFAsSpecialString(matrix.GetFractions(), coe.GetFractions());
+            string[] coe = { "x", "y", "z" };
+            Dictionary<string, Fraction> values = new()
+            {
+                { "x", new Fraction(2)},
+                { "y", new Fraction(5)},
+                { "z", new Fraction(-8)},
+            };
+            Console.WriteLine((matrix, coe).GetMatrix());
+            (var top, var topco) = Linear.REFAsSpecialString(matrix.GetFractions());
             Console.WriteLine((top, topco).GetMatrix());
-            foreach (var it in topco)
-            { 
-                //Console.WriteLine(string.Join("", ExpressionHelpers.InfixToPostfix(it.str)));
-            }
-            Special test = new(new Fraction(-3, 2), "x");
-            Special test2 = new(new Fraction(1, 4), "y");
-            Special test4 = new Special(new Fraction(2), "x");
-            var test3 = test + test2;
-            Console.WriteLine($"({test}) + ({test2}) = ({test3})\n");
-            var test5 = test3 - test4;
-            Console.WriteLine($"({test3}) - ({test4}) = ({test5})\n");
-            var frac = new Fraction(-3, 4);
-            Console.WriteLine($"({frac}) * ({test5}) = ({test5 * frac})\n");
-            Console.WriteLine($"({frac}) / ({test5}) = ({test5 / frac})\n");
-            Console.WriteLine($"({frac}) + ({test5}) = ({test5 + frac})\n");
-            Console.WriteLine($"({frac}) - ({test5}) = ({test5 - frac})\n");
+            Console.WriteLine(SpecialString.Solve(topco, values).GetMatrix());
+            decimal[] coe2 = { 2, 5, -8 };
+            (var top1, var topco1) = Linear.REFAsFraction(matrix.GetFractions(), coe2.GetFractions());
+            Console.WriteLine((top1, topco1).GetMatrix());
+            //foreach (var it in topco)
+            //{
+            //    Console.WriteLine(string.Join("", ExpressionHelpers.InfixToPostfix(it.ToString())));
+            //    Console.WriteLine(it);
+            //}
         }
     }
 }

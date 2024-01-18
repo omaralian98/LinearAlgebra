@@ -11,9 +11,15 @@ public partial class Linear
             }
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
-            Fraction? scalar = steps[i].Scalar;
-            if (scalar is null) coefficient = SwapCoefficient(pivot, target, coefficient);
-            else coefficient[target] = (Fraction)scalar * coefficient[pivot] + coefficient[target];
+            Fraction scalar = steps[i].Scalar;
+            if (steps[i].Operation is Operations.Scale)
+            {
+                coefficient[target] = (coefficient[pivot] * scalar) + coefficient[target];
+            }
+            else
+            {
+                coefficient = SwapCoefficient(pivot, target, coefficient);
+            }
         }
         return coefficient;
     }
@@ -28,9 +34,15 @@ public partial class Linear
             }
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
-            Fraction? scalar = steps[i].Scalar;
-            if (scalar is null) coefficient = SwapCoefficient(pivot, target, coefficient);
-            else coefficient[target] = (Fraction)scalar * coefficient[pivot] + coefficient[target];
+            Fraction scalar = steps[i].Scalar;
+            if (steps[i].Operation is Operations.Scale)
+            {
+                coefficient[target] = (coefficient[pivot] * scalar) + coefficient[target];
+            }
+            else
+            {
+                coefficient = SwapCoefficient(pivot, target, coefficient);
+            }
         }
         return coefficient;
     }
@@ -65,7 +77,7 @@ public partial class Linear
                     StepDescription = $"Swap between R{x + 1} and R{y + 1}",
                     Matrix = (Fraction[,])matrix.Clone(),
                 });
-            steps.Add(new Steps(pivotRow: x, effectedRow: y));
+            steps.Add(new Steps { PivotRow = x, EffectedRow = y, Operation = Operations.Swap });
         }
         return (matrix, steps);
     }
@@ -94,7 +106,7 @@ public partial class Linear
                 StepDescription = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
                 Matrix = (Fraction[,])matrix.Clone(),
             });
-            steps.Add(new Steps(pivotRow, targetedRow, scalar));
+            steps.Add(new Steps { PivotRow = pivotRow, EffectedRow = targetedRow, Scalar = scalar, Operation = Operations.Scale });
         }
         return (matrix, steps);
     }

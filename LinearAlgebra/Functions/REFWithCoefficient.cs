@@ -11,7 +11,6 @@ public partial class Linear
     /// Aka: Row Echelon Form.
     /// </summary>
     /// <param name="matrix">The matrix you want to get it's REF</param>
-    /// <param name="coefficient">The coefficient of the matrix</param>
     /// <returns>
     /// Returns the REF of the giving matrix, and it's coefficient as Fraction arraies
     /// <br></br>
@@ -22,11 +21,11 @@ public partial class Linear
     /// <exception cref="ArithmeticException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="DivideByZeroException"></exception>
-    public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix, Fraction[] coefficient)
+    public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix)
     {
-        CheckCoherence(matrix, coefficient);
+        //CheckCoherence(matrix);
         (matrix, var solution) = GetREF(matrix, reduced: false);
-        var special = GetCoefficient(coefficient.GetFraction(), solution);
+        var special = GetCoefficient(SpecialString.GetVariableMatrix(matrix.GetLength(0)), solution);
         return (matrix, special);
     }
     public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
@@ -37,9 +36,9 @@ public partial class Linear
         return (matrix, special);
     }
 
-    public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix, T[] coefficient)
+    public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix)
     {
-        var (result, coe) = REFAsSpecialString(matrix.GetFractions(), coefficient.GetFractions());
+        var (result, coe) = REFAsSpecialString(matrix.GetFractions());
         return coe.SpecialString2String();
     }
 

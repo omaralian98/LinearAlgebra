@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using MathNet.Symbolics;
+using System.Linq;
 using static LinearAlgebra.Linear;
 
 namespace LinearAlgebra;
@@ -7,66 +8,125 @@ public partial class Linear
     public struct SpecialString
     {
         public static char[] vari = { 'x', 'y', 'z', 't', 'd', 's', 'h', 'k', 'p', 'v', 'e', 'l', 'a', 'b', 'c', 'f', 'g', 'i', 'j', 'm', 'n', 'o', 'q', 'r', 'u', 'w' };
-        public string str;
-        public SpecialString(char str, Fraction value)
+        public Dictionary<string, Fraction> values = new();
+        public SpecialString(string str)
         {
-            this.str = str.ToString();
-            variables.Add(str, value);
+            values.Add(str.ToString(), new Fraction(1));
         }
-        public SpecialString(string str) => this.str = str;
-        public static Dictionary<char, Fraction> variables = new Dictionary<char, Fraction>();
-        public static SpecialString operator +(SpecialString a) => a;
-        public static SpecialString operator -(SpecialString a) => new($"-({a})");
-        public static SpecialString operator +(SpecialString a, SpecialString b) => new($"({a} + {b})");
-        public static SpecialString operator +(SpecialString a, object b) => new($"({a} + {b})");
-        public static SpecialString operator +(object a, SpecialString b) => new($"({a} + {b})");
-        public static SpecialString operator +(SpecialString a, Fraction b) =>
-            (a * b.Denominator + b.Numerator) / b.Denominator;
-        public static SpecialString operator +(Fraction a, SpecialString b) =>
-            (b * a.Denominator + a.Numerator) / a.Denominator;
-        public static SpecialString operator -(SpecialString a, SpecialString b) => new($"{a} - {b}");
-        public static SpecialString operator -(SpecialString a, object b) => new($"({a} - {b})");
-        public static SpecialString operator -(object a, SpecialString b) => new($"({a} - {b})");
-        public static SpecialString operator -(SpecialString a, Fraction b) =>
-            (a * b.Denominator - b.Numerator) / b.Denominator;
-        public static SpecialString operator -(Fraction a, SpecialString b) =>
-            (b * a.Denominator - a.Numerator) / a.Denominator;
-        public static SpecialString operator *(SpecialString a, SpecialString b) => new($"{a} * {b}");
-        public static SpecialString operator *(SpecialString a, object b) => new($"{b} * {a}");
-        public static SpecialString operator *(object a, SpecialString b) => new($"({a} * {b})");
-        public static SpecialString operator *(SpecialString a, Fraction b) => a * b.Numerator / b.Denominator;
-        //public static SpecialString operator *(Fraction a, SpecialString b) => b * a.Numerator / a.Denominator;
-        public static SpecialString operator *(Fraction a, SpecialString b)
+        public static SpecialString operator +(SpecialString a, SpecialString b)
         {
-            if (a.Quotient.IsDecimal()) return new SpecialString($"({a}) * {b}");
-            return new SpecialString($"{a} * {b}");
+            Dictionary<string, Fraction> newValues = a.values
+                .ToDictionary(entry => entry.Key, entry => entry.Value);
+            foreach (var item in b.values)
+            {
+                if (a.values.ContainsKey(item.Key))
+                {
+                    newValues[item.Key] = a.values[item.Key] + item.Value;
+                }
+                else
+                {
+                    newValues[item.Key] = item.Value;
+                }
+            }
+            return new SpecialString { values = newValues };
         }
-        public static SpecialString operator /(SpecialString a, SpecialString b) => new($"{a} / {b}");
-        public static SpecialString operator /(SpecialString a, object b) => new($"({a} / {b})");
-        public static SpecialString operator /(object a, SpecialString b) => new($"({a} / {b})");
-        public static SpecialString operator /(SpecialString a, Fraction b) => a * b.Denominator / b.Numerator;
-        public static SpecialString operator /(Fraction a, SpecialString b) => b * a.Denominator / a.Numerator;
+        public static SpecialString operator -(SpecialString a, SpecialString b)
+        {
+            Dictionary<string, Fraction> newValues = a.values
+                .ToDictionary(entry => entry.Key, entry => entry.Value);
+            foreach (var item in b.values)
+            {
+                if (newValues.ContainsKey(item.Key))
+                {
+                    newValues[item.Key] -= item.Value;
+                }
+                else
+                {
+                    newValues[item.Key] = -item.Value;
+                }
+            }
+            return new SpecialString { values = newValues };
+        }
+        public static SpecialString operator *(SpecialString a, SpecialString b)
+        {
+            Dictionary<string, Fraction> newValues = new();
+            foreach (var item in a.values)
+            {
+                foreach (var item1 in b.values)
+                {
+                    newValues.Add($"{item.Key}{item1.Key}", item.Value * item1.Value);
+                }
+            }
+            return new SpecialString { values = newValues };
+        }
+        public static SpecialString operator /(SpecialString a, SpecialString b)
+        {
+            Dictionary<string, Fraction> newValues = new();
+            foreach (var item in a.values)
+            {
+                foreach (var item1 in b.values)
+                {
+                    newValues.Add($"{item.Key}{item1.Key}", item.Value / item1.Value);
+                }
+            }
+            return new SpecialString { values = newValues };
+        }
+        public static SpecialString operator +(SpecialString a, Fraction b)
+        {
+            Dictionary<string, Fraction> newValues = a.values
+                .ToDictionary(entry => entry.Key, entry => entry.Value + b);
+            return new SpecialString { values = newValues };
+        }
+        public static SpecialString operator -(SpecialString a, Fraction b)
+        {
+            Dictionary<string, Fraction> newValues = a.values
+                .ToDictionary(entry => entry.Key, entry => entry.Value - b);
+            return new SpecialString { values = newValues };
+        }
+        public static SpecialString operator *(SpecialString a, Fraction b)
+        {
+            Dictionary<string, Fraction> newValues = a.values
+                .ToDictionary(entry => entry.Key, entry => entry.Value * b);
+            return new SpecialString { values = newValues };
+        }
+        public static SpecialString operator /(SpecialString a, Fraction b)
+        {
+            Dictionary<string, Fraction> newValues = a.values
+                .ToDictionary(entry => entry.Key, entry => entry.Value / b);
+            return new SpecialString { values = newValues };
+        }
 
 
-        public static Fraction[] Solve(SpecialString[] t)
+        public static Fraction[] Solve(SpecialString[] t, Dictionary<string, Fraction> variablesValue)
         {
             Fraction[] answer = new Fraction[t.Length];
             for (int i = 0; i < t.Length; i++)
             {
-                answer[i] = ExpressionHelpers.EvaluateAsFraction(t[i].str, variables);
+                answer[i] = ExpressionHelpers.EvaluateAsFraction(t[i].ToString(), variablesValue);
             }
             return answer;
         }
 
-        public SpecialString Simplifiy()
+        public static SpecialString[] GetVariableMatrix(int length)
         {
-            foreach (var it in str.Split(' '))
+            SpecialString[] matrix = new SpecialString[length];
+            for (int i = 0; i < matrix.GetLength(0); i++)
             {
+                matrix[i] = new(vari[i].ToString());
             }
-            return new SpecialString(str);
+            return matrix;
         }
 
-        public override string ToString() => str;
+        public override string ToString()
+        {
+            string result = "";
+            foreach (var item in values)
+            {
+                if (item.Value.Numerator != 1) result += $"{item.Value} * {item.Key} + ";
+                else result += $"{item.Key} + ";
+            }
+            return result[..^3];
+        } 
     }
 
     /// <summary>
@@ -146,26 +206,22 @@ public static class Extensions
         }
         return a;
     }
-    public static decimal[] SpecialString2Decimal(this SpecialString[] t)
+    public static decimal[] SpecialString2Decimal(this SpecialString[] t, Dictionary<string, Fraction> variablesValue)
     {
-         return SpecialString.Solve(t).Fraction2Decimal();
-    }
-    public static string[] SpecialString2StringWSolve(this SpecialString[] t)
-    {
-        return SpecialString.Solve(t).Fraction2String();
+         return SpecialString.Solve(t, variablesValue).Fraction2Decimal();
     }
     public static string[] SpecialString2String(this SpecialString[] t)
     {
         var strings = new string[t.Length];
         for (int i = 0; i < t.Length; i++)
         {
-            strings[i] = t[i].str;
+            strings[i] = t[i].ToString();
         }
         return strings;
     }
-    public static Fraction[] SpecialString2Fraction(this SpecialString[] t)
+    public static Fraction[] SpecialString2Fraction(this SpecialString[] t, Dictionary<string, Fraction> variablesValue)
     {
-        return SpecialString.Solve(t);
+        return SpecialString.Solve(t, variablesValue);
     }
     public static Fraction[,] GetFractions<T>(this T[,] oldMatrix)
     {
@@ -211,27 +267,6 @@ public static class Extensions
         return matrix;
     }
 
-    public static SpecialString[] GetFraction<T>(this T[] oldMatrix)
-    {
-        SpecialString[] matrix = new SpecialString[oldMatrix.GetLength(0)];
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            string t = oldMatrix[i]?.ToString() ?? "0";
-            if (t.Contains('/'))
-            {
-                Fraction fraction = String2Fraction(t);
-                SpecialString sp = new(SpecialString.vari[i], fraction);
-                if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
-                matrix[i] = sp;
-            }
-            else
-            {
-                if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                matrix[i] = new(SpecialString.vari[i], new(Convert.ToDouble(t)));
-            }
-        }
-        return matrix;
-    }
     public static bool IsDecimal<T>(this T it)
     {
         string item = it?.ToString() ?? "";
@@ -372,52 +407,58 @@ public static class Extensions
 public static class ExpressionHelpers
 {
     public static char[] operations = { '*', '/', '+', '-' };
-    public static Fraction EvaluateAsFraction(string expression, Dictionary<char, Fraction> variables)
+    public static Fraction EvaluateAsFraction(string expression, Dictionary<string, Fraction> variables)
     {
         string replaced = ReplaceVariables(expression, variables);
         List<string> postFix = InfixToPostfix(replaced);
         return CalCulate(postFix);
     }
-    public static decimal EvaluateAsDecimal(string expression, Dictionary<char, Fraction> variables)
+    public static decimal EvaluateAsDecimal(string expression, Dictionary<string, Fraction> variables)
     {
         return EvaluateAsFraction(expression, variables).Quotient;
     }
-    public static string EvaluateAsString(string expression, Dictionary<char, Fraction> variables)
+    public static string EvaluateAsString(string expression, Dictionary<string, Fraction> variables)
     {
         return EvaluateAsFraction(expression, variables).ToString();
     }
     private static Fraction CalCulate(List<string> exp)
     {
-        Stack<string> stack = new Stack<string>();
-        Fraction answer = new(0);
-        bool first = true;
+        Stack<Fraction> stack = new Stack<Fraction>();
         for (int i = 0; i < exp.Count; i++)
         {
-            if (operations.Contains(exp[i][0]) && exp[i].Length == 1)
+            if (IsOperator(exp[i]))
             {
-                double y = Convert.ToDouble(stack.Pop());
-                if (first)
-                {
-                    answer = new(y);
-                    first = false;
-                    y = Convert.ToDouble(stack.Pop());
-                }
-                if (exp[i][0] == '*') answer *= y;
-                else if (exp[i][0] == '/') answer /= y;
-                else if (exp[i][0] == '+') answer += y;
-                else answer -= y;
+                Fraction y = stack.Pop();
+                Fraction x = stack.Pop();
+                if (exp[i][0] == '*') x *= y;
+                else if (exp[i][0] == '/') x /= y;
+                else if (exp[i][0] == '+') x += y;
+                else x -= y;
+                stack.Push(x);
             }
-            else stack.Push(exp[i].ToString());
+            else 
+            {
+                stack.Push(new Fraction(Convert.ToDouble(exp[i])));
+            }
         }
-        return answer;
+        return stack.Pop();
     }
-    private static string ReplaceVariables(string expression, Dictionary<char, Fraction> variables)
+    private static string ReplaceVariables(string expression, Dictionary<string, Fraction> variables)
     {
         expression = expression.Replace("(", "( ");
         expression = expression.Replace(")", " )");
+        expression = expression.Replace(" / ", "/");
+        expression = expression.Replace("/", " / ");
         foreach (var variable in variables)
         {
-            expression = expression.Replace(variable.Key.ToString(), $"( {variable.Value.Numerator} / {variable.Value.Denominator} )");
+            if (variable.Value.IsDecimal())
+            {
+                expression = expression.Replace(variable.Key.ToString(), $"( {variable.Value.Numerator} / {variable.Value.Denominator} )");
+            }
+            else
+            {
+                expression = expression.Replace(variable.Key.ToString(), $"( {variable.Value.Quotient} )");
+            }
         }
         return expression;
     }
@@ -426,10 +467,6 @@ public static class ExpressionHelpers
     {
         List<string> result = new List<string>();
         Stack<char> stack = new Stack<char>();
-        expression = expression.Replace("(", "( ");
-        expression = expression.Replace(")", " )");
-        expression = expression.Replace(" / ", "/");
-        expression = expression.Replace("/", " / ");
         foreach (var item in expression.Split(' '))
         {
             string current = item.Trim();
@@ -469,7 +506,7 @@ public static class ExpressionHelpers
 
     private static bool IsOperator(string c)
     {
-        return c == "+" || c == "-" || c == "*" || c == "/" || c == "^";
+        return c == "+" || c == "-" || c == "*" || c == "/";
     }
 
     private static int Prec(char c)
@@ -478,119 +515,5 @@ public static class ExpressionHelpers
         if (c == '*' || c == '/') return 2;
         if (c == '^') return 3;
         return -1;
-    }
-}
-
-public class Special
-{
-    Dictionary<string, Fraction> values = new();
-    const string None = "No";
-    public Special()
-    {
-
-    }
-    public Special(string variable)
-    {
-        values.Add(variable, new Fraction(1));
-    }
-    public Special(Fraction fraction)
-    {
-        values.Add(None, new Fraction(1));
-    }
-    public Special(Fraction fraction, string variable)
-    {
-        values.Add(variable, fraction);
-    }
-
-    public static Special operator +(Special a, Special b)
-    {
-        Dictionary<string, Fraction> newValues = a.values
-            .ToDictionary(entry => entry.Key, entry => entry.Value);
-        foreach (var item in b.values)
-        {
-            if (a.values.ContainsKey(item.Key))
-            {
-                newValues[item.Key] = a.values[item.Key] + item.Value;
-            }
-            else
-            {
-                newValues[item.Key] = item.Value;
-            }
-        }
-        return new Special { values = newValues };
-    }
-    public static Special operator -(Special a, Special b)
-    {
-        Dictionary<string, Fraction> newValues = a.values
-            .ToDictionary(entry => entry.Key, entry => entry.Value);
-        foreach (var item in b.values)
-        {
-            if (newValues.ContainsKey(item.Key))
-            {
-                newValues[item.Key] -= item.Value;
-            }
-            else
-            {
-                newValues[item.Key] = -item.Value;
-            }
-        }
-        return new Special { values = newValues };
-    }
-    public static Special operator *(Special a, Special b)
-    {
-        Dictionary<string, Fraction> newValues = new();
-        foreach (var item in a.values)
-        {
-            foreach (var item1 in b.values)
-            {
-                newValues.Add($"{item.Key}{item1.Key}", item.Value * item1.Value);
-            }
-        }
-        return new Special { values = newValues };
-    }
-    public static Special operator /(Special a, Special b)
-    {
-        Dictionary<string, Fraction> newValues = new();
-        foreach (var item in a.values)
-        {
-            foreach (var item1 in b.values)
-            {
-                newValues.Add($"{item.Key}{item1.Key}", item.Value / item1.Value);
-            }
-        }
-        return new Special { values = newValues };
-    }
-    public static Special operator +(Special a, Fraction b)
-    {
-        Dictionary<string, Fraction> newValues = a.values
-            .ToDictionary(entry => entry.Key, entry => entry.Value + b);
-        return new Special { values = newValues };
-    }
-    public static Special operator -(Special a, Fraction b)
-    {
-        Dictionary<string, Fraction> newValues = a.values
-            .ToDictionary(entry => entry.Key, entry => entry.Value - b);
-        return new Special { values = newValues };
-    }
-    public static Special operator *(Special a, Fraction b)
-    {
-        Dictionary<string, Fraction> newValues = a.values
-            .ToDictionary(entry => entry.Key, entry => entry.Value * b);
-        return new Special { values = newValues };
-    }
-    public static Special operator /(Special a, Fraction b)
-    {
-        Dictionary<string, Fraction> newValues = a.values
-            .ToDictionary(entry => entry.Key, entry => entry.Value / b);
-        return new Special { values = newValues };
-    }
-    public override string ToString()
-    {
-        string result = "";
-        foreach (var item in values)
-        {
-            result += $"{item.Value} * {item.Key} + ";
-        }
-        return result[..^3];
     }
 }
