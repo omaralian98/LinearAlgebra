@@ -1,5 +1,5 @@
 ﻿using LinearAlgebra;
-using static LinearAlgebra.Linear;
+using LinearAlgebra.Classes;
 namespace Mr_Sure21
 {
 
