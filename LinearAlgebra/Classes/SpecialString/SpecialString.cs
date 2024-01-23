@@ -1,6 +1,6 @@
 ﻿namespace LinearAlgebra.Classes;
 
-public partial struct SpecialString
+public partial struct SpecialString : ICoefficient
 {
     private static char[] vari = { 'x', 'y', 'z', 't', 'd', 's', 'h', 'k', 'p', 'v', 'e', 'l', 'a', 'b', 'c', 'f', 'g', 'i', 'j', 'm', 'n', 'o', 'q', 'r', 'u', 'w' };
     public Dictionary<string, Fraction> values = new();
@@ -35,7 +35,8 @@ public partial struct SpecialString
         foreach (var item in values)
         {
             if (item.Value.Numerator == 0) continue;
-            else if (item.Value.Numerator < 0) result += $" - {item.Value.GetAbs()} * {item.Key}";
+            else if (item.Value.Numerator < 0 && result.Length > 0) result += $" - {item.Value.GetAbs()} * {item.Key}";
+            else if (item.Value.Numerator < 0) result += $" - {item.Value} * {item.Key}";
             else if (item.Value.Numerator != 1) result += $" + {item.Value} * {item.Key}";
             else result += $" + {item.Key}";
         }

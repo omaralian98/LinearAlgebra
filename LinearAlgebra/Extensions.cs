@@ -127,6 +127,28 @@ public static class Extensions
         return new Fraction(dividend, divisor);
     }
 
+    public static string GetDeterminantMatrix<T>(this T[,] matrix)
+    {
+        string[] Lines = new string[matrix.GetLength(0)];
+        AddBeginningLine(Lines);
+        for (int j = 0; j < matrix.GetLength(1); j++)
+        {
+            int index = 0;
+            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                Lines[index++] += String.Format(" {0, " + vart + "}", matrix[i, j]);
+            }
+        }
+        AddEnddingLine(Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
+    }
+
     public static string GetMatrix<T>(this T[,] matrix)
     {
         string[] Lines = new string[matrix.GetLength(0) + 2];
@@ -244,6 +266,22 @@ public static class Extensions
             Lines[i] += " |";
         }
         Lines[^1] += String.Format("{0, " + (Lines[1].Length - 1) + "}", "┘");
+    }
+
+    private static void AddBeginningLine(string[] Lines)
+    {
+        for (int i = 0; i < Lines.Length; i++)
+        {
+            Lines[i] += "|";
+        }
+    }
+
+    private static void AddEnddingLine(string[] Lines)
+    {
+        for (int i = 0; i < Lines.Length; i++)
+        {
+            Lines[i] += " |";
+        }
     }
 
     public static bool IsNumber(this object value)

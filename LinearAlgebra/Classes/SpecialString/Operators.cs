@@ -91,4 +91,18 @@ public partial struct SpecialString
             .ToDictionary(entry => entry.Key, entry => entry.Value / b);
         return new SpecialString { values = newValues };
     }
+
+    public ICoefficient Add(ICoefficient a, ICoefficient b)
+    {
+        SpecialString x = (SpecialString)a;
+        SpecialString y = (SpecialString)b;
+        return x + y;
+    }
+
+    public ICoefficient Multiply(ICoefficient a, Fraction b)
+    {
+        SpecialString x = (SpecialString)a;
+        Fraction y = b;
+        return x * y;
+    }
 }

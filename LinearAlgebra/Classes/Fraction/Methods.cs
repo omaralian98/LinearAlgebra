@@ -23,4 +23,18 @@ public partial struct Fraction
         else if (!Quotient.IsDecimal()) return Quotient.ToString();
         return $"{Numerator}/{Denominator}";
     }
+
+    public ICoefficient Add(ICoefficient a, ICoefficient b)
+    {
+        Fraction x = (Fraction)a;
+        Fraction y = (Fraction)b;
+        return x + y;
+    }
+
+    public ICoefficient Multiply(ICoefficient a, Fraction b)
+    {
+        Fraction x = (Fraction)a;
+        Fraction y = b;
+        return x * y;
+    }
 }

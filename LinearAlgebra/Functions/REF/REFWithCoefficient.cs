@@ -1,7 +1,59 @@
 ﻿namespace LinearAlgebra;
 public partial class Linear
 {
-    private static void CheckCoherence<T, S>(T[,] matrix, S[] coefficient)
+    public static Result<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
+    {
+        int matrixRows = matrix.GetLength(0); //Gets the number of rows
+        int matrixColumns = matrix.GetLength(1); //Gets the number of columns
+        List<MatrixStep<T>>? matrixSteps = solution ? [] : null;
+        for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
+        {
+            if (token.IsCancellationRequested)
+            {
+                throw new TaskCanceledException("Task was canceled.");
+            }
+            ReOrderMatrix(matrix, coefficient, currentRow, matrixSteps);
+            int currentColumn = FindPivot(matrix, currentRow);
+            if (currentColumn == -1) continue;
+            ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, matrixSteps);
+        }
+        return new Result<T> { Matrix = matrix, MatrixSteps = matrixSteps?.ToArray() ?? [] };
+    }
+    private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int row, List<MatrixStep<T>>? solution) where T : ICoefficient
+    {
+        var (result, x, y) = CheckPossibleSwap(row, row, matrix);
+        if (result)
+        {
+            matrix = SwapMatrix(x, y, matrix);
+            coefficient = SwapCoefficient(x, y, coefficient);
+            solution?.Add(new MatrixStep<T>
+            {
+                Description = $"Swap between R{x + 1} and R{y + 1}",
+                Coefficient = (T[])coefficient.Clone(),
+                Matrix = (Fraction[,])matrix.Clone(),
+            });
+        }
+    }
+
+    private static void ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, List<MatrixStep<T>>? solution) where T : ICoefficient
+    {
+        int targetedRow = reduced ? 0 : pivotRow;
+        for (; targetedRow < matrix.GetLength(0); targetedRow++)
+        {
+            if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
+            Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
+            matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
+            coefficient[targetedRow] = (T)((coefficient[pivotRow] * scalar) + coefficient[targetedRow]);
+            solution?.Add(new MatrixStep<T>
+            {
+                Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
+                Coefficient = coefficient.Clone() as T[],
+                Matrix = (Fraction[,])matrix.Clone(),
+            });
+        }
+    }
+
+    private static void CheckCoherenceForREF<T, S>(T[,] matrix, S[] coefficient)
     {
         //If the matrix and the coefficient matrix has different number of rows throw an exception
         string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
@@ -23,17 +75,19 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix)
     {
-        //CheckCoherence(matrix);
-        var result = REF(matrix, solution: true);
-        var special = GetCoefficient(SpecialString.GetVariableMatrix(matrix.GetLength(0)), result.Steps);
-        return (matrix, special);
+        //CheckCoherenceForREF(matrix);
+        //var result = REF(matrix, solution: true);
+        //var special = GetCoefficient(SpecialString.GetVariableMatrix(matrix.GetLength(0)), result.Steps);
+        //return (matrix, special);
+        return (matrix, []);
     }
     public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
     {
-        CheckCoherence(matrix, coefficient);
-        var result = REF(matrix, solution: false);
-        var special = GetCoefficient(coefficient, result.Steps);
-        return (matrix, special);
+        //CheckCoherenceForREF(matrix, coefficient);
+        //var result = REF(matrix, solution: false);
+        //var special = GetCoefficient(coefficient, result.Steps);
+        //return (matrix, special);
+        return (matrix, []);
     }
 
     public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix)
@@ -53,7 +107,7 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static (decimal[,], decimal[]) REF<T>(T[,] matrix, T[] coefficient)
     {
-        CheckCoherence(matrix, coefficient);
+        CheckCoherenceForREF(matrix, coefficient);
         var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2Decimal(), coe.Fraction2Decimal());
     }
@@ -68,7 +122,7 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static (string[,], string[]) REFAsString<T>(T[,] matrix, T[] coefficient)
     {
-        CheckCoherence(matrix, coefficient);
+        CheckCoherenceForREF(matrix, coefficient);
         var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2String(), coe.Fraction2String());
     }

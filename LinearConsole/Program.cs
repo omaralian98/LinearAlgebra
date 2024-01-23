@@ -9,9 +9,9 @@ namespace Mr_Sure21
         {
             decimal[,] matrix =
             {
-                { 1, 1 },
-                { 1, 0 },
-                { 1, -1 }
+                { 1, 0, 3, 7, 2 , 1, 1, 1 },
+                { 4, 6, 9, 5, 4, 1, 1, 1 },
+                { 4, 9, 7, 6, 0, 1, 1, 1 },
             };
             string[] coe = ["x", "y", "z"];
             Dictionary<string, Fraction> values = new()
@@ -21,15 +21,19 @@ namespace Mr_Sure21
                 { "z", new Fraction(-8)},
             };
             Console.WriteLine((matrix, coe).GetMatrix());
-            var res = Linear.REF(matrix.GetFractions(), true);
-            decimal[] core = { 1, 1, 1 };
-            var coeff = Linear.GetCoefficient(SpecialString.GetVariableMatrix(3), res.Steps);
+            decimal[] core = [1, 1, 1];
+            var res = Linear.RREF(matrix.GetFractions(), SpecialString.GetVariableMatrix(3), true);
             foreach (var step in res.MatrixSteps)
             {
                 Console.WriteLine(step.Description);
-                Console.WriteLine(step.Matrix?.GetMatrix());
+                //Console.WriteLine(step.Matrix?.GetMatrix());
+                if (step.Matrix is not null && step.Coefficient is not null)
+                {
+                    Console.WriteLine((step.Matrix, step.Coefficient).GetMatrix());
+                }
             }
-            Console.WriteLine((res.Matrix, coeff).GetMatrix());
+            //Console.WriteLine(matrix.GetMatrix());
+            //Console.WriteLine(matrix.GetDeterminantMatrix());
         }
     }
 }
