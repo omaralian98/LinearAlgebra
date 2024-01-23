@@ -17,7 +17,7 @@ public partial class Linear
             if (currentColumn == -1) continue;
             ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, matrixSteps);
         }
-        return new Result<T> { Matrix = matrix, MatrixSteps = matrixSteps?.ToArray() ?? [] };
+        return new Result<T> { Matrix = matrix, MatrixSteps = matrixSteps?.ToArray() ?? [], Coefficient = coefficient };
     }
     private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int row, List<MatrixStep<T>>? solution) where T : ICoefficient
     {

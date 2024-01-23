@@ -19,7 +19,7 @@ public partial class Linear
             ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: true, matrixSteps);
             ClearPivotRow(matrix, coefficient, currentRow, currentColumn, matrixSteps);
         }
-        return new Result<T> { Matrix = matrix, MatrixSteps = matrixSteps?.ToArray() ?? [] };
+        return new Result<T> { Matrix = matrix, MatrixSteps = matrixSteps?.ToArray() ?? [], Coefficient = coefficient };
     }
 
     private static void ClearPivotRow<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int pivoColumn, List<MatrixStep<T>>? solution) where T : ICoefficient 
@@ -30,6 +30,7 @@ public partial class Linear
         {
             matrix[pivotRow, column] *= scalar;
         }
+        coefficient[pivotRow] = (T)(coefficient[pivotRow] * scalar);
         solution?.Add(new MatrixStep<T>
         {
             Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",

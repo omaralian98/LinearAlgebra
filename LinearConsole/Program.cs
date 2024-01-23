@@ -9,16 +9,16 @@ namespace Mr_Sure21
         {
             decimal[,] matrix =
             {
-                { 1, 0, 3, 7, 2 , 1, 1, 1 },
-                { 4, 6, 9, 5, 4, 1, 1, 1 },
-                { 4, 9, 7, 6, 0, 1, 1, 1 },
+                { 1, 0, 3 },
+                { 4, 6, 9 },
+                { 4, 9, 7 },
             };
             string[] coe = ["x", "y", "z"];
             Dictionary<string, Fraction> values = new()
             {
-                { "x", new Fraction(2)},
-                { "y", new Fraction(5)},
-                { "z", new Fraction(-8)},
+                { "x", new Fraction(1)},
+                { "y", new Fraction(1)},
+                { "z", new Fraction(1)},
             };
             Console.WriteLine((matrix, coe).GetMatrix());
             decimal[] core = [1, 1, 1];
@@ -32,8 +32,9 @@ namespace Mr_Sure21
                     Console.WriteLine((step.Matrix, step.Coefficient).GetMatrix());
                 }
             }
-            //Console.WriteLine(matrix.GetMatrix());
-            //Console.WriteLine(matrix.GetDeterminantMatrix());
+            Console.WriteLine(SpecialString.Solve(res.Coefficient, values).GetMatrix());
+            Console.WriteLine(matrix.GetMatrix());
+            Console.WriteLine(matrix.GetDeterminantMatrix());
         }
     }
 }
