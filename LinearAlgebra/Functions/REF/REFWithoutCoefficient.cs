@@ -12,8 +12,8 @@ public partial class Linear
     public static decimal[,] REF<T>(T[,] matrix)
     {
         Fraction[,] newMatrix = matrix.GetFractions();
-        (newMatrix, var solution) = GetREF(newMatrix, reduced: false);
-        return newMatrix.Fraction2Decimal();
+        var result = REF(newMatrix, solution: false);
+        return result.Matrix.Fraction2Decimal();
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static Fraction[,] REFAsFraction<T>(T[,] matrix)
     {
-        var (answer, solution) = GetREF(matrix.GetFractions(), reduced: false);
-        return answer;
+        var result = REF(matrix.GetFractions(), solution: false);
+        return result.Matrix;
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static string[,] REFAsString<T>(T[,] matrix)
     {
-        var (answer, solution) = GetREF(matrix.GetFractions(), reduced: false);
-        return answer.Fraction2String();
+        var result = REF(matrix.GetFractions(), solution: false);
+        return result.Matrix.Fraction2String();
     }
 }

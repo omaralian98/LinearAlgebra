@@ -24,15 +24,15 @@ public partial class Linear
     public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix)
     {
         //CheckCoherence(matrix);
-        (matrix, var solution) = GetREF(matrix, reduced: false);
-        var special = GetCoefficient(SpecialString.GetVariableMatrix(matrix.GetLength(0)), solution);
+        var result = REF(matrix, solution: true);
+        var special = GetCoefficient(SpecialString.GetVariableMatrix(matrix.GetLength(0)), result.Steps);
         return (matrix, special);
     }
     public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
     {
         CheckCoherence(matrix, coefficient);
-        (matrix, var solution) = GetREF(matrix, reduced: false);
-        var special = GetCoefficient(coefficient, solution);
+        var result = REF(matrix, solution: false);
+        var special = GetCoefficient(coefficient, result.Steps);
         return (matrix, special);
     }
 

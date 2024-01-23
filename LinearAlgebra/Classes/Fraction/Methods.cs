@@ -14,8 +14,11 @@ public partial struct Fraction
         return a;
     }
 
+    public readonly Fraction GetAbs() => new (Math.Abs(Numerator), Denominator);
+
     public override string ToString()
     {
+        if (Numerator == 0) return "0";
         if (Denominator == 1) return Numerator.ToString();
         else if (!Quotient.IsDecimal()) return Quotient.ToString();
         return $"{Numerator}/{Denominator}";

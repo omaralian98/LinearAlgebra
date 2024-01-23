@@ -1,14 +1,10 @@
 ﻿namespace LinearAlgebra;
 public partial class Linear
 {
-    public static SpecialString[] GetCoefficient(SpecialString[] coefficient, Steps[] steps, CancellationToken token = default)
+    public static SpecialString[] GetCoefficient(SpecialString[] coefficient, Steps[] steps)
     {
         for (int i = 0; i < steps.Length; i++) 
         {
-            if (token.IsCancellationRequested)
-            {
-                throw new TaskCanceledException("Task was canceled.");
-            }
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
             Fraction scalar = steps[i].Scalar;
@@ -24,14 +20,10 @@ public partial class Linear
         return coefficient;
     }
 
-    public static Fraction[] GetCoefficient(Fraction[] coefficient, Steps[] steps, CancellationToken token = default)
+    public static Fraction[] GetCoefficient(Fraction[] coefficient, Steps[] steps)
     {
         for (int i = 0; i < steps.Length; i++)
         {
-            if (token.IsCancellationRequested)
-            {
-                throw new TaskCanceledException("Task was canceled.");
-            }
             var pivot = steps[i].PivotRow;
             var target = steps[i].EffectedRow;
             Fraction scalar = steps[i].Scalar;
@@ -47,40 +39,41 @@ public partial class Linear
         return coefficient;
     }
 
-    public static (Fraction[,], Steps[]) GetREF(Fraction[,] matrix, bool reduced, bool solution = false, CancellationToken token = default)
+    public static Result REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
     {
         int matrixRows = matrix.GetLength(0); //Gets the number of rows
         int matrixColumns = matrix.GetLength(1); //Gets the number of columns
         List<Steps> steps = new List<Steps>();
-        List<MatrixStep>? matrixSteps = solution == true ? new List<MatrixStep>() : null;
+        List<MatrixSteps>? matrixSteps = solution ? new List<MatrixSteps>() : null;
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
             if (token.IsCancellationRequested)
             {
                 throw new TaskCanceledException("Task was canceled.");
             }
-            (matrix, steps) = ReOrderMatrix(matrix, steps, currentRow, ref matrixSteps);
+            (matrix, steps) = ReOrderMatrix(matrix, steps, currentRow, matrixSteps);
             int currentColumn = FindPivot(matrix, currentRow);
             if (currentColumn == -1) continue;
-            (matrix, steps) = ClearPivotColumn(matrix, steps, currentRow, currentColumn, reduced, ref matrixSteps);
+            (matrix, steps) = ClearPivotColumn(matrix, steps, currentRow, currentColumn, reduced: false, matrixSteps);
         }
-        return (matrix, steps.ToArray());
+        return new Result { Matrix = matrix, Steps = steps.ToArray(), MatrixSteps = matrixSteps?.ToArray() ?? Array.Empty<MatrixSteps>() };
     }
-    private static (Fraction[,], List<Steps>) ReOrderMatrix(Fraction[,] matrix, List<Steps> steps, int row, ref List<MatrixStep>? solution)
+    private static (Fraction[,], List<Steps>) ReOrderMatrix(Fraction[,] matrix, List<Steps> steps, int row, List<MatrixSteps>? solution)
     {
         var (result, x, y) = CheckPossibleSwap(row, row, matrix);
         if (result)
         {
             matrix = SwapMatrix(x, y, matrix);
-            solution?.Add(new MatrixStep
-                {
-                    StepDescription = $"Swap between R{x + 1} and R{y + 1}",
-                    Matrix = (Fraction[,])matrix.Clone(),
-                });
+            solution?.Add(new MatrixSteps
+            {
+                Description = $"Swap between R{x + 1} and R{y + 1}",
+                Matrix = (Fraction[,])matrix.Clone(),
+            });
             steps.Add(new Steps { PivotRow = x, EffectedRow = y, Operation = Operations.Swap });
         }
         return (matrix, steps);
     }
+
     private static int FindPivot(Fraction[,] matrix, int row)
     {
         for (int column = 0; column < matrix.GetLength(1); column++)
@@ -93,7 +86,8 @@ public partial class Linear
         }
         return -1;
     }
-    private static (Fraction[,], List<Steps>) ClearPivotColumn(Fraction[,] matrix, List<Steps> steps, int pivotRow, int column, bool reduced, ref List<MatrixStep>? solution)
+
+    private static (Fraction[,], List<Steps>) ClearPivotColumn(Fraction[,] matrix, List<Steps> steps, int pivotRow, int column, bool reduced, List<MatrixSteps>? solution)
     {
         int targetedRow = reduced ? 0 : pivotRow;
         for (; targetedRow < matrix.GetLength(0); targetedRow++)
@@ -101,9 +95,9 @@ public partial class Linear
             if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
             Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
             matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
-            solution?.Add(new MatrixStep
+            solution?.Add(new MatrixSteps
             {
-                StepDescription = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
+                Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
                 Matrix = (Fraction[,])matrix.Clone(),
             });
             steps.Add(new Steps { PivotRow = pivotRow, EffectedRow = targetedRow, Scalar = scalar, Operation = Operations.Scale });

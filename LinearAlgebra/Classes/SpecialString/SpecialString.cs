@@ -2,7 +2,7 @@
 
 public partial struct SpecialString
 {
-    public static char[] vari = { 'x', 'y', 'z', 't', 'd', 's', 'h', 'k', 'p', 'v', 'e', 'l', 'a', 'b', 'c', 'f', 'g', 'i', 'j', 'm', 'n', 'o', 'q', 'r', 'u', 'w' };
+    private static char[] vari = { 'x', 'y', 'z', 't', 'd', 's', 'h', 'k', 'p', 'v', 'e', 'l', 'a', 'b', 'c', 'f', 'g', 'i', 'j', 'm', 'n', 'o', 'q', 'r', 'u', 'w' };
     public Dictionary<string, Fraction> values = new();
     public SpecialString(string str)
     {
@@ -34,9 +34,12 @@ public partial struct SpecialString
         string result = "";
         foreach (var item in values)
         {
-            if (item.Value.Numerator != 1) result += $"{item.Value} * {item.Key} + ";
-            else result += $"{item.Key} + ";
+            if (item.Value.Numerator == 0) continue;
+            else if (item.Value.Numerator < 0) result += $" - {item.Value.GetAbs()} * {item.Key}";
+            else if (item.Value.Numerator != 1) result += $" + {item.Value} * {item.Key}";
+            else result += $" + {item.Key}";
         }
-        return result[..^3];
+        if (result.Length < 3) return "0";
+        return result[3..];
     }
 }

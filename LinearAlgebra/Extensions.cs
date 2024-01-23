@@ -130,7 +130,7 @@ public static class Extensions
     public static string GetMatrix<T>(this T[,] matrix)
     {
         string[] Lines = new string[matrix.GetLength(0) + 2];
-        AddBeginningBrackets(ref Lines);
+        AddBeginningBrackets(Lines);
         for (int j = 0; j < matrix.GetLength(1); j++)
         {
             int index = 1;
@@ -140,7 +140,7 @@ public static class Extensions
                 Lines[index++] += String.Format(" {0, " + vart + "}", matrix[i, j]);
             }
         }
-        AddEndBrackets(ref Lines);
+        AddEndBrackets(Lines);
         string result = "";
         foreach (var it in Lines)
         {
@@ -152,14 +152,14 @@ public static class Extensions
     public static string GetMatrix<T>(this T[] matrix)
     {
         string[] Lines = new string[matrix.GetLength(0) + 2];
-        AddBeginningBrackets(ref Lines);
+        AddBeginningBrackets(Lines);
         int vart = GetPad(matrix);
         int index = 1;
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
             Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i]);
         }
-        AddEndBrackets(ref Lines);
+        AddEndBrackets(Lines);
         string result = "";
         foreach (var it in Lines)
         {
@@ -171,7 +171,7 @@ public static class Extensions
     public static string GetMatrix<T, S>(this (T[,] matrix, S[] coefficient) c)
     {
         string[] Lines = new string[c.matrix.GetLength(0) + 2];
-        AddBeginningBrackets(ref Lines);
+        AddBeginningBrackets(Lines);
         int index = 1;
         for (int j = 0; j < c.matrix.GetLength(1); j++)
         {
@@ -188,7 +188,7 @@ public static class Extensions
             int vart = GetPad(c.coefficient);
             Lines[index++] += String.Format("| {0, " + vart + "}", c.coefficient[i]);
         }
-        AddEndBrackets(ref Lines);
+        AddEndBrackets(Lines);
         string result = "";
         foreach (var it in Lines)
         {
@@ -226,7 +226,7 @@ public static class Extensions
                 .Select(x => matrix[x, columnNumber]).ToArray();
     private static T[] GetRow<T>(this T[,] matrix, int rowNumber) => Enumerable.Range(0, matrix.GetLength(1))
                 .Select(x => matrix[rowNumber, x]).ToArray();
-    private static void AddBeginningBrackets(ref string[] Lines)
+    private static void AddBeginningBrackets(string[] Lines)
     {
         Lines[0] += "┌";
         for (int i = 1; i < Lines.Length - 1; i++)
@@ -236,7 +236,7 @@ public static class Extensions
         Lines[^1] += "└";
     }
 
-    private static void AddEndBrackets(ref string[] Lines)
+    private static void AddEndBrackets(string[] Lines)
     {
         Lines[0] += String.Format(" {0, " + Lines[1].Length + "}", "┐");
         for (int i = 1; i < Lines.Length - 1; i++)
