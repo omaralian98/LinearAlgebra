@@ -8,34 +8,31 @@ public partial class Linear
         if (matrix.GetLength(0) != matrix.GetLength(1)) throw new ArgumentException(errorMessage);
     }
 
-    public static Fraction Det(Fraction[,] matrix)
+    public static DeterminantResult Determinant(Fraction[,] matrix)
     {
         CheckCoherenceForDet(matrix);
         Fraction answer = new(0);
-        int size = matrix.GetLength(0);
+        int size = matrix.GetLength(0);      
         if (size == 1)
         {
             answer += matrix[0, 0];
+            return new DeterminantResult { Matrix = matrix, Value = answer };
         }
-        else if (size == 2)
+        else if (size >= 2)
         {
-            answer += (matrix[0, 0] * matrix[1, 1]) - (matrix[0, 1] * matrix[1, 0]);
-        }
-        else if (size >= 3)
-        {
+            DeterminantResult[] matrixSteps = new DeterminantResult[size];
             for (int i = 0; i < size; i++)
             {
-                if (i % 2 == 0) 
-                { 
-                    answer += (matrix[0, i] * Det(Erase(0, i, matrix))); 
-                }
-                else 
-                { 
-                    answer -= (matrix[0, i] * Det(Erase(0, i, matrix))); 
-                }
+                var errasedMatrix = Erase(0, i, matrix);
+                Fraction scalar = i % 2 == 0 ? matrix[0, i] : -matrix[0, i];
+                var det = Determinant(errasedMatrix);
+                answer += (scalar * det.Value);
+                matrixSteps[i] = det with { Scalar = scalar};
             }
+            return new DeterminantResult { Value = answer, MatrixSteps = matrixSteps, Matrix = matrix };
         }
-        return answer;
+        
+        throw new NotImplementedException();
     }
 
     private static T[,] Erase<T>(int x, int y, T[,] matrix)

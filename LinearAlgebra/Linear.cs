@@ -14,7 +14,7 @@ public partial class Linear
     /// <exception cref="ArithmeticException"></exception>
     public static int Rank(decimal[,] matrix)
     {
-        //steps.Add(new MatrixStep
+        //steps.Add(new MatrixStepForREF
         //{
         //    StepDescription = "We get the Row Echelon Form(REF) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
         //    Matrix = matrix.GetFractions()

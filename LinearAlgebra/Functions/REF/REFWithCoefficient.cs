@@ -1,58 +1,82 @@
-﻿namespace LinearAlgebra;
+﻿using LinearAlgebra.Classes;
+
+namespace LinearAlgebra;
 public partial class Linear
 {
-    public static Result<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
+    public static REFResult<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
     {
         int matrixRows = matrix.GetLength(0); //Gets the number of rows
         int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-        List<MatrixStep<T>>? matrixSteps = solution ? [] : null;
+        REFResult<T> result = new();
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
             if (token.IsCancellationRequested)
             {
                 throw new TaskCanceledException("Task was canceled.");
             }
-            ReOrderMatrix(matrix, coefficient, currentRow, matrixSteps);
+            ReOrderMatrix(matrix, coefficient, currentRow, result);
             int currentColumn = FindPivot(matrix, currentRow);
             if (currentColumn == -1) continue;
-            ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, matrixSteps);
+            ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, result);
         }
-        return new Result<T> { Matrix = matrix, MatrixSteps = matrixSteps?.ToArray() ?? [], Coefficient = coefficient };
+        return result with { Matrix = matrix, Coefficient = coefficient };
     }
-    private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int row, List<MatrixStep<T>>? solution) where T : ICoefficient
+    private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int row, REFResult<T>? solution) where T : ICoefficient
     {
         var (result, x, y) = CheckPossibleSwap(row, row, matrix);
         if (result)
         {
             matrix = SwapMatrix(x, y, matrix);
             coefficient = SwapCoefficient(x, y, coefficient);
-            solution?.Add(new MatrixStep<T>
+            if (solution is not null)
             {
-                Description = $"Swap between R{x + 1} and R{y + 1}",
-                Coefficient = (T[])coefficient.Clone(),
-                Matrix = (Fraction[,])matrix.Clone(),
-            });
+                solution.NextStep = new REFResult<T>
+                {
+                    Description = $"Swap between R{x + 1} and R{y + 1}",
+                    Coefficient = (T[])coefficient.Clone(),
+                    Matrix = (Fraction[,])matrix.Clone(),
+                };
+            }
         }
     }
 
-    private static void ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, List<MatrixStep<T>>? solution) where T : ICoefficient
+    private static void ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, REFResult<T>? solution) where T : ICoefficient
     {
-        int targetedRow = reduced ? 0 : pivotRow;
-        for (; targetedRow < matrix.GetLength(0); targetedRow++)
-        {
-            if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
-            Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
-            matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
-            coefficient[targetedRow] = (T)((coefficient[pivotRow] * scalar) + coefficient[targetedRow]);
-            solution?.Add(new MatrixStep<T>
-            {
-                Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
-                Coefficient = coefficient.Clone() as T[],
-                Matrix = (Fraction[,])matrix.Clone(),
-            });
-        }
+        //int targetedRow = reduced ? 0 : pivotRow;
+        //for (; targetedRow < matrix.GetLength(0); targetedRow++)
+        //{
+        //    if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
+        //    Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
+        //    matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
+        //    coefficient[targetedRow] = (T)((coefficient[pivotRow] * scalar) + coefficient[targetedRow]);
+        //    solution?.NextStep.Add(new REFResult<T>
+        //    {
+        //        Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
+        //        Coefficient = (T[])coefficient.Clone(),
+        //        Matrix = (Fraction[,])matrix.Clone(),
+        //    });
+        //}
     }
-
+    private static Fraction[,] ClearRow<T>(int pivotRow, int targetedRow, int columnStart, Fraction scalar, Fraction[,] matrix, REFResult<T>? solution = null) where T : ICoefficient
+    {
+        matrix[targetedRow, columnStart] = new(0);
+        for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
+        {
+            var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
+            if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
+            else matrix[targetedRow, y] = new Fraction((double)testVal.Quotient);
+        }
+        if (solution is not null)
+        {
+            //solution.NextStep = new REFResult<T>
+            //{
+            //    Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
+            //    Coefficient = (T[])coefficient.Clone(),
+            //    Matrix = (Fraction[,])matrix.Clone(),
+            //};
+        }
+        return matrix;
+    }
     private static void CheckCoherenceForREF<T, S>(T[,] matrix, S[] coefficient)
     {
         //If the matrix and the coefficient matrix has different number of rows throw an exception
@@ -64,11 +88,11 @@ public partial class Linear
     /// </summary>
     /// <param name="matrix">The matrix you want to get it's REF</param>
     /// <returns>
-    /// Returns the REF of the giving matrix, and it's coefficient as Fraction arraies
+    /// Returns the REF of the giving matrix, and it's coefficient as Value arraies
     /// <br></br>
-    /// **Note**: Fraction is a struct that you can access like this:
+    /// **Note**: Value is a struct that you can access like this:
     /// <br></br>
-    /// LinearAlgebra.Linear.Fraction
+    /// LinearAlgebra.Linear.Value
     /// </returns>
     /// <exception cref="ArithmeticException"></exception>
     /// <exception cref="ArgumentException"></exception>

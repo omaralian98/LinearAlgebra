@@ -129,6 +129,10 @@ public static class Extensions
 
     public static string GetDeterminantMatrix<T>(this T[,] matrix)
     {
+        if (matrix.GetLength(0) == 1 && matrix.GetLength(1) == 1)
+        {
+            return matrix[0, 0]?.ToString() ?? "";
+        }
         string[] Lines = new string[matrix.GetLength(0)];
         AddBeginningLine(Lines);
         for (int j = 0; j < matrix.GetLength(1); j++)
@@ -151,6 +155,10 @@ public static class Extensions
 
     public static string GetMatrix<T>(this T[,] matrix)
     {
+        if (matrix.GetLength(0) == 1 && matrix.GetLength(1) == 1)
+        {
+            return matrix[0, 0]?.ToString() ?? "";
+        }
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
         for (int j = 0; j < matrix.GetLength(1); j++)
@@ -173,6 +181,10 @@ public static class Extensions
 
     public static string GetMatrix<T>(this T[] matrix)
     {
+        if (matrix.Length == 1)
+        {
+            return matrix[0]?.ToString() ?? "";
+        }
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
         int vart = GetPad(matrix);
