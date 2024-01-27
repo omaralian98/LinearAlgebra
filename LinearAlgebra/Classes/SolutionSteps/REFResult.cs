@@ -15,6 +15,14 @@ public record REFResult<T> : REFResult where T : ICoefficient
         }
         return allChildren;
     }
+
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new();
+        stringBuilder.AppendLine(Description);
+        stringBuilder.AppendLine((Matrix, Coefficient).GetMatrix());
+        return stringBuilder.ToString();
+    }
 }
 public record REFResult
 {
@@ -35,7 +43,7 @@ public record REFResult
 
     public override string ToString()
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new();
         stringBuilder.AppendLine(Description);
         stringBuilder.AppendLine(Matrix.GetMatrix());
         return stringBuilder.ToString();

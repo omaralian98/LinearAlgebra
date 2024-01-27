@@ -1,65 +1,57 @@
-﻿using static MathNet.Symbolics.Linq;
-
-namespace LinearAlgebra;
+﻿namespace LinearAlgebra;
 public partial class Linear
 {
-    public static REFResult REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
+    public static REFResult REF(Fraction[,] matrix, CancellationToken token = default)
     {
-        int matrixRows = matrix.GetLength(0); //Gets the number of rows
-        int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-        REFResult? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
+        int matrixRows = matrix.GetLength(0);
+        int matrixColumns = matrix.GetLength(1);
+        REFResult result = new() { Matrix = (Fraction[,])matrix.Clone() };
+        REFResult current = result;
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
             if (token.IsCancellationRequested)
             {
                 throw new TaskCanceledException("Task was canceled.");
             }
-            //ReOrderMatrix(matrix, currentRow, result);
+            ReOrderMatrix(matrix, currentRow, ref current);
             int currentColumn = FindPivot(matrix, currentRow);
             if (currentColumn == -1) continue;
-            ClearPivotColumn(matrix, currentRow, currentColumn, reduced: false, result?.GetAllChildren().Last());
+            ClearPivotColumn(matrix, currentRow, currentColumn, reduced: false, ref current);
         }
-        return result is not null ? result : new REFResult { Matrix = matrix };
+        return result;
     }
 
-    private static void ReOrderMatrix(Fraction[,] matrix, int row, REFResult? solution = null)
+    private static void ReOrderMatrix(Fraction[,] matrix, int x, ref REFResult solution)
     {
-        var (result, x, y) = CheckPossibleSwap(row, row, matrix);
-        if (result)
+        var y = CheckPossibleSwap(x, x, matrix);
+        if (y > 0)
         {
             matrix = SwapMatrix(x, y, matrix);
-            if (solution is not null)
+
+            solution.NextStep = new REFResult
             {
-                solution.NextStep = new REFResult
-                {
-                    Description = $"Swap between R{x + 1} and R{y + 1}",
-                    Matrix = (Fraction[,])matrix.Clone(),
-                };
-                solution = solution?.NextStep;
-            }
+                Description = $"Swap between R{x + 1} and R{y + 1}",
+                Matrix = (Fraction[,])matrix.Clone(),
+            };
+            solution = solution.NextStep;
         }
     }
 
-    public static void ClearPivotColumn(Fraction[,] matrix, int pivotRow, int column, bool reduced, REFResult? solution = null)
+    public static void ClearPivotColumn(Fraction[,] matrix, int pivotRow, int column, bool reduced, ref REFResult solution)
     {
         int targetedRow = reduced ? 0 : pivotRow;
-        REFResult? result = solution;
         for (; targetedRow < matrix.GetLength(0); targetedRow++)
         {
-            //Console.WriteLine($"Matrix:\n{result}");
-            //Console.WriteLine($"Nextmatrix: \n{result?.NextStep}");
             if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
             Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
             matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
-            if (result is not null)
+
+            solution.NextStep = new REFResult
             {
-                result.NextStep = new REFResult
-                {
-                    Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
-                    Matrix = (Fraction[,])matrix.Clone(),
-                };
-            }
-            result = result?.NextStep;
+                Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
+                Matrix = (Fraction[,])matrix.Clone(),
+            };
+            solution = solution.NextStep;
         }
     }
 
@@ -74,8 +66,8 @@ public partial class Linear
     public static decimal[,] REF<T>(T[,] matrix)
     {
         //Value[,] newMatrix = matrix.GetFractions();
-        //var result = REF(newMatrix, solution: false);
-        //return result.Matrix.Fraction2Decimal();
+        //var solution = REF(newMatrix, solution: false);
+        //return solution.Matrix.Fraction2Decimal();
         return null;
     }
 
@@ -95,8 +87,8 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static Fraction[,] REFAsFraction<T>(T[,] matrix)
     {
-        //var result = REF(matrix.GetFractions(), solution: false);
-        //return result.Matrix;
+        //var solution = REF(matrix.GetFractions(), solution: false);
+        //return solution.Matrix;
         return null;
     }
 
@@ -110,8 +102,8 @@ public partial class Linear
     /// <exception cref="DivideByZeroException"></exception>
     public static string[,] REFAsString<T>(T[,] matrix)
     {
-        //var result = REF(matrix.GetFractions(), solution: false);
-        //return result.Matrix.Fraction2String();
+        //var solution = REF(matrix.GetFractions(), solution: false);
+        //return solution.Matrix.Fraction2String();
         return null;
     }
 }

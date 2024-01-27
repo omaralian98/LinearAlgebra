@@ -10,10 +10,15 @@ namespace Mr_Sure21
         {
             decimal[,] matrix =
             {
-                { 1, 0, 3, 1 },
+                { 0, 0, 3, 1 },
                 { 4, 6, 9, 1 },
                 { 4, 9, 7, 2 },
-                { 1, 1, 3, 3 }
+                { 1, 1, 3, 3 },
+
+                { 1, 0, 3, 1 },
+                { -1, 6, 9, 1 },
+                { 5, 9, 7, 2 },
+                { -5, 1, 3, 3 }
             };
             string[] coe = ["x", "y", "z", "t"];
             Dictionary<string, Fraction> values = new()
@@ -24,7 +29,7 @@ namespace Mr_Sure21
             };
             Console.WriteLine((matrix, coe).GetMatrix());
             decimal[] core = [1, 1, 1];
-            var res = Linear.REF(matrix.GetFractions(), true);
+            var res = Linear.RREF(matrix.GetFractions(), SpecialString.GetVariableMatrix(8));
             //var test = new REFResult { Matrix = matrix.GetFractions() };
             //var tope1 = matrix.GetFractions();
             //Linear.ClearPivotColumn(tope1, 0, 0, reduced: false, test);
@@ -61,6 +66,7 @@ namespace Mr_Sure21
             //Console.WriteLine(SpecialString.Solve(res.Coefficient, values).GetMatrix());
             //Console.WriteLine(matrix.GetMatrix());
             //Console.WriteLine(matrix.GetDeterminantMatrix());
+
         }
     }
 }

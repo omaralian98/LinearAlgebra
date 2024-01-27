@@ -3,80 +3,67 @@
 namespace LinearAlgebra;
 public partial class Linear
 {
-    public static REFResult<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
+    public static REFResult<T> REF<T>(Fraction[,] matrix, T[] coefficient, CancellationToken token = default) where T : ICoefficient
     {
         int matrixRows = matrix.GetLength(0); //Gets the number of rows
         int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-        REFResult<T> result = new();
+        REFResult<T> result = new() 
+        { 
+            Matrix = (Fraction[,])matrix.Clone(),
+            Coefficient = (T[])coefficient.Clone()
+        };
+        REFResult<T> current = result;
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
             if (token.IsCancellationRequested)
             {
                 throw new TaskCanceledException("Task was canceled.");
             }
-            ReOrderMatrix(matrix, coefficient, currentRow, result);
+            ReOrderMatrix(matrix, coefficient, currentRow, ref current);
             int currentColumn = FindPivot(matrix, currentRow);
             if (currentColumn == -1) continue;
-            ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, result);
+            ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, ref current);
         }
-        return result with { Matrix = matrix, Coefficient = coefficient };
+        return result;
     }
-    private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int row, REFResult<T>? solution) where T : ICoefficient
+    private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int x, ref REFResult<T> solution) where T : ICoefficient
     {
-        var (result, x, y) = CheckPossibleSwap(row, row, matrix);
-        if (result)
+        var y = CheckPossibleSwap(x, x, matrix);
+        if (y > 0)
         {
             matrix = SwapMatrix(x, y, matrix);
             coefficient = SwapCoefficient(x, y, coefficient);
-            if (solution is not null)
+
+            solution.NextStep = new REFResult<T>
             {
-                solution.NextStep = new REFResult<T>
-                {
-                    Description = $"Swap between R{x + 1} and R{y + 1}",
-                    Coefficient = (T[])coefficient.Clone(),
-                    Matrix = (Fraction[,])matrix.Clone(),
-                };
-            }
+                Description = $"Swap between R{x + 1} and R{y + 1}",
+                Coefficient = (T[])coefficient.Clone(),
+                Matrix = (Fraction[,])matrix.Clone(),
+            };
+            solution = solution.NextStep;
         }
     }
 
-    private static void ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, REFResult<T>? solution) where T : ICoefficient
+    private static void ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, ref REFResult<T> solution) where T : ICoefficient
     {
-        //int targetedRow = reduced ? 0 : pivotRow;
-        //for (; targetedRow < matrix.GetLength(0); targetedRow++)
-        //{
-        //    if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
-        //    Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
-        //    matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
-        //    coefficient[targetedRow] = (T)((coefficient[pivotRow] * scalar) + coefficient[targetedRow]);
-        //    solution?.NextStep.Add(new REFResult<T>
-        //    {
-        //        Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
-        //        Coefficient = (T[])coefficient.Clone(),
-        //        Matrix = (Fraction[,])matrix.Clone(),
-        //    });
-        //}
-    }
-    private static Fraction[,] ClearRow<T>(int pivotRow, int targetedRow, int columnStart, Fraction scalar, Fraction[,] matrix, REFResult<T>? solution = null) where T : ICoefficient
-    {
-        matrix[targetedRow, columnStart] = new(0);
-        for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
+        int targetedRow = reduced ? 0 : pivotRow;
+        for (; targetedRow < matrix.GetLength(0); targetedRow++)
         {
-            var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
-            if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
-            else matrix[targetedRow, y] = new Fraction((double)testVal.Quotient);
+            if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
+            Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
+            matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
+            coefficient[targetedRow] = (T)((coefficient[pivotRow] * scalar) + coefficient[targetedRow]);
+
+            solution.NextStep = new REFResult<T>
+            {
+                Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
+                Coefficient = (T[])coefficient.Clone(),
+                Matrix = (Fraction[,])matrix.Clone(),
+            };
+            solution = solution.NextStep;
         }
-        if (solution is not null)
-        {
-            //solution.NextStep = new REFResult<T>
-            //{
-            //    Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
-            //    Coefficient = (T[])coefficient.Clone(),
-            //    Matrix = (Fraction[,])matrix.Clone(),
-            //};
-        }
-        return matrix;
     }
+
     private static void CheckCoherenceForREF<T, S>(T[,] matrix, S[] coefficient)
     {
         //If the matrix and the coefficient matrix has different number of rows throw an exception

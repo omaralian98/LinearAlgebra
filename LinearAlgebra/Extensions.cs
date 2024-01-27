@@ -231,6 +231,16 @@ public static class Extensions
         return result;
     }
 
+    public static string GetMatrix<T, S>(this (T[] matrix, S[] coefficient) c)
+    {
+        T[,] matrix = new T[c.matrix.Length, 1];
+        for (int i = 0;i < c.matrix.Length;i++)
+        {
+            matrix[i, 0] = c.matrix[i];
+        }
+        return (matrix, c.coefficient).GetMatrix();
+    }
+
     public static void Print<T>(this T[,] matrix)
     {
         Console.WriteLine(matrix.GetMatrix());
@@ -255,11 +265,32 @@ public static class Extensions
         }
         return max;
     }
+    /// <summary>
+    /// Get's a specific column from a 2d array.
+    /// </summary>
+    /// <typeparam name="T">Any type of array</typeparam>
+    /// <param name="matrix">The original 2d array</param>
+    /// <param name="columnIndex">The index of the required column</param>
+    /// <param name="startFromIndex">The index of the start row</param>
+    /// <returns>The required column as an array</returns>
+    public static T[] GetColumn<T>(this T[,] matrix, int columnIndex, int startFromIndex = 0) =>
+        Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
+            .Select(x => matrix[x, columnIndex])
+             .ToArray();
 
-    private static T[] GetColumn<T>(this T[,] matrix, int columnNumber) => Enumerable.Range(0, matrix.GetLength(0))
-                .Select(x => matrix[x, columnNumber]).ToArray();
-    private static T[] GetRow<T>(this T[,] matrix, int rowNumber) => Enumerable.Range(0, matrix.GetLength(1))
-                .Select(x => matrix[rowNumber, x]).ToArray();
+    /// <summary>
+    /// Get's a specific row from a 2d array.
+    /// </summary>
+    /// <typeparam name="T">Any type of array</typeparam>
+    /// <param name="matrix">The original 2d array</param>
+    /// <param name="rowIndex">The index of the required row</param>
+    /// <param name="startFromIndex">The index of the start column</param>
+    /// <returns>The required row as an array</returns>
+    public static T[] GetRow<T>(this T[,] matrix, int rowIndex, int startFromIndex = 0) =>
+        Enumerable.Range(startFromIndex, matrix.GetLength(1) - startFromIndex)
+            .Select(y => matrix[rowIndex, y])
+             .ToArray();
+
     private static void AddBeginningBrackets(string[] Lines)
     {
         Lines[0] += "┌";
