@@ -1,8 +1,5 @@
-﻿using LinearAlgebra.Classes;
-using MathNet.Symbolics;
-
-namespace LinearAlgebra;
-public partial class Linear
+﻿namespace LinearAlgebra.Functions;
+public partial class Row_Echelon_Form
 {
 
     private static int FindPivot(Fraction[,] matrix, int row)

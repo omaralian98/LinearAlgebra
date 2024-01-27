@@ -1,13 +1,13 @@
-﻿namespace LinearAlgebra;
+﻿namespace LinearAlgebra.Functions;
 
-public partial class Linear
+public partial class Row_Echelon_Form
 {
-    public static REFResult RREF(Fraction[,] matrix, CancellationToken token = default)
+    public static REFResult RREF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
     {
         int matrixRows = matrix.GetLength(0); //Gets the number of rows
         int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-        REFResult result = new() { Matrix = (Fraction[,])matrix.Clone() };
-        REFResult current = result;
+        REFResult? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
+        REFResult? current = result;
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
             if (token.IsCancellationRequested)
@@ -20,10 +20,10 @@ public partial class Linear
             ClearPivotColumn(matrix, currentRow, currentColumn, true, ref current);
             ClearPivotRow(matrix, currentRow, currentColumn, ref current);
         }
-        return result;
+        return result is not null ? result : new REFResult { Matrix = matrix };
     }
 
-    private static void ClearPivotRow(Fraction[,] matrix, int pivotRow, int pivotColumn, ref REFResult solution)
+    private static void ClearPivotRow(Fraction[,] matrix, int pivotRow, int pivotColumn, ref REFResult? solution)
     {
         Fraction scalar = new(matrix[pivotRow, pivotColumn].Denominator, matrix[pivotRow, pivotColumn].Numerator);
         if (scalar.Numerator == 0) return;
@@ -31,10 +31,15 @@ public partial class Linear
         {
             matrix[pivotRow, column] *= scalar;
         }
-        solution.NextStep = new REFResult
+
+        if (solution is not null)
         {
-            Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
-            Matrix = (Fraction[,])matrix.Clone(),
-        };
+            solution.NextStep = new REFResult
+            {
+                Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
+                Matrix = (Fraction[,])matrix.Clone(),
+            };
+            solution = solution.NextStep;
+        }
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace LinearAlgebra;
+﻿namespace LinearAlgebra.Functions;
 
-public partial class Linear
+public partial class Row_Echelon_Form
 {
-    public static REFResult<T> RREF<T>(Fraction[,] matrix, T[] coefficient, CancellationToken token = default) where T : ICoefficient
+    public static REFResult<T> RREF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
     {
         int matrixRows = matrix.GetLength(0); //Gets the number of rows
         int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-        REFResult<T> result = new()
+        REFResult<T>? result = solution ? new()
         {
             Matrix = (Fraction[,])matrix.Clone(),
             Coefficient = (T[])coefficient.Clone()
-        };
-        REFResult<T> current = result;
+        } : null;
+        REFResult<T>? current = result;
         for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
         {
             if (token.IsCancellationRequested)
@@ -24,10 +24,10 @@ public partial class Linear
             ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: true, ref current);
             ClearPivotRow(matrix, coefficient, currentRow, currentColumn, ref current);
         }
-        return result;
+        return result is not null ? result : new REFResult<T> { Matrix = matrix, Coefficient = coefficient };
     }
 
-    private static void ClearPivotRow<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int pivoColumn, ref REFResult<T> solution) where T : ICoefficient
+    private static void ClearPivotRow<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int pivoColumn, ref REFResult<T>? solution) where T : ICoefficient
     {
         Fraction scalar = new(matrix[pivotRow, pivoColumn].Denominator, matrix[pivotRow, pivoColumn].Numerator);
         if (scalar.Quotient == 1) return;
@@ -37,11 +37,15 @@ public partial class Linear
         }
         coefficient[pivotRow] = (T)(coefficient[pivotRow] * scalar);
 
-        solution.NextStep = new REFResult<T>
+        if (solution is not null)
         {
-            Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
-            Coefficient = (T[])coefficient.Clone(),
-            Matrix = (Fraction[,])matrix.Clone(),
-        };
+            solution.NextStep = new REFResult<T>
+            {
+                Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
+                Coefficient = (T[])coefficient.Clone(),
+                Matrix = (Fraction[,])matrix.Clone(),
+            };
+            solution = solution.NextStep;
+        }
     }
 }
