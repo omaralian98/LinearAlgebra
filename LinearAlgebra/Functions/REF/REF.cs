@@ -2,12 +2,12 @@
 public partial class Row_Echelon_Form
 {
 
-    private static int FindPivot(Fraction[,] matrix, int row)
+    public static int FindPivot(Fraction[,] matrix, int row)
     {
         for (int column = 0; column < matrix.GetLength(1); column++)
         {
             if (matrix[row, column].Quotient != 0) return column;
-            var elements = Enumerable.Range(0, matrix.GetLength(0)).SkipWhile(x => x <= row)
+            var elements = Enumerable.Range(row, matrix.GetLength(0) - row)
                 .Select(x => matrix[x, column]).ToArray();
             if (elements.All(x => x.Quotient == 0)) continue;
             return column;
@@ -15,7 +15,7 @@ public partial class Row_Echelon_Form
         return -1;
     }
 
-    private static Fraction[,] ClearRow(int pivotRow, int targetedRow, int columnStart, Fraction scalar, Fraction[,] matrix)
+    public static Fraction[,] ClearRow(int pivotRow, int targetedRow, int columnStart, Fraction scalar, Fraction[,] matrix)
     {
         matrix[targetedRow, columnStart] = new(0);
         for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
@@ -27,7 +27,7 @@ public partial class Row_Echelon_Form
         return matrix;
     }
 
-    private static int CheckPossibleSwap(int x, int y, Fraction[,] matrix)
+    public static int CheckPossibleSwap(int x, int y, Fraction[,] matrix)
     {
         if (matrix[x, y].Quotient == 0)
         {
@@ -44,7 +44,7 @@ public partial class Row_Echelon_Form
             //Reorder the dictionary accordingly
             var final = dic.Order(comparer: new CustomCompare()).ToArray();
             //return the first index
-            return y + final.First().Key;
+            return final.First().Key;
         }
         return 0;
     }
@@ -60,7 +60,7 @@ public partial class Row_Echelon_Form
         return array;
     }
 
-    private static T[,] SwapMatrix<T>(int x, int y, T[,] matrix)
+    public static T[,] SwapMatrix<T>(int x, int y, T[,] matrix)
     {
         int columns = matrix.GetLength(1);
         for (int i = 0; i < columns; i++)
@@ -69,7 +69,7 @@ public partial class Row_Echelon_Form
         }
         return matrix;
     }
-    private static T[] SwapCoefficient<T>(int x, int y, T[] coefficient)
+    public static T[] SwapCoefficient<T>(int x, int y, T[] coefficient)
     {
         (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
         return coefficient;
@@ -86,6 +86,8 @@ public class CustomCompare : IComparer<KeyValuePair<int, Fraction>>
         else if (f1.Quotient == -1 && f2.Quotient == -1) return 0; // Both are equal
         else if (f1.Quotient == -1) return -1; // f1 is -1, comes second
         else if (f2.Quotient == -1) return 1;  // f2 is -1, comes second
+        else if (f1.Denominator == 1 && f1 < f2) return -1;
+        else if (f2.Denominator == 1 && f1 > f2) return 1;
         else return 0; // otherwise they are equal
     }
 

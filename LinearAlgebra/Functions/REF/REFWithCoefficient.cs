@@ -18,16 +18,16 @@
                 {
                     throw new TaskCanceledException("Task was canceled.");
                 }
-                ReOrderMatrix(matrix, coefficient, currentRow, ref current);
                 int currentColumn = FindPivot(matrix, currentRow);
                 if (currentColumn == -1) continue;
+                ReOrderMatrix(matrix, coefficient, currentRow, currentColumn, ref current);
                 ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, ref current);
             }
             return result is not null? result : new REFResult<T> { Matrix = matrix, Coefficient = coefficient };
         }
-        private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int x, ref REFResult<T>? solution) where T : ICoefficient
+        private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int x, int y, ref REFResult<T>? solution) where T : ICoefficient
         {
-            var y = CheckPossibleSwap(x, x, matrix);
+            y = CheckPossibleSwap(x, y, matrix);
             if (y > 0)
             {
                 matrix = SwapMatrix(x, y, matrix);

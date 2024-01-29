@@ -61,4 +61,21 @@ public partial struct Fraction
     {
         return !(a == b);
     }
+
+    public static bool operator <(Fraction a, Fraction b)
+    {
+        return a.Quotient < b.Quotient;
+    }
+    public static bool operator <=(Fraction a, Fraction b)
+    {
+        return a.Quotient <= b.Quotient;
+    }
+    public static bool operator >(Fraction a, Fraction b)
+    {
+        return a.Quotient > b.Quotient;
+    }
+    public static bool operator >=(Fraction a, Fraction b)
+    {
+        return a.Quotient >= b.Quotient;
+    }
 }

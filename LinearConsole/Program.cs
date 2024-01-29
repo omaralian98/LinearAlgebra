@@ -9,18 +9,18 @@ namespace Mr_Sure21
     {
         public static void Main()
         {
-            //decimal[,] matrix =
-            //{
-            //    { 0, 0, 3, 1 },
-            //    { 4, 6, 9, 1 },
-            //    { 4, 9, 7, 2 },
-            //    { 1, 1, 3, 3 },
+            decimal[,] matrix =
+            {
+                { 0, 0, 3, 1 },
+                { 0, 0, 0, 1 },
+                { 0, 9, 7, 2 },
+                { 0, 1, 3, 3 },
 
-            //    { 1, 0, 3, 1 },
-            //    { -1, 6, 9, 1 },
-            //    { 5, 9, 7, 2 },
-            //    { -5, 1, 3, 3 }
-            //};
+                { 0, 0, 4, 1 },
+                { 0, 6, 9, 1 },
+                { 0, 9, 7, 2 },
+                { 0, 1, 3, 3 }
+            };
             //string[] coe = ["x", "y", "z", "t"];
             //Dictionary<string, Fraction> values = new()
             //{
@@ -30,7 +30,7 @@ namespace Mr_Sure21
             //};
             //Console.WriteLine((matrix, coe).GetMatrix());
             //decimal[] core = [1, 1, 1];
-            //var res = Linear.RREF(matrix.GetFractions(), SpecialString.GetVariableMatrix(8));
+            var res = Row_Echelon_Form.REF(matrix.GetFractions(), true);
             ////var test = new REFResult { Matrix = matrix.GetFractions() };
             ////var tope1 = matrix.GetFractions();
             ////Linear.ClearPivotColumn(tope1, 0, 0, reduced: false, test);
@@ -43,16 +43,16 @@ namespace Mr_Sure21
             ////    Console.WriteLine(item.Description);
             ////    Console.WriteLine(item.Matrix.GetMatrix());
             ////}
-            //foreach (var step in res.GetAllChildren())
-            //{
-            //    //Console.WriteLine(step);
-            //    //Console.WriteLine(step.Description);
-            //    //Console.WriteLine(step.Matrix.GetMatrix());
-            //    //if (step.Matrix is not null && step.Coefficient is not null)
-            //    //{
-            //    //    Console.WriteLine((step.Matrix, step.Coefficient).GetMatrix());
-            //    //}
-            //}
+            foreach (var step in res.GetAllChildren())
+            {
+                Console.WriteLine(step);
+                //Console.WriteLine(step.Description);
+                //Console.WriteLine(step.Matrix.GetMatrix());
+                //if (step.Matrix is not null && step.Coefficient is not null)
+                //{
+                //    Console.WriteLine((step.Matrix, step.Coefficient).GetMatrix());
+                //}
+            }
 
             //var result = Linear.Determinant(matrix.GetFractions()).GetAllChildren();
             //foreach (var item in result)

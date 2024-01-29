@@ -18,9 +18,9 @@ public partial class Row_Echelon_Form
             {
                 throw new TaskCanceledException("Task was canceled.");
             }
-            ReOrderMatrix(matrix, coefficient, currentRow, ref current);
             int currentColumn = FindPivot(matrix, currentRow);
             if (currentColumn == -1) continue;
+            ReOrderMatrix(matrix, coefficient, currentRow, currentColumn, ref current);
             ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: true, ref current);
             ClearPivotRow(matrix, coefficient, currentRow, currentColumn, ref current);
         }
