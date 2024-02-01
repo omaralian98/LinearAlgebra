@@ -32,7 +32,7 @@ public static class Extensions
         {
             for (int j = 0; j < a.GetLength(1); j++)
             {
-                a[i, j] = (decimal)t[i, j].Quotient;
+                a[i, j] = t[i, j].Quotient;
             }
         }
         return a;
@@ -43,7 +43,7 @@ public static class Extensions
         decimal[] a = new decimal[t.GetLength(0)];
         for (int i = 0; i < a.GetLength(0); i++)
         {
-            a[i] = (decimal)t[i].Quotient;
+            a[i] = t[i].Quotient;
         }
         return a;
     }
@@ -187,7 +187,7 @@ public static class Extensions
         }
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
-        int vart = GetPad(matrix);
+        int vart = GetPad(matrix) + 2;
         int index = 1;
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
@@ -206,20 +206,24 @@ public static class Extensions
     {
         string[] Lines = new string[c.matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
-        int index = 1;
+        int index;
         for (int j = 0; j < c.matrix.GetLength(1); j++)
         {
             index = 1;
             int vart = GetPad(c.matrix.GetColumn(j)) + 2;
             for (int i = 0; i < c.matrix.GetLength(0); i++)
             {
+                if (i == 0)
+                {
+                    Lines[index++] += String.Format(" {0, " + (vart - 2) + "} ", c.matrix[i, j]);
+                }
                 Lines[index++] += String.Format(" {0, " + vart + "} ", c.matrix[i, j]);
             }
         }
         index = 1;
         for (int i = 0; i < c.coefficient.Length; i++)
         {
-            int vart = GetPad(c.coefficient);
+            int vart = GetPad(c.coefficient) + 2;
             Lines[index++] += String.Format("| {0, " + vart + "}", c.coefficient[i]);
         }
         AddEndBrackets(Lines);
@@ -233,12 +237,27 @@ public static class Extensions
 
     public static string GetMatrix<T, S>(this (T[] matrix, S[] coefficient) c)
     {
-        T[,] matrix = new T[c.matrix.Length, 1];
-        for (int i = 0;i < c.matrix.Length;i++)
+        string[] Lines = new string[c.matrix.GetLength(0) + 2];
+        AddBeginningBrackets(Lines);
+        int vart = GetPad(c.matrix);
+        int index = 1;
+        for (int i = 0; i < c.matrix.Length; i++)
         {
-            matrix[i, 0] = c.matrix[i];
+            Lines[index++] += String.Format(" {0, " + vart + "} ", c.matrix[i]);
         }
-        return (matrix, c.coefficient).GetMatrix();
+        index = 1;
+        for (int i = 0; i < c.coefficient.Length; i++)
+        {
+            vart = GetPad(c.coefficient);
+            Lines[index++] += String.Format("| {0, " + vart + "}", c.coefficient[i]);
+        }
+        AddEndBrackets(Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
     }
 
     public static void Print<T>(this T[,] matrix)

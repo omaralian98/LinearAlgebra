@@ -1,45 +1,49 @@
-﻿namespace LinearAlgebra.Functions;
+﻿namespace LinearAlgebra;
 
-public partial class Row_Echelon_Form
+public partial class Linear
 {
-    public static REFResult RREF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
+    private partial class Row_Echelon_Form
     {
-        int matrixRows = matrix.GetLength(0); //Gets the number of rows
-        int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-        REFResult? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
-        REFResult? current = result;
-        for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
+        public static REFResult RREF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
         {
-            if (token.IsCancellationRequested)
+            int matrixRows = matrix.GetLength(0); //Gets the number of rows
+            int matrixColumns = matrix.GetLength(1); //Gets the number of columns
+            REFResult? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
+            REFResult? current = result;
+            for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
             {
-                throw new TaskCanceledException("Task was canceled.");
+                if (token.IsCancellationRequested)
+                {
+                    throw new TaskCanceledException("Task was canceled.");
+                }
+                int currentColumn = FindPivot(matrix, currentRow);
+                if (currentColumn == -1) continue;
+                ReOrderMatrix(matrix, currentRow, currentColumn, ref current);
+                ClearPivotColumn(matrix, currentRow, currentColumn, true, ref current);
+                ClearPivotRow(matrix, currentRow, currentColumn, ref current);
             }
-            int currentColumn = FindPivot(matrix, currentRow);
-            if (currentColumn == -1) continue;
-            ReOrderMatrix(matrix, currentRow, currentColumn, ref current);
-            ClearPivotColumn(matrix, currentRow, currentColumn, true, ref current);
-            ClearPivotRow(matrix, currentRow, currentColumn, ref current);
-        }
-        return result is not null ? result : new REFResult { Matrix = matrix };
-    }
-
-    private static void ClearPivotRow(Fraction[,] matrix, int pivotRow, int pivotColumn, ref REFResult? solution)
-    {
-        Fraction scalar = new(matrix[pivotRow, pivotColumn].Denominator, matrix[pivotRow, pivotColumn].Numerator);
-        if (scalar.Numerator == 0) return;
-        for (int column = 0; column < matrix.GetLength(1); column++)
-        {
-            matrix[pivotRow, column] *= scalar;
+            return result is not null ? result : new REFResult { Matrix = matrix };
         }
 
-        if (solution is not null)
+        private static void ClearPivotRow(Fraction[,] matrix, int pivotRow, int pivotColumn, ref REFResult? solution)
         {
-            solution.NextStep = new REFResult
+            Fraction scalar = new(matrix[pivotRow, pivotColumn].Denominator, matrix[pivotRow, pivotColumn].Numerator);
+            if (scalar.Quotient == 1) return;
+            for (int column = 0; column < matrix.GetLength(1); column++)
             {
-                Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
-                Matrix = (Fraction[,])matrix.Clone(),
-            };
-            solution = solution.NextStep;
+                matrix[pivotRow, column] *= scalar;
+            }
+
+            if (solution is not null)
+            {
+                solution.NextStep = new REFResult
+                {
+                    Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
+                    Matrix = (Fraction[,])matrix.Clone(),
+                };
+                solution = solution.NextStep;
+            }
         }
     }
+
 }

@@ -1,98 +1,102 @@
-﻿namespace LinearAlgebra.Functions;
-public partial class Row_Echelon_Form
+﻿namespace LinearAlgebra;
+
+public partial class Linear
 {
-
-    public static int FindPivot(Fraction[,] matrix, int row)
+    private partial class Row_Echelon_Form
     {
-        for (int column = 0; column < matrix.GetLength(1); column++)
+
+        public static int FindPivot(Fraction[,] matrix, int row)
         {
-            if (matrix[row, column].Quotient != 0) return column;
-            var elements = Enumerable.Range(row, matrix.GetLength(0) - row)
-                .Select(x => matrix[x, column]).ToArray();
-            if (elements.All(x => x.Quotient == 0)) continue;
-            return column;
+            for (int column = 0; column < matrix.GetLength(1); column++)
+            {
+                if (matrix[row, column].Quotient != 0) return column;
+                var elements = Enumerable.Range(row, matrix.GetLength(0) - row)
+                    .Select(x => matrix[x, column]).ToArray();
+                if (elements.All(x => x.Quotient == 0)) continue;
+                return column;
+            }
+            return -1;
         }
-        return -1;
-    }
 
-    public static Fraction[,] ClearRow(int pivotRow, int targetedRow, int columnStart, Fraction scalar, Fraction[,] matrix)
-    {
-        matrix[targetedRow, columnStart] = new(0);
-        for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
+        public static Fraction[,] ClearRow(int pivotRow, int targetedRow, int columnStart, Fraction scalar, Fraction[,] matrix)
         {
-            var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
-            if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
-            else matrix[targetedRow, y] = new Fraction((double)testVal.Quotient);
+            matrix[targetedRow, columnStart] = new(0);
+            for (int y = columnStart + 1; y < matrix.GetLength(1); y++)
+            {
+                var testVal = scalar * matrix[pivotRow, y] + matrix[targetedRow, y];
+                if (testVal.Quotient.IsDecimal()) matrix[targetedRow, y] = testVal;
+                else matrix[targetedRow, y] = new Fraction((double)testVal.Quotient);
+            }
+            return matrix;
         }
-        return matrix;
-    }
 
-    public static int CheckPossibleSwap(int x, int y, Fraction[,] matrix)
-    {
-        if (matrix[x, y].Quotient == 0)
+        public static int CheckPossibleSwap(int x, int y, Fraction[,] matrix)
         {
-            //gets the column the x column
-            var column = matrix.GetColumn(y, x + 1);
-            //If all the elements in this column are 0 then we don't have a row to swap with
-            if (column.All(x => x.Quotient == 0)) return -1;
-            //gets the index of every element it the column array
-            var keys = CreateIndexArray(x + 1, matrix.GetLength(0));
-            //Creates a dictionary of The element and it's index
-            Dictionary<int, Fraction> dic = keys
-                .Zip(column, (key, value) => new { key, value })
-                 .ToDictionary(x => x.key, x => x.value);
-            //Reorder the dictionary accordingly
-            var final = dic.Order(comparer: new CustomCompare()).ToArray();
-            //return the first index
-            return final.First().Key;
+            if (matrix[x, y].Quotient == 0)
+            {
+                //gets the column the x column
+                var column = matrix.GetColumn(y, x + 1);
+                //If all the elements in this column are 0 then we don't have a row to swap with
+                if (column.All(x => x.Quotient == 0)) return -1;
+                //gets the index of every element it the column array
+                var keys = CreateIndexArray(x + 1, matrix.GetLength(0));
+                //Creates a dictionary of The element and it's index
+                Dictionary<int, Fraction> dic = keys
+                    .Zip(column, (key, value) => new { key, value })
+                     .ToDictionary(x => x.key, x => x.value);
+                //Reorder the dictionary accordingly
+                var final = dic.Order(comparer: new CustomCompare()).ToArray();
+                //return the first index
+                return final.First().Key;
+            }
+            return 0;
         }
-        return 0;
-    }
 
-    public static int[] CreateIndexArray(int start, int end)
-    {
-        int[] array = new int[end - start];
-        int counter = 0;
-        for (int i = start; i < end; i++)
+        public static int[] CreateIndexArray(int start, int end)
         {
-            array[counter++] = i;
+            int[] array = new int[end - start];
+            int counter = 0;
+            for (int i = start; i < end; i++)
+            {
+                array[counter++] = i;
+            }
+            return array;
         }
-        return array;
-    }
 
-    public static T[,] SwapMatrix<T>(int x, int y, T[,] matrix)
-    {
-        int columns = matrix.GetLength(1);
-        for (int i = 0; i < columns; i++)
+        public static T[,] SwapMatrix<T>(int x, int y, T[,] matrix)
         {
-            (matrix[x, i], matrix[y, i]) = (matrix[y, i], matrix[x, i]);
+            int columns = matrix.GetLength(1);
+            for (int i = 0; i < columns; i++)
+            {
+                (matrix[x, i], matrix[y, i]) = (matrix[y, i], matrix[x, i]);
+            }
+            return matrix;
         }
-        return matrix;
-    }
-    public static T[] SwapCoefficient<T>(int x, int y, T[] coefficient)
-    {
-        (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
-        return coefficient;
-    }
-}
-
-public class CustomCompare : IComparer<KeyValuePair<int, Fraction>>
-{
-    public static int Compare(Fraction f1, Fraction f2)
-    {
-        if (f1.Quotient == 1 && f2.Quotient == 1) return 0; // Both are equal
-        else if (f1.Quotient == 1) return -1; // f1 is 1, comes first
-        else if (f2.Quotient == 1) return 1;  // f2 is 1, comes first
-        else if (f1.Quotient == -1 && f2.Quotient == -1) return 0; // Both are equal
-        else if (f1.Quotient == -1) return -1; // f1 is -1, comes second
-        else if (f2.Quotient == -1) return 1;  // f2 is -1, comes second
-        else if (f1.Denominator == 1 && f1 < f2) return -1;
-        else if (f2.Denominator == 1 && f1 > f2) return 1;
-        else return 0; // otherwise they are equal
+        public static T[] SwapCoefficient<T>(int x, int y, T[] coefficient)
+        {
+            (coefficient[x], coefficient[y]) = (coefficient[y], coefficient[x]);
+            return coefficient;
+        }
     }
 
-    public int Compare(KeyValuePair<int, Fraction> x, KeyValuePair<int, Fraction> y)
+    public class CustomCompare : IComparer<KeyValuePair<int, Fraction>>
     {
-        return Compare(x.Value, y.Value);
+        public static int Compare(Fraction f1, Fraction f2)
+        {
+            if (f1.Quotient == 1 && f2.Quotient == 1) return 0; // Both are equal
+            else if (f1.Quotient == 1) return -1; // f1 is 1, comes first
+            else if (f2.Quotient == 1) return 1;  // f2 is 1, comes first
+            else if (f1.Quotient == -1 && f2.Quotient == -1) return 0; // Both are equal
+            else if (f1.Quotient == -1) return -1; // f1 is -1, comes second
+            else if (f2.Quotient == -1) return 1;  // f2 is -1, comes second
+            else if (f1.Denominator == 1 && f1 < f2) return -1;
+            else if (f2.Denominator == 1 && f1 > f2) return 1;
+            else return 0; // otherwise they are equal
+        }
+
+        public int Compare(KeyValuePair<int, Fraction> x, KeyValuePair<int, Fraction> y)
+        {
+            return Compare(x.Value, y.Value);
+        }
     }
 }

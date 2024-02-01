@@ -1,12 +1,83 @@
-﻿namespace LinearAlgebra.Functions
+﻿namespace LinearAlgebra;
+
+public partial class Linear
 {
-    public partial class Row_Echelon_Form
+    private static void CheckCoherenceForREF<T, S>(T[,] matrix, S[] coefficient)
+    {
+        //If the matrix and the coefficient matrix has different number of rows throw an exception
+        string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
+        if (matrix.GetLength(0) != coefficient?.GetLength(0)) throw new ArgumentException(errorMessage);
+    }
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <returns>
+    /// Returns the REF of the giving matrix, and it's coefficient as Value arraies
+    /// <br></br>
+    /// **Note**: Value is a struct that you can access like this:
+    /// <br></br>
+    /// LinearAlgebra.Linear.Value
+    /// </returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix)
+    {
+        var coefficient = SpecialString.GetVariableMatrix(matrix.GetLength(0));
+        var result = Row_Echelon_Form.REF(matrix, coefficient);
+        return (result.Matrix, result.Coefficient);
+    }
+    public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
+    {
+        CheckCoherenceForREF(matrix, coefficient);
+        var result = Row_Echelon_Form.REF(matrix, coefficient);
+        return (result.Matrix, result.Coefficient);
+    }
+
+    public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix)
+    {
+        var (result, coe) = REFAsSpecialString(matrix.GetFractions());
+        return coe.SpecialString2String();
+    }
+
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <param name="coefficient">The coefficient of the matrix</param>
+    /// <returns>Returns the REF of the giving matrix, and it's coefficient as decimal arraies</returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static (decimal[,], decimal[]) REF<T>(T[,] matrix, T[] coefficient)
+    {
+        CheckCoherenceForREF(matrix, coefficient);
+        var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
+        return (result.Fraction2Decimal(), coe.Fraction2Decimal());
+    }
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <param name="coefficient">The coefficient of the matrix</param>
+    /// <returns>Returns the REF of the giving matrix, and it's coefficient as string arraies</returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static (string[,], string[]) REFAsString<T>(T[,] matrix, T[] coefficient)
+    {
+        CheckCoherenceForREF(matrix, coefficient);
+        var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
+        return (result.Fraction2String(), coe.Fraction2String());
+    }
+    private partial class Row_Echelon_Form
     {
         public static REFResult<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
         {
             int matrixRows = matrix.GetLength(0); //Gets the number of rows
             int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-            REFResult<T>? result = solution? new()
+            REFResult<T>? result = solution ? new()
             {
                 Matrix = (Fraction[,])matrix.Clone(),
                 Coefficient = (T[])coefficient.Clone()
@@ -23,7 +94,7 @@
                 ReOrderMatrix(matrix, coefficient, currentRow, currentColumn, ref current);
                 ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, ref current);
             }
-            return result is not null? result : new REFResult<T> { Matrix = matrix, Coefficient = coefficient };
+            return result is not null ? result : new REFResult<T> { Matrix = matrix, Coefficient = coefficient };
         }
         private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int x, int y, ref REFResult<T>? solution) where T : ICoefficient
         {
@@ -69,80 +140,5 @@
             }
         }
     }
-}
 
-namespace LinearAlgebra
-{
-    public partial class Linear
-    {
-        private static void CheckCoherenceForREF<T, S>(T[,] matrix, S[] coefficient)
-        {
-            //If the matrix and the coefficient matrix has different number of rows throw an exception
-            string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
-            if (matrix.GetLength(0) != coefficient?.GetLength(0)) throw new ArgumentException(errorMessage);
-        }
-        /// <summary>
-        /// Aka: Row Echelon Form.
-        /// </summary>
-        /// <param name="matrix">The matrix you want to get it's REF</param>
-        /// <returns>
-        /// Returns the REF of the giving matrix, and it's coefficient as Value arraies
-        /// <br></br>
-        /// **Note**: Value is a struct that you can access like this:
-        /// <br></br>
-        /// LinearAlgebra.Linear.Value
-        /// </returns>
-        /// <exception cref="ArithmeticException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DivideByZeroException"></exception>
-        public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix)
-        {
-            var coefficient = SpecialString.GetVariableMatrix(matrix.GetLength(0));
-            var result = Row_Echelon_Form.REF(matrix, coefficient);
-            return (result.Matrix, result.Coefficient);
-        }
-        public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
-        {
-            CheckCoherenceForREF(matrix, coefficient);
-            var result = Row_Echelon_Form.REF(matrix, coefficient);
-            return (result.Matrix, result.Coefficient);
-        }
-
-        public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix)
-        {
-            var (result, coe) = REFAsSpecialString(matrix.GetFractions());
-            return coe.SpecialString2String();
-        }
-
-        /// <summary>
-        /// Aka: Row Echelon Form.
-        /// </summary>
-        /// <param name="matrix">The matrix you want to get it's REF</param>
-        /// <param name="coefficient">The coefficient of the matrix</param>
-        /// <returns>Returns the REF of the giving matrix, and it's coefficient as decimal arraies</returns>
-        /// <exception cref="ArithmeticException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DivideByZeroException"></exception>
-        public static (decimal[,], decimal[]) REF<T>(T[,] matrix, T[] coefficient)
-        {
-            CheckCoherenceForREF(matrix, coefficient);
-            var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
-            return (result.Fraction2Decimal(), coe.Fraction2Decimal());
-        }
-        /// <summary>
-        /// Aka: Row Echelon Form.
-        /// </summary>
-        /// <param name="matrix">The matrix you want to get it's REF</param>
-        /// <param name="coefficient">The coefficient of the matrix</param>
-        /// <returns>Returns the REF of the giving matrix, and it's coefficient as string arraies</returns>
-        /// <exception cref="ArithmeticException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DivideByZeroException"></exception>
-        public static (string[,], string[]) REFAsString<T>(T[,] matrix, T[] coefficient)
-        {
-            CheckCoherenceForREF(matrix, coefficient);
-            var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
-            return (result.Fraction2String(), coe.Fraction2String());
-        }
-    }
 }

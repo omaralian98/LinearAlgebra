@@ -1,12 +1,63 @@
-﻿namespace LinearAlgebra.Functions
+﻿namespace LinearAlgebra;
+
+public partial class Linear
 {
-    public partial class Row_Echelon_Form
+
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <returns>Returns the REF of the giving matrix as decimal array</returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static decimal[,] REF<T>(T[,] matrix)
+    {
+        var solution = Row_Echelon_Form.REF(matrix.GetFractions());
+        solution.Matrix.Print();
+        return solution.Matrix.Fraction2Decimal();
+    }
+
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <returns>
+    /// Returns the REF of the giving matrix as Value array
+    /// <br></br>
+    /// **Note**: Value is a struct that you can access like this:
+    /// <br></br>
+    /// LinearAlgebra.Linear.Value
+    /// </returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static Fraction[,] REFAsFraction<T>(T[,] matrix)
+    {
+        var solution = Row_Echelon_Form.REF(matrix.GetFractions());
+        return solution.Matrix;
+    }
+
+    /// <summary>
+    /// Aka: Row Echelon Form.
+    /// </summary>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <returns>Returns the REF of the giving matrix as string array</returns>
+    /// <exception cref="ArithmeticException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="DivideByZeroException"></exception>
+    public static string[,] REFAsString<T>(T[,] matrix)
+    {
+        var solution = Row_Echelon_Form.REF(matrix.GetFractions());
+        return solution.Matrix.Fraction2String();
+    }
+    private partial class Row_Echelon_Form
     {
         public static REFResult REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
         {
             int matrixRows = matrix.GetLength(0);
             int matrixColumns = matrix.GetLength(1);
-            REFResult? result = solution? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
+            REFResult? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
             REFResult? current = result;
             for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
             {
@@ -50,7 +101,7 @@
                 Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];
                 matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
 
-                if(solution is not null)
+                if (solution is not null)
                 {
                     solution.NextStep = new REFResult
                     {
@@ -60,62 +111,6 @@
                     solution = solution.NextStep;
                 }
             }
-        }
-    }
-}
-
-namespace LinearAlgebra
-{
-    public partial class Linear
-    {
-
-        /// <summary>
-        /// Aka: Row Echelon Form.
-        /// </summary>
-        /// <param name="matrix">The matrix you want to get it's REF</param>
-        /// <returns>Returns the REF of the giving matrix as decimal array</returns>
-        /// <exception cref="ArithmeticException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DivideByZeroException"></exception>
-        public static decimal[,] REF<T>(T[,] matrix)
-        {
-            var solution = Row_Echelon_Form.REF(matrix.GetFractions());
-            solution.Matrix.Print();
-            return solution.Matrix.Fraction2Decimal();
-        }
-
-        /// <summary>
-        /// Aka: Row Echelon Form.
-        /// </summary>
-        /// <param name="matrix">The matrix you want to get it's REF</param>
-        /// <returns>
-        /// Returns the REF of the giving matrix as Value array
-        /// <br></br>
-        /// **Note**: Value is a struct that you can access like this:
-        /// <br></br>
-        /// LinearAlgebra.Linear.Value
-        /// </returns>
-        /// <exception cref="ArithmeticException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DivideByZeroException"></exception>
-        public static Fraction[,] REFAsFraction<T>(T[,] matrix)
-        {
-            var solution = Row_Echelon_Form.REF(matrix.GetFractions());
-            return solution.Matrix;
-        }
-
-        /// <summary>
-        /// Aka: Row Echelon Form.
-        /// </summary>
-        /// <param name="matrix">The matrix you want to get it's REF</param>
-        /// <returns>Returns the REF of the giving matrix as string array</returns>
-        /// <exception cref="ArithmeticException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DivideByZeroException"></exception>
-        public static string[,] REFAsString<T>(T[,] matrix)
-        {
-            var solution = Row_Echelon_Form.REF(matrix.GetFractions());
-            return solution.Matrix.Fraction2String();
         }
     }
 }
