@@ -51,7 +51,7 @@ public partial class Linear
         var solution = Row_Echelon_Form.REF(matrix.GetFractions());
         return solution.Matrix.Fraction2String();
     }
-    private partial class Row_Echelon_Form
+    public partial class Row_Echelon_Form
     {
         public static REFResult REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
         {

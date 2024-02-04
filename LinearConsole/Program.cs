@@ -12,17 +12,11 @@ namespace Mr_Sure21
             {
                 { 0, 0, 3, 1 },
                 { 0, 0, 0, 1 },
-                { 0, 9, 7, 2 },
+                { 1, 9, 7, 2 },
                 { 0, 1, 3, 3 },
-
-                { 0, 0, 4, 1 },
-                { 0, 6, 9, 1 },
-                { 0, 9, 7, 2 },
-                { 0, 1, 3, 3 }
             };
             string[] coe = ["x", "y", "z", "t"];
-            decimal[] test = [1, 2, 3, 4];
-            Console.WriteLine((coe, test).GetMatrix());
+            decimal[] test = [1, 2, 3, 4, 5, 6, 7, 8];
             //Dictionary<string, Fraction> values = new()
             //{
             //    { "x", new Fraction(1)},
@@ -31,44 +25,16 @@ namespace Mr_Sure21
             //};
             //Console.WriteLine((matrix, coe).GetMatrix());
             //decimal[] core = [1, 1, 1];
-            //var res = Linear.RREF(matrix.GetFractions(), true);
-            ////var test = new REFResult { Matrix = matrix.GetFractions() };
-            ////var tope1 = matrix.GetFractions();
-            ////Linear.ClearPivotColumn(tope1, 0, 0, reduced: false, test);
-            ////Linear.ClearPivotColumn(tope1, 1, 1, reduced: false, test.GetAllChildren().Last());
-            ////Console.WriteLine($"Matrix before: \n{test}");
-            ////Console.WriteLine($"Nextmatrix before: \n{test.NextStep}");
-            ////Console.WriteLine($"Nextmatrix Nextmatrix before: \n{test.NextStep?.NextStep}");
-            ////foreach (var item in test.GetAllChildren())
-            ////{
-            ////    Console.WriteLine(item.Description);
-            ////    Console.WriteLine(item.Matrix.GetMatrix());
-            ////}
+            //var res = Linear.Row_Echelon_Form.REF(matrix.GetFractions(), SpecialString.GetVariableMatrix(4), true);
             //foreach (var step in res.GetAllChildren())
             //{
             //    Console.WriteLine(step);
-            //    //Console.WriteLine(step.Description);
-            //    //Console.WriteLine(step.Matrix.GetMatrix());
-            //    //if (step.Matrix is not null && step.Coefficient is not null)
-            //    //{
-            //    //    Console.WriteLine((step.Matrix, step.Coefficient).GetMatrix());
-            //    //}
             //}
-
-            //var result = Linear.Det(matrix.GetFractions()).GetAllChildren();
-            //foreach (var item in result)
-            //{
-            //    Console.WriteLine($"Value of: {item.Value}\n{item.Matrix.GetDeterminantMatrix()}");
-            //    foreach (var item2 in item.NextStep)
-            //    {
-            //        Console.WriteLine($"Scalar: {item2.Scalar}");
-            //        Console.WriteLine(item2.Matrix.GetDeterminantMatrix());
-            //    }
-            //}
-            //Console.WriteLine(SpecialString.Solve(res.Coefficient, values).GetMatrix());
-            //Console.WriteLine(matrix.GetMatrix());
-            //Console.WriteLine(matrix.GetDeterminantMatrix());
-
+            var rete = Linear.DeterminantWithResultUsingREF(matrix.GetFractions());
+            foreach (var item in rete.Item2)
+            {
+                Console.WriteLine(item);
+            }
         }
     }
 }

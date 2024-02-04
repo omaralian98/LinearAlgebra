@@ -2,7 +2,7 @@
 
 public partial class Linear
 {
-    private partial class Row_Echelon_Form
+    public partial class Row_Echelon_Form
     {
         public static REFResult RREF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
         {

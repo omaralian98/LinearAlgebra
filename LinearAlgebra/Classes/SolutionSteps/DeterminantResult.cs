@@ -20,4 +20,12 @@ public record DeterminantResult
         }
         return allChildren;
     }
+
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new();
+        stringBuilder.AppendLine(Value.ToString());
+        stringBuilder.AppendLine(Matrix.GetDeterminantMatrix());
+        return stringBuilder.ToString();
+    }
 }

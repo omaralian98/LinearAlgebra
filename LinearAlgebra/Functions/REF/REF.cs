@@ -2,7 +2,8 @@
 
 public partial class Linear
 {
-    private partial class Row_Echelon_Form
+
+    public partial class Row_Echelon_Form
     {
 
         public static int FindPivot(Fraction[,] matrix, int row)

@@ -213,10 +213,6 @@ public static class Extensions
             int vart = GetPad(c.matrix.GetColumn(j)) + 2;
             for (int i = 0; i < c.matrix.GetLength(0); i++)
             {
-                if (i == 0)
-                {
-                    Lines[index++] += String.Format(" {0, " + (vart - 2) + "} ", c.matrix[i, j]);
-                }
                 Lines[index++] += String.Format(" {0, " + vart + "} ", c.matrix[i, j]);
             }
         }

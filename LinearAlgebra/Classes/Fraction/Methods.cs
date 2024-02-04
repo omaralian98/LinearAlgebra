@@ -16,13 +16,15 @@ public partial struct Fraction
 
     public readonly Fraction GetAbs() => new (Math.Abs(Numerator), Denominator);
 
+    public readonly string ValueToString() => Quotient.ToString();
+
     public override string ToString()
     {
         if (Numerator == 0) return "0";
         if (Denominator == 1) return Numerator.ToString();
         else if (!Quotient.IsDecimal()) return Quotient.ToString();
         return $"{Numerator}/{Denominator}";
-    }
+    } 
 
     public ICoefficient Add(ICoefficient a, ICoefficient b)
     {

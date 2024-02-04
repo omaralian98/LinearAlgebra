@@ -71,7 +71,7 @@ public partial class Linear
         var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2String(), coe.Fraction2String());
     }
-    private partial class Row_Echelon_Form
+    public partial class Row_Echelon_Form
     {
         public static REFResult<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
         {

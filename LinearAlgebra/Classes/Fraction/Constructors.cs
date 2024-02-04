@@ -2,6 +2,7 @@
 
 public partial struct Fraction
 {
+    public Fraction(Fraction fraction) => this = fraction; 
     public Fraction(double num)
     {
         Numerator = num;
@@ -16,4 +17,6 @@ public partial struct Fraction
         Numerator = num / gcd;
         Numerator *= den < 0 ? -1 : 1;
     }
+
+    public Fraction(string fraction) : this((Fraction)fraction) { }
 }

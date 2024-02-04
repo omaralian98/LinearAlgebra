@@ -1,6 +1,6 @@
 ﻿namespace LinearAlgebra.Classes;
 
-public partial struct Fraction : ICoefficient
+public partial struct Fraction
 {
     public double Numerator;
     public double Denominator;

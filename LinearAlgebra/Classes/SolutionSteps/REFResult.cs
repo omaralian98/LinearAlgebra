@@ -27,7 +27,7 @@ public record REFResult<T> : REFResult where T : ICoefficient
 public record REFResult
 {
     public Fraction[,] Matrix { get; set; } = new Fraction[0, 0];
-    public string? Description { get; set; }
+    public string Description { get; set; } = "";
     public REFResult? NextStep { get; set; } = null;
     public virtual List<REFResult> GetAllChildren()
     {
