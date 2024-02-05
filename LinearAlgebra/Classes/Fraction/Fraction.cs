@@ -6,6 +6,18 @@ public partial struct Fraction
     public double Denominator;
     public readonly decimal Quotient
     {
-        get { return (decimal)Numerator / (decimal)Denominator; }
+        get 
+        {
+            decimal quotient;
+            try
+            {
+                quotient = (decimal)Numerator / (decimal)Denominator;
+            }
+            catch
+            {
+                quotient = (decimal)(Numerator / Denominator);
+            }
+            return quotient;
+        }
     }
 }

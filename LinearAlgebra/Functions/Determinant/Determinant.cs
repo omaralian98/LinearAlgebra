@@ -45,14 +45,14 @@ public partial class Linear
         return (string)result.Value;
     }
 
-    public static DeterminantResult[] DeterminantWithResult<T>(T[,] matrix)
+    public static Determinant_Result[] DeterminantWithResult<T>(T[,] matrix)
     {
         CheckCoherenceForDeterminant(matrix);
         var result = DeterminantClass.Determinant(matrix.GetFractions(), true);
         return [.. result.GetAllChildren()];
     }
 
-    public static (Fraction, REFResult[]) DeterminantWithResultUsingREF<T>(T[,] matrix)
+    public static (Fraction, REF_Result[]) DeterminantWithResultUsingREF<T>(T[,] matrix)
     {
         CheckCoherenceForDeterminant(matrix);
         var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions(), true);
@@ -74,18 +74,18 @@ public partial class Linear
 
     internal partial class DeterminantClass
     {
-        public static DeterminantResult Determinant(Fraction[,] matrix, bool solution = false)
+        public static Determinant_Result Determinant(Fraction[,] matrix, bool solution = false)
         {
             Fraction answer = new(0);
             int size = matrix.GetLength(0);
             if (size == 1)
             {
                 answer += matrix[0, 0];
-                return new DeterminantResult { Matrix = matrix, Value = answer };
+                return new Determinant_Result { Matrix = matrix, Value = answer };
             }
             else if (size >= 2)
             {
-                DeterminantResult[] matrixSteps = new DeterminantResult[size];
+                Determinant_Result[] matrixSteps = new Determinant_Result[size];
                 for (int i = 0; i < size; i++)
                 {
                     var errasedMatrix = Erase(0, i, matrix);
@@ -94,7 +94,7 @@ public partial class Linear
                     answer += scalar * det.Value;
                     matrixSteps[i] = det with { Scalar = scalar };
                 }
-                return new DeterminantResult
+                return new Determinant_Result
                 {
                     Value = answer,
                     MatrixSteps = solution ? matrixSteps : [],

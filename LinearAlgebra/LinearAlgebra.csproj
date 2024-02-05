@@ -11,4 +11,10 @@
     <PackageReference Include="MathNet.Symbolics" Version="0.24.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Functions\Transpose\" />
+    <Folder Include="Functions\Trace\" />
+    <Folder Include="Functions\Rank\" />
+  </ItemGroup>
+
 </Project>

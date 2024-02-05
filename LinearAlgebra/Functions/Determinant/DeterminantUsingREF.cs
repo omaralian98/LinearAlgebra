@@ -4,7 +4,7 @@ public partial class Linear
 {
     internal partial class DeterminantClass
     {
-        public static (Fraction, REFResult) DeterminantUsingREF(Fraction[,] matrix, bool solution = false)
+        public static (Fraction, REF_Result) DeterminantUsingREF(Fraction[,] matrix, bool solution = false)
         {
             var result = Row_Echelon_Form.REF(matrix, true);
             int opt = 0;
@@ -33,7 +33,7 @@ public partial class Linear
             }
             else
             {
-                return (determinant, new REFResult()
+                return (determinant, new REF_Result()
                 {
                     Matrix = matrix,
                     Description = description

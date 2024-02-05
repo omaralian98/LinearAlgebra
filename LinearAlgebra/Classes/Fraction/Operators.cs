@@ -86,12 +86,12 @@ public partial struct Fraction
 
     public static implicit operator Fraction(double num)
     {
-        return new Fraction(num, 1);
+        return ConvertDecimalToFraction(num);
     }
 
     public static implicit operator Fraction(decimal num)
     {
-        return new Fraction((double)num, 1);
+        return ConvertDecimalToFraction((double)num);
     }
 
     public static implicit operator Fraction(string fraction)
@@ -106,6 +106,10 @@ public partial struct Fraction
                 return new Fraction(num, den);
             }
             catch { }
+        }
+        else if (fraction.Contains('.'))
+        {
+            return ConvertDecimalToFraction(Convert.ToDouble(fraction));
         }
         else
         {

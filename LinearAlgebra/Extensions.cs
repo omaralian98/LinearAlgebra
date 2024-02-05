@@ -76,17 +76,7 @@ public static class Extensions
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
                 string t = oldMatrix[i, j]?.ToString() ?? "0";
-                if (t.Contains('/'))
-                {
-                    Fraction fraction = String2Fraction(t);
-                    if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
-                    matrix[i, j] = fraction;
-                }
-                else
-                {
-                    if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                    matrix[i, j] = new Fraction(Convert.ToDouble(t));
-                }
+                matrix[i, j] = t;
             }
         }
         return matrix;
@@ -98,17 +88,7 @@ public static class Extensions
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
             string t = oldMatrix[i]?.ToString() ?? "0";
-            if (t.Contains('/'))
-            {
-                Fraction fraction = String2Fraction(t);
-                if (fraction.Denominator == 0) throw new DivideByZeroException("You can't divide by zero");
-                matrix[i] = fraction;
-            }
-            else
-            {
-                if (t.IsDecimal()) throw new ArithmeticException("We don't support decimal numbers try passing it as a string matrix separating the numerator from the denominator by slash('/') a/b");
-                matrix[i] = new Fraction(Convert.ToDouble(t));
-            }
+            matrix[i] = t;
         }
         return matrix;
     }

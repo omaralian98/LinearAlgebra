@@ -1,15 +1,15 @@
 ﻿namespace LinearAlgebra.Classes;
 
-public record DeterminantResult
+public record Determinant_Result
 {
     public Fraction[,] Matrix { get; set; } = new Fraction[0, 0];
     public Fraction Value { get; set; } = new Fraction(0);
     public Fraction Scalar { get; set; } = new Fraction(1);
-    public DeterminantResult[] MatrixSteps { get; set; } = [];
+    public Determinant_Result[] MatrixSteps { get; set; } = [];
 
-    public List<DeterminantResult> GetAllChildren()
+    public List<Determinant_Result> GetAllChildren()
     {
-        List<DeterminantResult> allChildren = [this];
+        List<Determinant_Result> allChildren = [this];
 
         if (MatrixSteps is not null && MatrixSteps.Length > 0)
         {

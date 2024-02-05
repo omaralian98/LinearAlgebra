@@ -1,6 +1,6 @@
 ﻿namespace LinearAlgebra.Classes;
 
-public partial struct Fraction : ICoefficient, IConvertible
+public partial struct Fraction : IConvertible
 {
     public TypeCode GetTypeCode()
     {

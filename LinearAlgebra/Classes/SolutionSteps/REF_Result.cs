@@ -1,12 +1,12 @@
 ﻿namespace LinearAlgebra.Classes;
 
-public record REFResult<T> : REFResult where T : ICoefficient
+public record REF_Result<T> : REF_Result where T : ICoefficient
 {
     public T[] Coefficient { get; set; } = [];
-    public new REFResult<T>? NextStep { get; set; } = null;
-    public new List<REFResult<T>> GetAllChildren()
+    public new REF_Result<T>? NextStep { get; set; } = null;
+    public new List<REF_Result<T>> GetAllChildren()
     {
-        List<REFResult<T>> allChildren = [];
+        List<REF_Result<T>> allChildren = [];
         var temp = this;
         while (temp is not null)
         {
@@ -24,14 +24,14 @@ public record REFResult<T> : REFResult where T : ICoefficient
         return stringBuilder.ToString();
     }
 }
-public record REFResult
+public record REF_Result
 {
     public Fraction[,] Matrix { get; set; } = new Fraction[0, 0];
     public string Description { get; set; } = "";
-    public REFResult? NextStep { get; set; } = null;
-    public virtual List<REFResult> GetAllChildren()
+    public REF_Result? NextStep { get; set; } = null;
+    public virtual List<REF_Result> GetAllChildren()
     {
-        List<REFResult> allChildren = [];
+        List<REF_Result> allChildren = [];
         var temp = this;
         while (temp is not null)
         {

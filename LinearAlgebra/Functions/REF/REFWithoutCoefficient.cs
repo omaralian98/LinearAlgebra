@@ -53,12 +53,12 @@ public partial class Linear
     }
     public partial class Row_Echelon_Form
     {
-        public static REFResult REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
+        public static REF_Result REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
         {
             int matrixRows = matrix.GetLength(0);
             int matrixColumns = matrix.GetLength(1);
-            REFResult? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
-            REFResult? current = result;
+            REF_Result? result = solution ? new() { Matrix = (Fraction[,])matrix.Clone() } : null;
+            REF_Result? current = result;
             for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
             {
                 if (token.IsCancellationRequested)
@@ -70,10 +70,10 @@ public partial class Linear
                 ReOrderMatrix(matrix, currentRow, currentColumn, ref current);
                 ClearPivotColumn(matrix, currentRow, currentColumn, reduced: false, ref current);
             }
-            return result is not null ? result : new REFResult { Matrix = matrix };
+            return result is not null ? result : new REF_Result { Matrix = matrix };
         }
 
-        private static void ReOrderMatrix(Fraction[,] matrix, int x, int y, ref REFResult? solution)
+        private static void ReOrderMatrix(Fraction[,] matrix, int x, int y, ref REF_Result? solution)
         {
             y = CheckPossibleSwap(x, y, matrix);
             if (y > 0)
@@ -82,7 +82,7 @@ public partial class Linear
 
                 if (solution is not null)
                 {
-                    solution.NextStep = new REFResult
+                    solution.NextStep = new REF_Result
                     {
                         Description = $"Swap between R{x + 1} and R{y + 1}",
                         Matrix = (Fraction[,])matrix.Clone(),
@@ -92,7 +92,7 @@ public partial class Linear
             }
         }
 
-        public static void ClearPivotColumn(Fraction[,] matrix, int pivotRow, int column, bool reduced, ref REFResult? solution)
+        public static void ClearPivotColumn(Fraction[,] matrix, int pivotRow, int column, bool reduced, ref REF_Result? solution)
         {
             int targetedRow = reduced ? 0 : pivotRow;
             for (; targetedRow < matrix.GetLength(0); targetedRow++)
@@ -103,7 +103,7 @@ public partial class Linear
 
                 if (solution is not null)
                 {
-                    solution.NextStep = new REFResult
+                    solution.NextStep = new REF_Result
                     {
                         Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
                         Matrix = (Fraction[,])matrix.Clone(),
