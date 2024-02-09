@@ -8,37 +8,48 @@ public partial class Linear
         string errorMessage = $"The matrix of coefficients should be consistent with the original matrix.\nThe matrix has {matrix.GetLength(0)} rows and the coefficient has {coefficient.Length} rows";
         if (matrix.GetLength(0) != coefficient?.GetLength(0)) throw new ArgumentException(errorMessage);
     }
+
     /// <summary>
-    /// Aka: Row Echelon Form.
+    /// Returns the REF of the given matrix and the coefficient.
     /// </summary>
     /// <param name="matrix">The matrix you want to get it's REF</param>
     /// <returns>
-    /// Returns the REF of the giving matrix, and it's coefficient as Value arraies
+    /// Returns the REF of the giving matrix, and it's coefficient as Fraction arraies
     /// <br></br>
-    /// **Note**: Value is a struct that you can access like this:
+    /// **Note**: Fraction is a struct that you can access like this:
     /// <br></br>
-    /// LinearAlgebra.Linear.Value
+    /// LinearAlgebra.Linear.Fraction
     /// </returns>
+    /// <remarks>Aka: Row Echelon Form.</remarks>
     /// <exception cref="ArithmeticException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="DivideByZeroException"></exception>
-    public static (Fraction[,], SpecialString[]) REFAsSpecialString(Fraction[,] matrix)
+    public static (Fraction[,], SpecialString[]) REFAsSpecialString<T>(T[,] matrix, SpecialString[]? coefficient = null)
     {
-        var coefficient = SpecialString.GetVariableMatrix(matrix.GetLength(0));
-        var result = Row_Echelon_Form.REF(matrix, coefficient);
-        return (result.Matrix, result.Coefficient);
-    }
-    public static (Fraction[,], Fraction[]) REFAsFraction(Fraction[,] matrix, Fraction[] coefficient)
-    {
+        coefficient ??= SpecialString.GetVariableMatrix(matrix.GetLength(0));
         CheckCoherenceForREF(matrix, coefficient);
-        var result = Row_Echelon_Form.REF(matrix, coefficient);
+        REF_Result<SpecialString> result = Row_Echelon_Form.REF(matrix.GetFractions(), coefficient).First();
         return (result.Matrix, result.Coefficient);
     }
-
-    public static string[] REFGetCoefficientAsStrings<T>(T[,] matrix)
+    
+    /// <summary>
+    /// Returns the REF of the given matrix and the coefficient.
+    /// </summary>
+    /// <typeparam name="T">The type of the matrix</typeparam>
+    /// <typeparam name="S">The type of the coefficient</typeparam>
+    /// <param name="matrix">The matrix you want to get it's REF</param>
+    /// <param name="coefficient">The coefficient of the matrix</param>
+    /// <returns>2d array of type Fraction that represent the matrix and a Fraction array that represent the coefficient</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static (Fraction[,], Fraction[]) REFAsFraction<T, S>(T[,] matrix, S[] coefficient)
     {
-        var (result, coe) = REFAsSpecialString(matrix.GetFractions());
-        return coe.SpecialString2String();
+        if (typeof(S) == typeof(SpecialString))
+        {
+            throw new ArgumentException($"The coefficient can't be {typeof(S)}", nameof(coefficient));
+        }
+        CheckCoherenceForREF(matrix, coefficient);
+        var result = Row_Echelon_Form.REF(matrix.GetFractions(), coefficient.GetFractions()).First();
+        return (result.Matrix, result.Coefficient);
     }
 
     /// <summary>
@@ -56,6 +67,7 @@ public partial class Linear
         var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2Decimal(), coe.Fraction2Decimal());
     }
+   
     /// <summary>
     /// Aka: Row Echelon Form.
     /// </summary>
@@ -71,20 +83,21 @@ public partial class Linear
         var (result, coe) = REFAsFraction(matrix.GetFractions(), coefficient.GetFractions());
         return (result.Fraction2String(), coe.Fraction2String());
     }
+
     public partial class Row_Echelon_Form
     {
-        public static REF_Result<T> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
+        public static IEnumerable<REF_Result<T>> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
         {
             int matrixRows = matrix.GetLength(0); //Gets the number of rows
             int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-            REF_Result<T>? result = solution ? new()
+            if (solution) yield return new()
             {
                 Matrix = (Fraction[,])matrix.Clone(),
                 Coefficient = (T[])coefficient.Clone()
-            } : null;
-            REF_Result<T>? current = result;
+            };
             for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
             {
+                REF_Result<T>? current = solution ? new() : null;
                 if (token.IsCancellationRequested)
                 {
                     throw new TaskCanceledException("Task was canceled.");
@@ -92,9 +105,17 @@ public partial class Linear
                 int currentColumn = FindPivot(matrix, currentRow);
                 if (currentColumn == -1) continue;
                 ReOrderMatrix(matrix, coefficient, currentRow, currentColumn, ref current);
-                ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, ref current);
+                if (current?.Matrix.GetLength(0) != 0 && solution) yield return current!;
+                var cur = ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: false, solution);
+                foreach (var step in cur)
+                {
+                    yield return step;
+                }
             }
-            return result is not null ? result : new REF_Result<T> { Matrix = matrix, Coefficient = coefficient };
+            if (!solution)
+            {
+                yield return new() { Matrix = matrix, Coefficient = coefficient };
+            }
         }
         private static void ReOrderMatrix<T>(Fraction[,] matrix, T[] coefficient, int x, int y, ref REF_Result<T>? solution) where T : ICoefficient
         {
@@ -106,18 +127,17 @@ public partial class Linear
 
                 if (solution is not null)
                 {
-                    solution.NextStep = new REF_Result<T>
+                    solution = new REF_Result<T>
                     {
                         Description = $"Swap between R{x + 1} and R{y + 1}",
                         Coefficient = (T[])coefficient.Clone(),
                         Matrix = (Fraction[,])matrix.Clone(),
                     };
-                    solution = solution.NextStep;
                 }
             }
         }
 
-        private static void ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, ref REF_Result<T>? solution) where T : ICoefficient
+        private static IEnumerable<REF_Result<T>> ClearPivotColumn<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int column, bool reduced, bool solution= false) where T : ICoefficient
         {
             int targetedRow = reduced ? 0 : pivotRow;
             for (; targetedRow < matrix.GetLength(0); targetedRow++)
@@ -127,15 +147,14 @@ public partial class Linear
                 matrix = ClearRow(pivotRow, targetedRow, column, scalar, matrix);
                 coefficient[targetedRow] = (T)((coefficient[pivotRow] * scalar) + coefficient[targetedRow]);
 
-                if (solution is not null)
+                if (solution)
                 {
-                    solution.NextStep = new REF_Result<T>
+                    yield return new REF_Result<T>
                     {
                         Description = $"{scalar}R{pivotRow + 1} + R{targetedRow + 1} ----> R{targetedRow + 1}",
                         Coefficient = (T[])coefficient.Clone(),
                         Matrix = (Fraction[,])matrix.Clone(),
                     };
-                    solution = solution.NextStep;
                 }
             }
         }

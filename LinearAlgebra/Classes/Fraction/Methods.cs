@@ -28,18 +28,22 @@ public partial struct Fraction
 
     private const decimal Min = -9;
     private const decimal Max = 9;
-    public static Fraction[,] GenerateRandomMatrix(int row, int column = 1, decimal min = Min, decimal max = Max, bool simplify = true, bool preferInteger = false)
+    public static Fraction[,] GenerateRandomMatrix(int row, int column = 1, bool IntegersOnly = false, decimal min = Min, decimal max = Max, bool simplify = true, bool preferInteger = false)
     {
         if (max - min < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(min), "Shouldn't be greater than max");
         }
         Fraction[,] matrix = new Fraction[row, column];
+        Random rand = new();
+        int minInt = Convert.ToInt32(min);
+        int maxInt = Convert.ToInt32(max);
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < column; j++)
             {
-                matrix[i, j] = GenerateRandomFraction(min, max, simplify, preferInteger);
+                if (IntegersOnly) matrix[i, j] = rand.Next(minInt, maxInt);
+                else matrix[i, j] = GenerateRandomFraction(min, max, simplify, preferInteger);
             }
         }
         return matrix;

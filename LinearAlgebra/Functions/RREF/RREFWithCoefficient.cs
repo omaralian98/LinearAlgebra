@@ -4,18 +4,18 @@ public partial class Linear
 {
     public partial class Row_Echelon_Form
     {
-        public static REF_Result<T> RREF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
+        public static IEnumerable<REF_Result<T>> RREF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
         {
             int matrixRows = matrix.GetLength(0); //Gets the number of rows
             int matrixColumns = matrix.GetLength(1); //Gets the number of columns
-            REF_Result<T>? result = solution ? new()
+            if (solution) yield return new()
             {
                 Matrix = (Fraction[,])matrix.Clone(),
                 Coefficient = (T[])coefficient.Clone()
-            } : null;
-            REF_Result<T>? current = result;
+            };
             for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
             {
+                REF_Result<T>? current = solution ? new() : null;
                 if (token.IsCancellationRequested)
                 {
                     throw new TaskCanceledException("Task was canceled.");
@@ -23,10 +23,19 @@ public partial class Linear
                 int currentColumn = FindPivot(matrix, currentRow);
                 if (currentColumn == -1) continue;
                 ReOrderMatrix(matrix, coefficient, currentRow, currentColumn, ref current);
-                ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: true, ref current);
+                if (current?.Matrix.GetLength(0) != 0 && solution) yield return current!;
+                var cur = ClearPivotColumn(matrix, coefficient, currentRow, currentColumn, reduced: true, solution);
+                foreach (var step in cur)
+                {
+                    yield return step;
+                }
                 ClearPivotRow(matrix, coefficient, currentRow, currentColumn, ref current);
+                if (current?.Matrix.GetLength(0) != 0 && solution) yield return current!;
             }
-            return result is not null ? result : new REF_Result<T> { Matrix = matrix, Coefficient = coefficient };
+            if (!solution)
+            {
+                yield return new() { Matrix = matrix, Coefficient = coefficient };
+            }
         }
 
         private static void ClearPivotRow<T>(Fraction[,] matrix, T[] coefficient, int pivotRow, int pivoColumn, ref REF_Result<T>? solution) where T : ICoefficient
@@ -41,13 +50,12 @@ public partial class Linear
 
             if (solution is not null)
             {
-                solution.NextStep = new REF_Result<T>
+                solution = new REF_Result<T>
                 {
                     Description = $"{scalar}R{pivotRow + 1} ----> R{pivotRow + 1}",
                     Coefficient = (T[])coefficient.Clone(),
                     Matrix = (Fraction[,])matrix.Clone(),
                 };
-                solution = solution.NextStep;
             }
         }
     }

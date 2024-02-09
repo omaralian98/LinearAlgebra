@@ -5,8 +5,8 @@ namespace Unit
         [Fact]
         public void Test1()
         {
-            decimal[,] matrix = { {5, 1, 2 }, {1, 3, 7}, {2, 7, 6} };
-            decimal[,] expectedValue = { {5, 1, 2 }, {0, 14m/5, 33m/5}, {0, 0, -145m/14} };
+            decimal[,] matrix = { { 5, 1, 2 }, { 1, 3, 7 }, { 2, 7, 6 } };
+            decimal[,] expectedValue = { { 5, 1, 2 }, { 0, 14m / 5, 33m / 5 }, { 0, 0, -145m / 14 } };
             decimal[,] realValue = Linear.REF(matrix);
             Assert.Equal(expectedValue, realValue);
         }
@@ -15,7 +15,7 @@ namespace Unit
         public void Test2()
         {
             double[,] matrix = { { 5, 6, 6 }, { 1, 9, 5 }, { 4, 5, 9 } };
-            decimal[,] expectedValue = { { 5, 6, 6 }, { 0, 39m/5, 19m/5 }, { 0, 0, 160m/39 } };
+            decimal[,] expectedValue = { { 5, 6, 6 }, { 0, 39m / 5, 19m / 5 }, { 0, 0, 160m / 39 } };
             decimal[,] realValue = Linear.REF(matrix);
             Assert.Equal(expectedValue, realValue);
         }
@@ -36,12 +36,6 @@ namespace Unit
             Assert.Equal(expectedValue, realValue);
         }
         [Fact]
-        public void Test5()
-        {
-            string[,] matrix = { { "2.5", "1", "2" }, { "1", "3", "7" }, { "2", "7", "6" } };
-            Assert.Throws<ArithmeticException>(() => Linear.REFAsString(matrix));
-        }
-        [Fact]
         public void Test6()
         {
             string[,] matrix = { { "10/0", "1", "2" }, { "1", "3", "7" }, { "2", "7", "6" } };
@@ -57,16 +51,16 @@ namespace Unit
         [Fact]
         public void Test8()
         {
-            decimal[,] matrix =  { { 1, 3 }, { 9, 3 }, { 1, 9 } };
-            decimal[,] expectedValue = { { 1, 3 }, { 0, -24 }, { 0, 0 } }; 
+            decimal[,] matrix = { { 1, 3 }, { 9, 3 }, { 1, 9 } };
+            decimal[,] expectedValue = { { 1, 3 }, { 0, -24 }, { 0, 0 } };
             var realValue = Linear.REF(matrix);
             Assert.Equal(expectedValue, realValue);
         }
         [Fact]
         public void Test9()
         {
-            decimal[,] matrix = { { 3, 5}, { 8, 5 }, { 9, 8 }, { 1, 6 } };
-            string[,] expectedValue = { { "3", "5" }, { "0", "-25/3" }, { "0", "0" }, { "0", "0" } }; 
+            decimal[,] matrix = { { 3, 5 }, { 8, 5 }, { 9, 8 }, { 1, 6 } };
+            string[,] expectedValue = { { "3", "5" }, { "0", "-25/3" }, { "0", "0" }, { "0", "0" } };
             var realValue = Linear.REFAsString(matrix);
             Assert.Equal(expectedValue, realValue);
         }

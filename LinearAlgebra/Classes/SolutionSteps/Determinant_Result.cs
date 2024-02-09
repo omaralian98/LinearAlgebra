@@ -10,13 +10,9 @@ public record Determinant_Result
     public List<Determinant_Result> GetAllChildren()
     {
         List<Determinant_Result> allChildren = [this];
-
-        if (MatrixSteps is not null && MatrixSteps.Length > 0)
+        foreach (var childMatrixStep in MatrixSteps)
         {
-            foreach (var childMatrixStep in MatrixSteps)
-            {
-                allChildren.AddRange(childMatrixStep.GetAllChildren());
-            }
+            allChildren.AddRange(childMatrixStep.GetAllChildren());
         }
         return allChildren;
     }

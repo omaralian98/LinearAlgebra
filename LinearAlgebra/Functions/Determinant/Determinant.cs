@@ -52,11 +52,11 @@ public partial class Linear
         return [.. result.GetAllChildren()];
     }
 
-    public static (Fraction, REF_Result[]) DeterminantWithResultUsingREF<T>(T[,] matrix)
+    public static REF_Result[] DeterminantWithResultUsingREF<T>(T[,] matrix, out Fraction determinant)
     {
         CheckCoherenceForDeterminant(matrix);
-        var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions(), true);
-        return (result.Item1, [.. result.Item2.GetAllChildren()]);
+        var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions(), out determinant, true);
+        return [..result];
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public partial class Linear
     }
 
 
-    internal partial class DeterminantClass
+    private partial class DeterminantClass
     {
         public static Determinant_Result Determinant(Fraction[,] matrix, bool solution = false)
         {
@@ -90,7 +90,7 @@ public partial class Linear
                 {
                     var errasedMatrix = Erase(0, i, matrix);
                     Fraction scalar = i % 2 == 0 ? matrix[0, i] : -matrix[0, i];
-                    var det = Determinant(errasedMatrix);
+                    var det = Determinant(errasedMatrix, solution);
                     answer += scalar * det.Value;
                     matrixSteps[i] = det with { Scalar = scalar };
                 }

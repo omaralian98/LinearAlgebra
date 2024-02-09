@@ -2,12 +2,8 @@
 
 public partial struct Fraction
 {
-    public Fraction(Fraction fraction) => this = fraction; 
-    public Fraction(double num)
-    {
-        Numerator = num;
-        Denominator = 1;
-    }
+    public Fraction(Fraction fraction) => this = fraction;
+    public Fraction(double num) : this(num, 1) { }
 
     public Fraction(double num, double den)
     {

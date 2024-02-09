@@ -1,5 +1,7 @@
 ﻿using LinearAlgebra;
 using LinearAlgebra.Classes;
+using Newtonsoft.Json.Linq;
+using static LinearAlgebra.Linear;
 namespace Mr_Sure21
 {
 
@@ -14,21 +16,15 @@ namespace Mr_Sure21
                 { 1, 9, 7, 2 },
                 { 0, 1, 3, 3 },
             };
-            Fraction[,] randomMatrix = Fraction.GenerateRandomMatrix(4, 4);
-            decimal[,] matr =
-            {
-                { 1, 2, 3 },
-                { 4, 5, 6 },
-            };
 
-            decimal[,] matr2 =
+            var mat = Fraction.GenerateRandomMatrix(4, 4, IntegersOnly: true);
+            var res = DeterminantClass.Determinant(mat, true);
+            Console.WriteLine(res.MatrixSteps[0].MatrixSteps.Length);
+            foreach (var step in res.GetAllChildren())
             {
-                { 7, 8 },
-                { 9, 10 },
-                { 11, 12 },
-            };
+                Console.WriteLine(step);
+            }
 
-            Console.WriteLine(Linear.Multiplication.Multiply(matr.GetFractions(), matr2.GetFractions()).GetMatrix());
         }
     }
 }

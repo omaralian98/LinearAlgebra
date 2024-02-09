@@ -1,4 +1,6 @@
-﻿namespace LinearAlgebra.Classes;
+﻿using MathNet.Numerics;
+
+namespace LinearAlgebra.Classes;
 
 public partial struct Fraction
 {
@@ -96,19 +98,52 @@ public partial struct Fraction
 
     public static implicit operator Fraction(string fraction)
     {
-        var index = fraction.IndexOf('/');
+        static int MiddleIndexOf(string str, char a)
+        {
+            int counter = 0;
+            List<int> Indexes = [];
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == a)
+                {
+                    Indexes.Add(i);
+                    counter++;
+                }
+            }
+            if (counter == 0) return -1;
+            else if (counter.IsEven()) return -2;
+            else return Indexes[(counter - 1) / 2];
+        }
+        var index = MiddleIndexOf(fraction, '/');
         if (index != -1)
         {
             try
             {
+                if (fraction.IndexOf('/', startIndex: index + 1) != -1)
+                {
+                    Fraction num1 = fraction[..index];
+                    Fraction den1 = fraction[(index + 1)..];
+                    return num1 / den1;
+                }
                 double num = Convert.ToDouble(fraction[..index]);
                 double den = Convert.ToDouble(fraction[(index + 1)..]);
+                if (num.IsDecimal() || den.IsDecimal())
+                {
+                    var numer = ConvertDecimalToFraction(num);
+                    var deno = ConvertDecimalToFraction(den);
+                    return numer / deno;
+                }
                 return new Fraction(num, den);
+            }
+            catch (DivideByZeroException ex)
+            {
+                throw new DivideByZeroException();
             }
             catch { }
         }
-        else if (fraction.Contains('.'))
+        else if (fraction.Contains('.') && index == -2)
         {
+            Console.WriteLine(fraction);
             return ConvertDecimalToFraction(Convert.ToDouble(fraction));
         }
         else
@@ -119,7 +154,7 @@ public partial struct Fraction
             }
         }
         throw new FormatException("Fraction was not in a correct format\nAccepted Formats:" +
-            "\n1) {Numerator}/{Denominator}\n2) {Numerator}");
+            "\n1) {Numerator:T}/{Denominator:T}\n2) {Numerator}");
     }
 
     public static explicit operator decimal(Fraction a) => a.Quotient;

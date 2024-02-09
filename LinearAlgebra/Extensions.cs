@@ -1,15 +1,19 @@
-﻿namespace LinearAlgebra;
+﻿using MathNet.Symbolics;
+using Microsoft.FSharp.Core;
+using System.Numerics;
+
+namespace LinearAlgebra;
 
 public static class Extensions
 {
-    public static string[,] Fraction2String(this Fraction[,] t)
+    public static string[,] Fraction2String(this Fraction[,] t, bool getDecimal = false)
     {
         string[,] answer = new string[t.GetLength(0), t.GetLength(1)];
         for (int i = 0; i < answer.GetLength(0); i++)
         {
             for (int j = 0; j < answer.GetLength(1); j++)
             {
-                answer[i, j] = t[i, j].ToString();
+                answer[i, j] = getDecimal ? t[i, j].ValueToString() : t[i, j].ToString();
             }
         }
         return answer;
@@ -25,14 +29,15 @@ public static class Extensions
         return answer;
     }
 
-    public static decimal[,] Fraction2Decimal(this Fraction[,] t)
+    public static decimal[,] Fraction2Decimal(this Fraction[,] t, int decimals = -1)
     {
         decimal[,] a = new decimal[t.GetLength(0), t.GetLength(1)];
         for (int i = 0; i < a.GetLength(0); i++)
         {
             for (int j = 0; j < a.GetLength(1); j++)
             {
-                a[i, j] = t[i, j].Quotient;
+                if (decimals > -1) a[i, j] = Math.Round(t[i, j].Quotient, decimals);
+                else a[i, j] = t[i, j].Quotient;
             }
         }
         return a;
@@ -75,8 +80,8 @@ public static class Extensions
         {
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                string t = oldMatrix[i, j]?.ToString() ?? "0";
-                matrix[i, j] = t;
+                string value = oldMatrix[i, j]?.ToString() ?? "0";
+                matrix[i, j] = (Fraction)value;
             }
         }
         return matrix;
@@ -87,24 +92,21 @@ public static class Extensions
         Fraction[] matrix = new Fraction[oldMatrix.GetLength(0)];
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
-            string t = oldMatrix[i]?.ToString() ?? "0";
-            matrix[i] = t;
+            string value = oldMatrix[i]?.ToString() ?? "0";
+            matrix[i] = (Fraction)value;
         }
         return matrix;
     }
 
     public static bool IsDecimal<T>(this T it)
     {
-        string item = it?.ToString() ?? "";
-        return item.Contains('.');
-    }
+        if (typeof(double) == typeof(T))
+        {
+            return double.IsInteger(Convert.ToDouble(it));
+        }
 
-    public static Fraction String2Fraction(this string a)
-    {
-        int indexOfSlash = a.IndexOf('/');
-        double dividend = Convert.ToDouble(a[0..indexOfSlash]);
-        double divisor = Convert.ToDouble(a[(indexOfSlash + 1)..a.Length]);
-        return new Fraction(dividend, divisor);
+        string str = it?.ToString() ?? "";
+        return str.Contains('.');
     }
 
     public static string GetDeterminantMatrix<T>(this T[,] matrix)
@@ -182,8 +184,12 @@ public static class Extensions
         return result;
     }
 
-    public static string GetMatrix<T, S>(this (T[,] matrix, S[] coefficient) c)
+    public static string GetMatrix<T, S>(this (T[,]? matrix, S[]? coefficient) c)
     {
+        if (c.coefficient is null && c.matrix is not null) return GetMatrix(c.matrix);
+        else if (c.matrix is null && c.coefficient is not null) return GetMatrix(c.coefficient);
+        else if (c.matrix is null && c.coefficient is null) return "";
+        if (c.matrix!.GetLength(0) != c.coefficient!.GetLength(0)) throw new InvalidOperationException();
         string[] Lines = new string[c.matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
         int index;

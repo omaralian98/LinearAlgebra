@@ -1,44 +1,39 @@
-﻿namespace LinearAlgebra;
+﻿using MathNet.Numerics;
+
+namespace LinearAlgebra;
 
 public partial class Linear
 {
-    internal partial class DeterminantClass
+    private partial class DeterminantClass
     {
-        public static (Fraction, REF_Result) DeterminantUsingREF(Fraction[,] matrix, bool solution = false)
+        public static IEnumerable<REF_Result> DeterminantUsingREF(Fraction[,] matrix, out Fraction determinant, bool solution = false)
         {
-            var result = Row_Echelon_Form.REF(matrix, true);
+            var refSteps = Row_Echelon_Form.REF(matrix, solution: true);
+            List<REF_Result> steps = [];
             int opt = 0;
             string description = "";
-            Fraction determinant = new(1);
-            var step = result.GetAllChildren();
-            for (int i = 0; i < step.Count; i++)
+            determinant = new(1);
+            foreach (var step in refSteps)
             {
-                if (step[i].Description.Contains("Swap")) opt++;
-                if (i + 1 == step.Count)
-                {
-                    for (int j = 0; j < step[i].Matrix.GetLength(0); j++)
-                    {
-                        determinant *= step[i].Matrix[j, j];
-                        description += $" {step[i].Matrix[j, j]} *";
-                    }
-                    determinant *= opt % 2 == 0 ? 1 : -1;
-                    description = description[1..];
-                    description += $" (-1)^{opt} = {determinant}";
-                    step[i].Description += $"\n{description}";
-                }
+                if (step.Description.Contains("Swap")) opt++;
+                if (solution) steps.Add(step);
             }
-            if (solution)
+            var result = solution ?  steps[^1] : new REF_Result()
             {
-                return (determinant, result);
-            }
-            else
+                Matrix = matrix,
+                Description = description
+            };
+            for (int i = 0; i < result.Matrix.GetLength(0); i++)
             {
-                return (determinant, new REF_Result()
-                {
-                    Matrix = matrix,
-                    Description = description
-                });
+                determinant *= result.Matrix[i, i];
+                description += $" {result.Matrix[i, i]} *";
             }
+            determinant *= opt.IsEven() ? 1 : -1;
+            description = description[1..];
+            description += $" (-1)^{opt} = {determinant}";
+            result.Description += solution ? $"\n{description}": description;
+            steps.Add(result);
+            return steps;
         }
     }
 }

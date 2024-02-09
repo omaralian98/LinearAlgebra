@@ -19,7 +19,7 @@ public partial class Linear
         //    StepDescription = "We get the Row Echelon Form(REF) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
         //    Matrix = matrix.GetFractions()
         //});
-        REF(matrix);
+        //REF(matrix);
         int rank = 0;
         for (int x = 0; x < matrix.GetLength(0); x++)
         {
