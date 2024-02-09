@@ -53,7 +53,7 @@ public partial class Linear
         return result.Matrix.Fraction2String();
     }
 
-    public partial class Row_Echelon_Form
+    private partial class Row_Echelon_Form
     {
         public static IEnumerable<REF_Result> REF(Fraction[,] matrix, bool solution = false, CancellationToken token = default)
         {

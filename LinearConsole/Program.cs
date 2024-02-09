@@ -18,11 +18,11 @@ namespace Mr_Sure21
             };
 
             var mat = Fraction.GenerateRandomMatrix(4, 4, IntegersOnly: true);
-            var res = DeterminantClass.Determinant(mat, true);
-            Console.WriteLine(res.MatrixSteps[0].MatrixSteps.Length);
-            foreach (var step in res.GetAllChildren())
+            var res = Linear.DeterminantWithResultUsingREF(mat, out Fraction determinant);
+            foreach (var step in res)
             {
-                Console.WriteLine(step);
+                Console.WriteLine(step.Description);
+                Console.WriteLine(step.Matrix.GetMatrix());
             }
 
         }

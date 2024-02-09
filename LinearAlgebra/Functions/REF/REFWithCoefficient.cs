@@ -84,7 +84,7 @@ public partial class Linear
         return (result.Fraction2String(), coe.Fraction2String());
     }
 
-    public partial class Row_Echelon_Form
+    private partial class Row_Echelon_Form
     {
         public static IEnumerable<REF_Result<T>> REF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
         {

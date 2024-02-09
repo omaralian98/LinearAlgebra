@@ -2,7 +2,7 @@
 
 public partial class Linear
 {
-    public partial class Row_Echelon_Form
+    private partial class Row_Echelon_Form
     {
         public static IEnumerable<REF_Result<T>> RREF<T>(Fraction[,] matrix, T[] coefficient, bool solution = false, CancellationToken token = default) where T : ICoefficient
         {
