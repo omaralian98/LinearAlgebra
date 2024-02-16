@@ -1,12 +1,19 @@
-﻿namespace LinearAlgebra.Classes;
+﻿using System.Text.Json.Serialization;
 
-public record REF_Result<T> : REF_Result where T : ICoefficient
+namespace LinearAlgebra.Classes;
+
+[Serializable]
+public record REF_Result<T, S> : REF_Result<T>
 {
-    public T[] Coefficient { get; set; } = [];
+    [JsonPropertyName("Coefficient")]
+    public S[] Coefficient { get; set; } = [];
 }
 
-public record REF_Result
+[Serializable]
+public record REF_Result<T>
 {
-    public Fraction[,] Matrix { get; set; } = new Fraction[0, 0];
+    [JsonPropertyName("Matrix")]
+    public T[,] Matrix { get; set; } = new T[0, 0];
+    [JsonPropertyName("Description")]
     public string Description { get; set; } = "";
 }

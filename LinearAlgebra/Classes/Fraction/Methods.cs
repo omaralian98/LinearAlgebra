@@ -15,6 +15,8 @@ public partial struct Fraction
     }
 
     public readonly Fraction GetAbs() => new (Math.Abs(Numerator), Denominator);
+    public readonly decimal GetDecimalAbs() => Math.Abs(Quotient);
+
 
     public readonly string ValueToString() => Quotient.ToString();
 
@@ -131,6 +133,33 @@ public partial struct Fraction
                 // Middle is our best fraction
                 return new Fraction((n * middle_d + middle_n) * sign, middle_d);
             }
+        }
+    }
+
+    public static bool TryParse(string value, out Fraction result)
+    {
+        try
+        {
+            result = (Fraction)value;
+            return true;
+        }
+        catch
+        {
+            result = default;
+            return false;
+        }
+    }
+    public static bool TryParse(string value, out Fraction result, Fraction defaultValue)
+    {
+        try
+        {
+            result = (Fraction)value;
+            return true;
+        }
+        catch
+        {
+            result = defaultValue;
+            return false;
         }
     }
 

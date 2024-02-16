@@ -1,5 +1,6 @@
 ﻿using MathNet.Symbolics;
 using Microsoft.FSharp.Core;
+using System;
 using System.Numerics;
 
 namespace LinearAlgebra;
@@ -19,12 +20,12 @@ public static class Extensions
         return answer;
     }
 
-    public static string[] Fraction2String(this Fraction[] t)
+    public static string[] Fraction2String<T>(this T[] t)
     {
         string[] answer = new string[t.GetLength(0)];
         for (int i = 0; i < answer.GetLength(0); i++)
         {
-            answer[i] = t[i].ToString();
+            answer[i] = t[i]?.ToString() ?? "";
         }
         return answer;
     }
@@ -53,6 +54,16 @@ public static class Extensions
         return a;
     }
 
+    public static SpecialString[] String2SpecialString(this string[] t)
+    {
+        var result = new SpecialString[t.Length];
+        for (int i = 0; i < result.Length; i++)
+        {
+            result[i] = t[i];
+        }
+        return result;
+    }
+
     public static decimal[] SpecialString2Decimal(this SpecialString[] t, Dictionary<string, Fraction> variablesValue)
     {
         return SpecialString.Solve(t, variablesValue).Fraction2Decimal();
@@ -64,6 +75,16 @@ public static class Extensions
         for (int i = 0; i < t.Length; i++)
         {
             strings[i] = t[i].ToString();
+        }
+        return strings;
+    }
+
+    public static string[] SpecialString2Decimal(this SpecialString[] t)
+    {
+        var strings = new string[t.Length];
+        for (int i = 0; i < t.Length; i++)
+        {
+            strings[i] = t[i].ToDecimalString();
         }
         return strings;
     }
@@ -102,7 +123,7 @@ public static class Extensions
     {
         if (typeof(double) == typeof(T))
         {
-            return double.IsInteger(Convert.ToDouble(it));
+            return !double.IsInteger(Convert.ToDouble(it));
         }
 
         string str = it?.ToString() ?? "";
@@ -117,15 +138,7 @@ public static class Extensions
         }
         string[] Lines = new string[matrix.GetLength(0)];
         AddBeginningLine(Lines);
-        for (int j = 0; j < matrix.GetLength(1); j++)
-        {
-            int index = 0;
-            int vart = GetPad(matrix.GetColumn(j)) + 2;
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                Lines[index++] += String.Format(" {0, " + vart + "}", matrix[i, j]);
-            }
-        }
+        AddMatrix(matrix, Lines);
         AddEnddingLine(Lines);
         string result = "";
         foreach (var it in Lines)
@@ -143,15 +156,7 @@ public static class Extensions
         }
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
-        for (int j = 0; j < matrix.GetLength(1); j++)
-        {
-            int index = 1;
-            int vart = GetPad(matrix.GetColumn(j)) + 2;
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                Lines[index++] += String.Format(" {0, " + vart + "}", matrix[i, j]);
-            }
-        }
+        AddMatrix(matrix, Lines);
         AddEndBrackets(Lines);
         string result = "";
         foreach (var it in Lines)
@@ -169,12 +174,7 @@ public static class Extensions
         }
         string[] Lines = new string[matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
-        int vart = GetPad(matrix) + 2;
-        int index = 1;
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i]);
-        }
+        AddMatrix(matrix, Lines);
         AddEndBrackets(Lines);
         string result = "";
         foreach (var it in Lines)
@@ -192,22 +192,8 @@ public static class Extensions
         if (c.matrix!.GetLength(0) != c.coefficient!.GetLength(0)) throw new InvalidOperationException();
         string[] Lines = new string[c.matrix.GetLength(0) + 2];
         AddBeginningBrackets(Lines);
-        int index;
-        for (int j = 0; j < c.matrix.GetLength(1); j++)
-        {
-            index = 1;
-            int vart = GetPad(c.matrix.GetColumn(j)) + 2;
-            for (int i = 0; i < c.matrix.GetLength(0); i++)
-            {
-                Lines[index++] += String.Format(" {0, " + vart + "} ", c.matrix[i, j]);
-            }
-        }
-        index = 1;
-        for (int i = 0; i < c.coefficient.Length; i++)
-        {
-            int vart = GetPad(c.coefficient) + 2;
-            Lines[index++] += String.Format("| {0, " + vart + "}", c.coefficient[i]);
-        }
+        AddMatrix(c.matrix, Lines, true);
+        AddMatrix(c.coefficient, Lines);
         AddEndBrackets(Lines);
         string result = "";
         foreach (var it in Lines)
@@ -215,6 +201,53 @@ public static class Extensions
             result += it + "\n";
         }
         return result;
+    }
+
+    public static string GetMatrix<T, S>(this (T[,]? matrix, S[,]? coefficient) c)
+    {
+        if (c.coefficient is null && c.matrix is not null) return GetMatrix(c.matrix);
+        else if (c.matrix is null && c.coefficient is not null) return GetMatrix(c.coefficient);
+        else if (c.matrix is null && c.coefficient is null) return "";
+        if (c.matrix!.GetLength(0) != c.coefficient!.GetLength(0)) throw new InvalidOperationException();
+        string[] Lines = new string[c.matrix.GetLength(0) + 2];
+        AddBeginningBrackets(Lines);
+        AddMatrix(c.matrix, Lines, true);
+        AddMatrix(c.coefficient, Lines);
+        AddEndBrackets(Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
+    }
+
+    private static string[] AddMatrix<T>(this T[,] matrix, string[]? Lines = null,bool addLine = false)
+    {
+        Lines = Lines is null ? new string[matrix.GetLength(0)] : Lines;
+        int index;
+        for (int j = 0; j < matrix.GetLength(1); j++)
+        {
+            index = 1;
+            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i, j]);
+                if (j + 1 == matrix.GetLength(1) && addLine) Lines[index - 1] += "|";
+            }
+        }
+        return Lines;
+    }
+    private static string[] AddMatrix<T>(this T[] vector, string[]? Lines = null, bool addLine = false)
+    {
+        Lines = Lines is null ? new string[vector.Length] : Lines;
+        int index = 1;
+        for (int i = 0; i < vector.Length; i++)
+        {
+            int vart = GetPad(vector) + 2;
+            Lines[index++] += String.Format("{1} {0, " + vart + "}", vector[i], (addLine?"|":""));
+        }
+        return Lines;
     }
 
     public static string GetMatrix<T, S>(this (T[] matrix, S[] coefficient) c)
@@ -291,6 +324,30 @@ public static class Extensions
         Enumerable.Range(startFromIndex, matrix.GetLength(1) - startFromIndex)
             .Select(y => matrix[rowIndex, y])
              .ToArray();
+
+    public static T[,] ConvertTo2D<T>(this T[] a, int columns = 0, int rows = 0)
+    {
+        if (columns == 0 && rows == 0)
+        {
+            columns = Convert.ToInt32(Math.Sqrt(a.Length));
+            rows = columns;
+        }
+        else if (rows == 0) rows = a.Length / columns;
+        else if (columns == 0) columns = a.Length / rows;
+        if (rows * columns != a.Length) throw new ArgumentException();
+        int counter = 0;
+        T[,] result = new T[rows, columns];
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                result[i, j] = a[counter++];
+            }
+        }
+        return result;
+    }
+
+    public static T[] ConvertTo1D<T>(this T[,] a) => a.Cast<T>().Select(c => c).ToArray();
 
     private static void AddBeginningBrackets(string[] Lines)
     {

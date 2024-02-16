@@ -16,10 +16,10 @@ public partial class Linear
     {
         //steps.Add(new MatrixStepForREF
         //{
-        //    StepDescription = "We get the Row Echelon Form(REF) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
+        //    StepDescription = "We get the Row Echelon Form(REFAsDecimal) of our matrix\nThen we count every non-zero row\nThe result is the rank of this matrix",
         //    Matrix = matrix.GetFractions()
         //});
-        //REF(matrix);
+        //REFAsDecimal(matrix);
         int rank = 0;
         for (int x = 0; x < matrix.GetLength(0); x++)
         {

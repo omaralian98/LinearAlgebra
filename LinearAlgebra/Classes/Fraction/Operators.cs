@@ -56,7 +56,7 @@ public partial struct Fraction
 
     public static bool operator ==(Fraction a, Fraction b)
     {
-        return a.Numerator == b.Numerator && a.Denominator == b.Denominator;
+        return a.Quotient == b.Quotient;
     }
 
     public static bool operator !=(Fraction a, Fraction b)
@@ -127,6 +127,7 @@ public partial struct Fraction
                 }
                 double num = Convert.ToDouble(fraction[..index]);
                 double den = Convert.ToDouble(fraction[(index + 1)..]);
+
                 if (num.IsDecimal() || den.IsDecimal())
                 {
                     var numer = ConvertDecimalToFraction(num);
@@ -141,9 +142,8 @@ public partial struct Fraction
             }
             catch { }
         }
-        else if (fraction.Contains('.') && index == -2)
+        else if (fraction.Contains('.'))
         {
-            Console.WriteLine(fraction);
             return ConvertDecimalToFraction(Convert.ToDouble(fraction));
         }
         else

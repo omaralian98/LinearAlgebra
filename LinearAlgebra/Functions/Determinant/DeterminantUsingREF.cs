@@ -6,10 +6,10 @@ public partial class Linear
 {
     private partial class DeterminantClass
     {
-        public static IEnumerable<REF_Result> DeterminantUsingREF(Fraction[,] matrix, out Fraction determinant, bool solution = false)
+        public static IEnumerable<REF_Result<Fraction>> DeterminantUsingREF(Fraction[,] matrix, out Fraction determinant, bool solution = false)
         {
             var refSteps = Row_Echelon_Form.REF(matrix, solution: true);
-            List<REF_Result> steps = [];
+            List<REF_Result<Fraction>> steps = [];
             int opt = 0;
             string description = "";
             determinant = new(1);
@@ -18,7 +18,7 @@ public partial class Linear
                 if (step.Description.Contains("Swap")) opt++;
                 if (solution) steps.Add(step);
             }
-            var result = solution ?  steps[^1] : new REF_Result()
+            var result = solution ?  steps[^1] : new REF_Result<Fraction>()
             {
                 Matrix = matrix,
                 Description = description

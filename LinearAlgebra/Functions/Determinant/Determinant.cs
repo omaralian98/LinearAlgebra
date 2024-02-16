@@ -52,7 +52,7 @@ public partial class Linear
         return [.. result.GetAllChildren()];
     }
 
-    public static REF_Result[] DeterminantWithResultUsingREF<T>(T[,] matrix, out Fraction determinant)
+    public static REF_Result<Fraction>[] DeterminantWithResultUsingREF<T>(T[,] matrix, out Fraction determinant)
     {
         CheckCoherenceForDeterminant(matrix);
         var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions(), out determinant, true);
@@ -105,7 +105,7 @@ public partial class Linear
             throw new NotImplementedException();
         }
 
-        private static T[,] Erase<T>(int x, int y, T[,] matrix)
+        public static T[,] Erase<T>(int x, int y, T[,] matrix)
         {
             int size = matrix.GetLength(0) - 1; //Get the new size.
             int row = 0;
@@ -128,7 +128,7 @@ public partial class Linear
             return erasedMatrix;
         }
 
-        private static void Reset(ref int row, ref int column, int size)
+        public static void Reset(ref int row, ref int column, int size)
         {
             //If we didn't reach the end of the row increase column's index.
             if (column + 1 != size) column++;

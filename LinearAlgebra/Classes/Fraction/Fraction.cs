@@ -1,9 +1,15 @@
-﻿namespace LinearAlgebra.Classes;
+﻿using System.Text.Json.Serialization;
 
+namespace LinearAlgebra.Classes;
+
+[Serializable]
 public partial struct Fraction
 {
-    public double Numerator;
-    public double Denominator;
+    [JsonPropertyName("numerator")]
+    public double Numerator {  get; set; }
+    [JsonPropertyName("denominator")]
+    public double Denominator{  get; set; }
+    [JsonIgnore]
     public readonly decimal Quotient
     {
         get 

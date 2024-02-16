@@ -92,6 +92,24 @@ public partial struct SpecialString
         return new SpecialString { values = newValues };
     }
 
+    public static implicit operator SpecialString(string a)
+    {
+        a = a.Replace("- ", "+ -");
+        SpecialString special = new();
+        Fraction def = new(1);
+        Fraction last = new(1);
+        foreach (var item in a.Split('*', '+'))
+        {
+            var res = item.Trim();
+            if (!Fraction.TryParse(res, out Fraction result, defaultValue: def))
+            {
+                special.Add(res, last);
+            }
+            last = result;
+        }
+        return special;
+    }
+
     public ICoefficient Add(ICoefficient a, ICoefficient b)
     {
         SpecialString x = (SpecialString)a;
