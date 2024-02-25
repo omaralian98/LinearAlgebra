@@ -119,6 +119,37 @@ public static class Extensions
         return matrix;
     }
 
+    public static T[,] GetTMatrix<T>(this Fraction[,] matrix)
+    {
+        if (typeof(T) == typeof(Fraction)) return (matrix as T[,])!;
+        var result = new T[matrix.GetLength(0), matrix.GetLength(1)];
+        var type = typeof(T);
+        for (int i = 0;i < matrix.GetLength(0); i++)
+        {
+            for(int j = 0;j < matrix.GetLength(1); j++)
+            {
+                object test = matrix[i, j].ToType(type, null);
+                
+                result[i, j] = (T)test;
+            }
+        }
+        return result;
+    }
+
+    public static T[] GetTMatrix<T>(this Fraction[] matrix)
+    {
+        if (typeof(T) == typeof(Fraction)) return (matrix as T[])!;
+        var result = new T[matrix.Length];
+        var type = typeof(T);
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            object test = matrix[i].ToType(type, null);
+
+            result[i] = (T)test;
+        }
+        return result;
+    }
+
     public static bool IsDecimal<T>(this T it)
     {
         if (typeof(double) == typeof(T))

@@ -18,13 +18,23 @@ public partial struct Fraction
     public readonly decimal GetDecimalAbs() => Math.Abs(Quotient);
 
 
-    public readonly string ValueToString() => Quotient.ToString();
+    public readonly string ValueToString()
+    {
+        try
+        {
+            return Quotient.ToString();
+        }
+        catch
+        {
+            return QuotientDouble.ToString();
+        }
+    }
 
     public override string ToString()
     {
         if (Numerator == 0) return "0";
         if (Denominator == 1) return Numerator.ToString();
-        else if (!Quotient.IsDecimal()) return Quotient.ToString();
+        else if (!QuotientDouble.IsDecimal()) return QuotientDouble.ToString();
         return $"{Numerator}/{Denominator}";
     }
 
@@ -134,6 +144,20 @@ public partial struct Fraction
                 return new Fraction((n * middle_d + middle_n) * sign, middle_d);
             }
         }
+    }
+
+    public static Fraction[,] GenerateIdentityMatrix(int n)
+    {
+        var identity = new Fraction[n, n];
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                identity[i, j] = 0;
+            }
+            identity[i, i] = 1;
+        }
+        return identity;
     }
 
     public static bool TryParse(string value, out Fraction result)

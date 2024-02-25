@@ -8,13 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathNet.Symbolics" Version="0.24.0" />
+    <Compile Remove="Functions\LU\**" />
+    <Compile Remove="Functions\Systems\**" />
+    <EmbeddedResource Remove="Functions\LU\**" />
+    <EmbeddedResource Remove="Functions\Systems\**" />
+    <None Remove="Functions\LU\**" />
+    <None Remove="Functions\Systems\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Functions\Transpose\" />
-    <Folder Include="Functions\Trace\" />
-    <Folder Include="Functions\Rank\" />
+    <PackageReference Include="MathNet.Symbolics" Version="0.24.0" />
   </ItemGroup>
 
 </Project>

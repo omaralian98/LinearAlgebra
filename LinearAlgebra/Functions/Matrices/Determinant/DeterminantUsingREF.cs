@@ -1,4 +1,6 @@
-﻿using MathNet.Numerics;
+﻿// Ignore Spelling: cancellationoken
+
+using MathNet.Numerics;
 
 namespace LinearAlgebra;
 
@@ -34,6 +36,29 @@ public partial class Linear
             result.Description += solution ? $"\n{description}": description;
             steps.Add(result);
             return steps;
+        }
+
+        public static Fraction DeterminantUsingREF(Fraction[,] matrix, CancellationToken cancellationoken = default)
+        {
+            int matrixRows = matrix.GetLength(0);
+            int matrixColumns = matrix.GetLength(1);
+            REF_Result<Fraction>? current = null;
+            Fraction determinant = new(1);
+            for (int currentRow = 0; currentRow < Math.Min(matrixRows, matrixColumns); currentRow++)
+            {
+                if (cancellationoken.IsCancellationRequested)
+                {
+                    throw new TaskCanceledException("Task was canceled.");
+                }
+                int currentColumn = Row_Echelon_Form.FindPivot(matrix, currentRow);
+                if (currentColumn == -1) break;
+                if (matrix[currentRow, currentColumn].Quotient == 0) determinant *= -1;
+                Row_Echelon_Form.ReOrderMatrix(matrix, currentRow, currentColumn, ref current);
+                if (matrix[currentRow, currentColumn].Quotient == 0) continue;
+                Row_Echelon_Form.ClearPivotColumn(matrix, currentRow, currentColumn, reduced: false, solution: false).Count();
+                determinant *= matrix[currentRow, currentColumn];
+            }
+            return determinant;
         }
     }
 }

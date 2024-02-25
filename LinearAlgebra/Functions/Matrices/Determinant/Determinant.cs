@@ -1,64 +1,9 @@
-﻿namespace LinearAlgebra;
+﻿using LinearAlgebra.Classes;
+
+namespace LinearAlgebra;
 
 public partial class Linear
 {
-    /// <summary>
-    /// Gets the Determinant of a given matrix as a Fraction.
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <returns>A fraction that's represent the value of the determinant</returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static Fraction DeterminantAsFraction<T>(T[,] matrix)
-    {
-        CheckCoherenceForDeterminant(matrix);
-        var result = DeterminantClass.Determinant(matrix.GetFractions());
-        return result.Value;
-    }
-
-    /// <summary>
-    /// Gets the Determinant of a given matrix as a decimal.
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <returns>The value of the determinant as a decimal</returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static decimal Determinant<T>(T[,] matrix)
-    {
-        CheckCoherenceForDeterminant(matrix);
-        var result = DeterminantClass.Determinant(matrix.GetFractions());
-        return (decimal)result.Value;
-    }
-
-    /// <summary>
-    /// Gets the Determinant of a given matrix as a string.
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <returns>The value of the determinant as a string</returns>
-    /// <remarks>If the value of the determinant is decimal the string will be in this format: {Numerator}/{Denominator}.</remarks>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static string DeterminantAsString<T>(T[,] matrix)
-    {
-        CheckCoherenceForDeterminant(matrix);
-        var result = DeterminantClass.Determinant(matrix.GetFractions());
-        return (string)result.Value;
-    }
-
-    public static Determinant_Result[] DeterminantWithResult<T>(T[,] matrix)
-    {
-        CheckCoherenceForDeterminant(matrix);
-        var result = DeterminantClass.Determinant(matrix.GetFractions(), true);
-        return [.. result.GetAllChildren()];
-    }
-
-    public static REF_Result<Fraction>[] DeterminantWithResultUsingREF<T>(T[,] matrix, out Fraction determinant)
-    {
-        CheckCoherenceForDeterminant(matrix);
-        var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions(), out determinant, true);
-        return [..result];
-    }
-
     /// <summary>
     /// Checks if the given matrix can be passed to the determinant function.
     /// </summary>
@@ -71,21 +16,64 @@ public partial class Linear
         if (matrix.GetLength(0) != matrix.GetLength(1)) throw new InvalidOperationException(errorMessage);
     }
 
+    public static T Determinant<T>(T[,] matrix) => Determinant<T, T>(matrix);
+    public static Determinant_Result<T>[] DeterminantWithResult<T>(T[,] matrix) => DeterminantWithResult<T, T>(matrix);
+    public static REF_Result<T>[] DeterminantWithResultUsingREF<T>(T[,] matrix, out Fraction determinant)
+        => DeterminantWithResultUsingREF<T, T>(matrix, out determinant);
+
+
+    /// <summary>
+    /// Gets the Determinant of a given matrix as a Fraction.
+    /// </summary>
+    /// <typeparam name="T">Type of the matrix</typeparam>
+    /// <param name="matrix">The matrix</param>
+    /// <returns>A fraction that's represent the value of the determinant</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static R Determinant<R, T>(T[,] matrix)
+    {
+        CheckCoherenceForDeterminant(matrix);
+        var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions());
+        return (R)result.ToType(typeof(R), null);
+    }
+    public static Determinant_Result<R>[] DeterminantWithResult<R, T>(T[,] matrix)
+    {
+        CheckCoherenceForDeterminant(matrix);
+        var result = DeterminantClass.Determinant(matrix.GetFractions(), true);
+        var res = result.GetAllChildren();
+        var retur = new Determinant_Result<R>[res.Count];
+        for (int i = 0; i < res.Count; i++)
+        {
+            retur[i] = new Determinant_Result<R> { Matrix = res[i].Matrix.GetTMatrix<R>() as R[,], Scalar = res[i].Scalar, Value = res[i].Value };
+        }
+        return retur;
+    }
+    public static REF_Result<R>[] DeterminantWithResultUsingREF<R, T>(T[,] matrix, out Fraction determinant)
+    {
+        CheckCoherenceForDeterminant(matrix);
+        var result = DeterminantClass.DeterminantUsingREF(matrix.GetFractions(), out determinant, true).ToList();
+        var retur = new REF_Result<R>[result.Count()];
+        for (int i = 0; i < result.Count; i++)
+        {
+            retur[i] = new REF_Result<R> { Matrix = result[i].Matrix.GetTMatrix<R>(), Description = result[i].Description };
+        }
+        return retur;
+    }
+
 
     private partial class DeterminantClass
     {
-        public static Determinant_Result Determinant(Fraction[,] matrix, bool solution = false)
+        public static Determinant_Result<Fraction> Determinant(Fraction[,] matrix, bool solution = false)
         {
             Fraction answer = new(0);
             int size = matrix.GetLength(0);
             if (size == 1)
             {
                 answer += matrix[0, 0];
-                return new Determinant_Result { Matrix = matrix, Value = answer };
+                return new Determinant_Result<Fraction> { Matrix = matrix, Value = answer };
             }
             else if (size >= 2)
             {
-                Determinant_Result[] matrixSteps = new Determinant_Result[size];
+                Determinant_Result<Fraction>[] matrixSteps = new Determinant_Result<Fraction>[size];
                 for (int i = 0; i < size; i++)
                 {
                     var errasedMatrix = Erase(0, i, matrix);
@@ -94,7 +82,7 @@ public partial class Linear
                     answer += scalar * det.Value;
                     matrixSteps[i] = det with { Scalar = scalar };
                 }
-                return new Determinant_Result
+                return new Determinant_Result<Fraction>
                 {
                     Value = answer,
                     MatrixSteps = solution ? matrixSteps : [],
@@ -102,7 +90,7 @@ public partial class Linear
                 };
             }
 
-            throw new NotImplementedException();
+            throw new InvalidOperationException();
         }
 
         public static T[,] Erase<T>(int x, int y, T[,] matrix)

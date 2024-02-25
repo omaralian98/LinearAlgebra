@@ -1,11 +1,14 @@
 ﻿// Ignore Spelling: cancellationoken
-
-using LinearAlgebra.Classes;
-
 namespace LinearAlgebra;
 
 public partial class Linear
 {
+    public static T[,] REF<T>(T[,] matrix, CancellationToken cancellationoken = default) 
+        => REF<T, T>(matrix, cancellationoken);
+    public static REF_Result<T>[] REFWithResult<T>(T[,] matrix, CancellationToken cancellationoken = default) 
+        => REFWithResult<T, T>(matrix, cancellationoken);
+
+
     /// <summary>
     /// Returns the REF of the given matrix
     /// </summary>
@@ -13,92 +16,29 @@ public partial class Linear
     /// <param name="matrix">The matrix</param>
     /// <param name="cancellationToken">The token that can be used to cancel the operation</param>
     /// <returns>2d array of type Decimal that represent the matrix</returns>
-    public static Fraction[,] REFAsFraction<T>(T[,] matrix, CancellationToken cancellationoken = default)
+    public static R[,] REF<R, T>(T[,] matrix, CancellationToken cancellationoken = default)
     {
         var solution = Row_Echelon_Form.REF(matrix.GetFractions(), cancellationoken: cancellationoken).First();
-        return solution.Matrix;
-    }
-
-    /// <summary>
-    /// Returns the REF of the given matrix
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <param name="decimals">The number of decimals you want to round up to</param>
-    /// <param name="cancellationToken">The token that can be used to cancel the operation</param>
-    /// <returns>2d array of type Fraction that represent the matrix</returns>
-    public static decimal[,] REFAsDecimal<T>(T[,] matrix, int decimals = -1, CancellationToken cancellationoken = default)
-    {
-        var solution = Row_Echelon_Form.REF(matrix.GetFractions(), cancellationoken: cancellationoken).First();
-        return solution.Matrix.Fraction2Decimal(decimals);
-    }
-
-    /// <summary>
-    /// Returns the REF of the given matrix
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <param name="cancellationToken">The token that can be used to cancel the operation</param>
-    /// <returns>2d array of type String that represent the matrix</returns>
-    public static string[,] REFAsString<T>(T[,] matrix, CancellationToken cancellationoken = default)
-    {
-        var solution = Row_Echelon_Form.REF(matrix.GetFractions(), cancellationoken: cancellationoken).First();
-        return solution.Matrix.Fraction2String();
-    }
-
-
-
-    /// <summary>
-    /// Returns the REF of the given matrix with stpes
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <param name="cancellationToken">The token that can be used to cancel the operation</param>
-    /// <returns>an array of REF_Result Fraction every element of this array represent a step in this operation 1st element is the given matrix, 2nd is the next step<br></br> the step is described in a string</returns>
-    public static REF_Result<Fraction>[] REFWithFraction<T>(T[,] matrix, CancellationToken cancellationoken = default)
-    {
-        var solution = Row_Echelon_Form.REF(matrix.GetFractions(), solution: true, cancellationoken: cancellationoken);
-        return [.. solution];
+        return solution.Matrix.GetTMatrix<R>();
     }
 
     /// <summary>
     /// Returns the REF of the given matrix with stpes
     /// </summary>
+    /// <typeparam name="R">The type of the returned matrices</typeparam>
     /// <typeparam name="T">Type of the matrix</typeparam>
     /// <param name="matrix">The matrix</param>
     /// <param name="cancellationToken">The token that can be used to cancel the operation</param>
     /// <returns>an array of REF_Result String every element of this array represent a step in this operation 1st element is the given matrix, 2nd is the next step<br></br> the step is described in a string</returns>
-    public static REF_Result<string>[] REFWithString<T>(T[,] matrix, CancellationToken cancellationoken = default)
+    public static REF_Result<R>[] REFWithResult<R, T>(T[,] matrix, CancellationToken cancellationoken = default)
     {
         var solution = Row_Echelon_Form.REF(matrix.GetFractions(), solution: true, cancellationoken: cancellationoken);
-        var result = new List<REF_Result<string>>();
+        var result = new List<REF_Result<R>>();
         foreach (var step in solution)
         {
-            result.Add(new REF_Result<string>
+            result.Add(new REF_Result<R>
             {
-                Matrix = step.Matrix.Fraction2String(),
-                Description = step.Description
-            });
-        }
-        return [.. result];
-    }
-
-    /// <summary>
-    /// Returns the REF of the given matrix with stpes
-    /// </summary>
-    /// <typeparam name="T">Type of the matrix</typeparam>
-    /// <param name="matrix">The matrix</param>
-    /// <param name="cancellationToken">The token that can be used to cancel the operation</param>
-    /// <returns>an array of REF_Result Decimal every element of this array represent a step in this operation 1st element is the given matrix, 2nd is the next step<br></br> the step is described in a string</returns>
-    public static REF_Result<decimal>[] REFWithDecimal<T>(T[,] matrix, CancellationToken cancellationoken = default)
-    {
-        var solution = Row_Echelon_Form.REF(matrix.GetFractions(), solution: true, cancellationoken: cancellationoken);
-        var result = new List<REF_Result<decimal>>();
-        foreach (var step in solution)
-        {
-            result.Add(new REF_Result<decimal>
-            {
-                Matrix = step.Matrix.Fraction2Decimal(),
+                Matrix = step.Matrix.GetTMatrix<R>(),
                 Description = step.Description
             });
         }
@@ -183,11 +123,13 @@ public partial class Linear
             //If we want REF we start our operation from the pivot row
             //If we want RREF we start from the beginning
             int targetedRow = reduced ? 0 : pivotRow;
-
             //Looping through this column
             for (; targetedRow < matrix.GetLength(0); targetedRow++)
             {//If the current row is the pivot or it's already 0 skip it
-                if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0) continue;
+                if (targetedRow == pivotRow || matrix[targetedRow, column].Quotient == 0)
+                {
+                    continue;
+                }
 
                 //Else define a scalar = -{Target}/{Pivot}
                 Fraction scalar = -matrix[targetedRow, column] / matrix[pivotRow, column];

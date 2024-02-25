@@ -26,4 +26,9 @@ public partial struct Fraction
             return quotient;
         }
     }
+    [JsonIgnore]
+    public readonly double QuotientDouble
+    {
+        get => Numerator / Denominator;
+    }
 }
