@@ -84,6 +84,7 @@ public partial struct Fraction : IConvertible
 
     public object ToType(Type conversionType, IFormatProvider? provider)
     {
+        if (conversionType == typeof(string)) return this.ToString();
         return Convert.ChangeType(Quotient, conversionType, provider);
     }
 

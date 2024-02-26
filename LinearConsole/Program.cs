@@ -44,21 +44,5 @@ namespace Mr_Sure21
             //Console.WriteLine(Linear.Add<double, Fraction>(fractions[0], fractions[1]).GetMatrix());
             //Console.WriteLine(Linear.Add<bool, Fraction>(fractions[0], fractions[1]).GetMatrix());
         }
-
-        public static void OMAR(List<Fraction[,]> fractions)
-        {
-            foreach (Fraction[,] fraction in fractions)
-            {
-                Linear.REFAsFraction(fraction);
-            }
-        }
-
-        public static void REF(List<Fraction[,]> fractions)
-        {
-            foreach (Fraction[,] fraction in fractions)
-            {
-                Linear.DeterminantClass.DeterminantUsingREF(fraction);
-            }
-        }
     }
 }

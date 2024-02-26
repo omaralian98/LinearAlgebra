@@ -12,7 +12,7 @@ public partial class Linear
 
     public static R Trace<R, T>(T[,] matrix)
     {
-        var answer = TraceAsFraction(matrix);
+        var answer = TraceClass.Trace(matrix.GetFractions());
         return (R)answer.ToType(typeof(R), null);
     }
 

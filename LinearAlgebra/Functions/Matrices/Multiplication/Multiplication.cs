@@ -49,6 +49,14 @@ public partial class Linear
         return ret;
     }
 
+    public static T[,] Multiply<T>(T[,] matrix, T scale) => Multiply<T, T, T>(matrix, scale);
+    public static T[,] Multiply<T, S>(T[,] matrix, S scale) => Multiply<T, T, S>(matrix, scale);
+    public static R[,] Multiply<R, T, S>(T[,] matrix, S scale)
+    {
+        Fraction fraction = (Fraction)(scale?.ToString() ?? "1");
+        return Multiplication.Scale(matrix.GetFractions(), fraction).GetTMatrix<R>();
+    }
+
     private class Multiplication
     {
         public static Fraction[,] Multiply(params Fraction[][,] matrices)
