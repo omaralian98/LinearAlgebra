@@ -7,27 +7,32 @@ namespace LinearAlgebra;
 
 public static class Extensions
 {
-    public static string[,] Fraction2String(this Fraction[,] t, bool getDecimal = false)
+    public static string?[,] ConvertToStringMatrix<T>(this T[,] matrix)
     {
-        string[,] answer = new string[t.GetLength(0), t.GetLength(1)];
+        string?[,] answer = new string?[matrix.GetLength(0), matrix.GetLength(1)];
         for (int i = 0; i < answer.GetLength(0); i++)
         {
             for (int j = 0; j < answer.GetLength(1); j++)
             {
-                answer[i, j] = getDecimal ? t[i, j].ValueToString() : t[i, j].ToString();
+                answer[i, j] = matrix[i, j]?.ToString();
             }
         }
         return answer;
     }
 
-    public static string[] Fraction2String<T>(this T[] t)
+    public static string[] ConvertToStringMatrix<T>(this T[] matrix)
     {
-        string[] answer = new string[t.GetLength(0)];
-        for (int i = 0; i < answer.GetLength(0); i++)
+        string[] answer = new string[matrix.Length];
+        for (int i = 0; i < answer.Length; i++)
         {
-            answer[i] = t[i]?.ToString() ?? "";
+            answer[i] = matrix[i]?.ToString() ?? "";
         }
         return answer;
+    }
+
+    public static string ConvertToString<T>(this T[] matrix)
+    {
+        return $"[{string.Join(", ", matrix)}]";
     }
 
     public static decimal[,] Fraction2Decimal(this Fraction[,] t, int decimals = -1)

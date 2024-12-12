@@ -5,3 +5,4 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using System.Numerics;
 global using LinearAlgebra.Classes;
+global using LinearAlgebra.Classes.Enums;

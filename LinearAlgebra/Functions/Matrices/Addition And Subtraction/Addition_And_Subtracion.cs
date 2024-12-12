@@ -179,7 +179,7 @@ public partial class Linear
                     {
                         char currentOp = operation;
                         if (b[i, j].Quotient < 0) currentOp = operation == '+' ? '-' : '+';
-                        step[i, j] = $"({a[i,j]} {currentOp} {b[i, j].GetAbs()})";
+                        step[i, j] = $"({a[i,j]} {currentOp} {b[i, j].Abs()})";
                     }
                 }
             }

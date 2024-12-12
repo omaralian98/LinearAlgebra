@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Attributes;
 using LinearAlgebra;
 using LinearAlgebra.Classes;
+using LinearAlgebra.Classes.Enums;
 using MathNet.Numerics.LinearAlgebra.Complex;
 namespace Mr_Sure21
 {
@@ -13,7 +14,7 @@ namespace Mr_Sure21
             int sample = 1000;
             for (int i = 0; i < sample; i++)
             {
-                fractions.Add(Fraction.GenerateRandomMatrix(4, 4, simplify: false));
+                fractions.Add(Fraction.GenerateRandomMatrix(4, 4, RandomFractionGenerationType.Simplified));
             }
             ////long startTime1 = Stopwatch.GetTimestamp();
             ////REF(fractions);

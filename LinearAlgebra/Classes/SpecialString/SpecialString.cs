@@ -63,7 +63,7 @@ public partial struct SpecialString : ICoefficient
         foreach (var item in values)
         {
             if (item.Value.Numerator == 0) continue;
-            else if (item.Value.Numerator < 0 && result.Length > 0) result += $" - {item.Value.GetAbs()} * {item.Key}";
+            else if (item.Value.Numerator < 0 && result.Length > 0) result += $" - {item.Value.Abs()} * {item.Key}";
             else if (item.Value.Numerator < 0) result += $" - {item.Value} * {item.Key}";
             else if (item.Value.Numerator != 1) result += $" + {item.Value} * {item.Key}";
             else result += $" + {item.Key}";
@@ -77,7 +77,7 @@ public partial struct SpecialString : ICoefficient
         foreach (var item in values)
         {
             if (item.Value.Quotient == 0) continue;
-            else if (item.Value.Numerator < 0 && result.Length > 0) result += $" - {item.Value.GetDecimalAbs()} * {item.Key}";
+            else if (item.Value.Numerator < 0 && result.Length > 0) result += $" - {item.Value.DecimalAbs()} * {item.Key}";
             else if (item.Value.Numerator < 0) result += $" - {item.Value.Quotient} * {item.Key}";
             else if (item.Value.Numerator != 1) result += $" + {item.Value.Quotient} * {item.Key}";
             else result += $" + {item.Key}";
