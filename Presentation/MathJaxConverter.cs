@@ -6,13 +6,13 @@ public static class MathJaxConverter
 {
     public static string ConvertToMathJax(this Fraction fraction, Display config = Display.Inline)
     {
-        if (MathJaxSettings.DiagonalFractions)
+        if (Settings.MathJaxSettings.DiagonalFractions)
         {
             return WrapWithMathJax(fraction.ToString(), config);
         }
 
         char sign = ' ';
-        if (MathJaxSettings.ShowNegativeBesideTheFractionBar && fraction.Numerator < 0)
+        if (Settings.MathJaxSettings.ShowNegativeBesideTheFractionBar && fraction.Numerator < 0)
         {
             sign = '-';
             fraction = new Fraction(-fraction.Numerator, fraction.Denominator);
