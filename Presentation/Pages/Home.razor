@@ -1,0 +1,53 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<FractionComponent Fraction="@new("-5/7")" Display="Display.Inline" />
+<FractionComponent Fraction="@new("-5/7")" />
+@for (int i = 0; i < 7; i++)
+{
+    <MatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(3, 3)" Display="Display.Inline" />
+}
+
+<br/>
+<br/>
+@for (int i = 0; i < 7; i++)
+{
+    <MatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Coefficient="Fraction.GenerateRandomVector(5)" Display="Display.Inline" />
+}
+@* <MathJaxComponent>
+    \[
+    \left[
+    \begin{array}{rrr|r}
+    1 & 2 & 4 & 8 \\
+    16 & 32 & 64 & 128 \\
+    256 & 512 & 1024 & 2048 \\
+    \end{array}
+    \right]
+    \]
+</MathJaxComponent>
+<MathJaxComponent>
+    \[
+    \left[
+    \begin{array}{rrr}
+    1 & 2 & 4 \\
+    16 & 32 & 64 \\
+    256 & 512 & 1024 \\
+    \end{array}
+    \right]
+    \]
+</MathJaxComponent> *@
+
+
+@code {
+    public Fraction[,] Matrix =
+    {
+        { "1765756764/5", "5/9", "6.4" },
+        { "1", "3", "7/465766575676" },
+        { "0/5", "5/5", 9 }
+    };
+}
