@@ -1,0 +1,160 @@
+﻿<MudPaper Class="matrix-input-card text" Elevation="10" Square>
+    <MudPaper Style="background-color: #35d446; margin: 5px -5px 0px -5px;" Outlined Square Elevation="5">
+        <MudText Class="text" Align="Align.Center" Color="Color.Dark" Style="margin: 0 5px;" Typo="Typo.h5">
+            Matrix @(Character) Input
+        </MudText>
+    </MudPaper>
+
+    <MudStack Style="width: fit-content;" Row="false" Justify="Justify.Center" AlignItems="AlignItems.Start">
+        <MudStack Style="width: 100%;" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+            <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
+                Rows
+            </MudText>
+            <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Error">
+                ×
+            </MudText>
+            <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
+                Columns
+            </MudText>
+        </MudStack>
+        <MudStack Style="width: 100%;" Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+            <MudNumericField Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" @bind-Value="@Rows" Immediate Placeholder="Rows" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+            <MudNumericField Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" @bind-Value="@Columns" Immediate Placeholder="Columns" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+        </MudStack>
+    </MudStack>
+
+    <br />
+
+    <div align="center">
+        <table class="matrix">
+            @for (int i = 0; i < Rows; i++)
+            {
+                int myI = i;
+                <tr>
+                    @for (int j = 0; j < Columns; j++)
+                    {
+                        int myJ = j;
+                        <td>
+                            <MudTextField Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][myJ]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</MudPaper>
+
+
+
+
+@code {
+    private int _rows = 3;
+    private int _columns = 3;
+
+    public int Rows
+    {
+        get => _rows;
+        set
+        {
+            if (value < 1)
+            {
+                value = 1;
+            }
+            else if (value > Settings.MaxRowsAllowed)
+            {
+                value = Settings.MaxRowsAllowed;
+            }
+
+            _rows = value;
+            UpdateMatrixRows();
+        }
+    }
+
+    public int Columns
+    {
+        get => _columns;
+        set
+        {
+            if (value < 1)
+            {
+                value = 1;
+            }
+            else if (value > Settings.MaxRowsAllowed)
+            {
+                value = Settings.MaxRowsAllowed;
+            }
+
+            _columns = value;
+            UpdateMatrixColumns();
+        }
+    }
+
+    [Parameter]
+    public List<List<string>> Matrix { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<List<string>>> MatrixChanged { get; set; }
+
+    [Parameter]
+    public char Character { get; set; } = ' ';
+
+    private void UpdateMatrixRows()
+    {
+        int difference = Rows - Matrix.Count;
+
+        if (difference > 0)
+        {
+            for (int i = 0; i < difference; i++)
+            {
+                Matrix.Add(new List<string>(new string[Columns]));
+            }
+        }
+        else if (difference < 0)
+        {
+            for (int i = 0; i < -difference; i++)
+            {
+                Matrix.RemoveAt(Matrix.Count - 1);
+            }
+        }
+    }
+
+    private void UpdateMatrixColumns()
+    {
+        if (Matrix.Count == 0)
+            return;
+
+        int currentColumnCount = Matrix[0].Count;
+        int difference = Columns - currentColumnCount;
+
+        if (difference > 0)
+        {
+            foreach (var row in Matrix)
+            {
+                for (int j = 0; j < difference; j++)
+                {
+                    row.Add(string.Empty);
+                }
+            }
+        }
+        else if (difference < 0)
+        {
+            foreach (var row in Matrix)
+            {
+                for (int j = 0; j < -difference; j++)
+                {
+                    row.RemoveAt(row.Count - 1);
+                }
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < Rows; i++)
+        {
+            Matrix.Add(new List<string>(new string[Columns]));
+        }
+
+        base.OnInitialized();
+    }
+}

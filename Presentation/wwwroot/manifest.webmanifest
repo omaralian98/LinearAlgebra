@@ -1,6 +1,6 @@
 {
-  "name": "Presentation",
-  "short_name": "Presentation",
+  "name": "Linear Algebra Calculator",
+  "short_name": "Linear Algebra",
   "id": "./",
   "start_url": "./",
   "display": "standalone",

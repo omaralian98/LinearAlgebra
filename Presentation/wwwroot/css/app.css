@@ -165,6 +165,34 @@ code {
         display: none;
     }
 
-.matrix-input {
+.matrix-input-card {
+    width: fit-content;
+    padding: 0 10px;
+    background-color: #46355f !important;
+    border: 5px solid #853ba2;
+}
 
+.text {
+    font-size: 1.1rem !important;
+}
+.matrix-input-card .mud-input,
+.matrix-input-card .mud-input-control > .mud-input-control-input-container > .mud-input-label-inputcontrol {
+    font-size: 0.78rem !important;
+}
+
+.matrix-input-card .mud-input > input.mud-input-root.mud-input-root-filled, div.mud-input-slot.mud-input-root.mud-input-root-filled {
+    padding: 0 !important;
+    margin: 0 5px !important;
+}
+
+.matrix-input-card .mud-input.mud-input-filled {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
+    .matrix-input-card .mud-input > input.mud-input-root-outlined, div.mud-input-slot.mud-input-root-outlined {
+        padding: 0px 14px !important;
+    }
+.matrix-input-card .mud-input.mud-input-outlined .mud-input-outlined-border {
+    border-radius: 0 !important;
 }

@@ -220,6 +220,24 @@ public static class Extensions
         return result;
     }
 
+    public static string GetMatrix<T>(this T[][] matrix)
+    {
+        if (matrix.Length == 1 && matrix[0].Length == 1)
+        {
+            return matrix[0][0]?.ToString() ?? "";
+        }
+        string[] Lines = new string[matrix.Length + 2];
+        AddBeginningBrackets(Lines);
+        AddMatrix(matrix, Lines);
+        AddEndBrackets(Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
+    }
+
     public static string GetMatrix<T, S>(this (T[,]? matrix, S[]? coefficient) c)
     {
         if (c.coefficient is null && c.matrix is not null) return GetMatrix(c.matrix);
@@ -274,6 +292,24 @@ public static class Extensions
         }
         return Lines;
     }
+
+    private static string[] AddMatrix<T>(this T[][] matrix, string[]? Lines = null, bool addLine = false)
+    {
+        Lines = Lines is null ? new string[matrix.Length] : Lines;
+        int index;
+        for (int j = 0; j < matrix[0].Length; j++)
+        {
+            index = 1;
+            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i][j]);
+                if (j + 1 == matrix[0].Length && addLine) Lines[index - 1] += "|";
+            }
+        }
+        return Lines;
+    }
+
     private static string[] AddMatrix<T>(this T[] vector, string[]? Lines = null, bool addLine = false)
     {
         Lines = Lines is null ? new string[vector.Length] : Lines;
@@ -347,6 +383,11 @@ public static class Extensions
         Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
             .Select(x => matrix[x, columnIndex])
              .ToArray();
+
+    public static T[] GetColumn<T>(this T[][] matrix, int columnIndex, int startFromIndex = 0) =>
+    Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
+        .Select(x => matrix[x][columnIndex])
+         .ToArray();
 
     /// <summary>
     /// Get's a specific row from a 2d array.
