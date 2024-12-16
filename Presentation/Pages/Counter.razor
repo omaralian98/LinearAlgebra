@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@inject ISnackbar Snackbar
 
 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
     <MatrixInput @bind-Matrix="@MatrixA" Character="@('A')" />
@@ -6,38 +7,43 @@
 </MudStack>
 
 <MudButton OnClick="Action">Click Me</MudButton>
-<MudTextField @bind-Value="A" AutoGrow/>
-<br/>
-<MudTextField @bind-Value="B" AutoGrow />
 @code {
     public List<List<string>> MatrixA { get; set; } = new();
     public List<List<string>> MatrixB { get; set; } = new();
 
-    public string A { get; set; } = string.Empty;
-    public string B { get; set; } = string.Empty;
+    public static Result<Fraction[][]> ConvertToFraction(List<List<string>> matrix)
+    {
+        Fraction[][] result = new Fraction[matrix.Count][];
+        for (int i = 0; i < matrix.Count; i++)
+        {
+            result[i] = new Fraction[matrix[i].Count];
+            for (int j = 0; j < matrix[i].Count; j++)
+            {
+                try
+                {
+                    result[i][j] = matrix[i][j];
+                }
+                catch (Exception ex)
+                {
+                    return new Error($"{nameof(ConvertToFraction)}", ex.Message);
+                }
+            }
+        }
+        return result;
+    }
+
     public void Action()
     {
-        Fraction[][] matrixa = new Fraction[MatrixA.Count][];
-        for (int i = 0; i < MatrixA.Count; i++)
+        var resulta = ConvertToFraction(MatrixA);
+        if (resulta.IsFailure)
         {
-            matrixa[i] = new Fraction[MatrixA[i].Count];
-            for (int j = 0; j < MatrixA[i].Count; j++)
-            {
-                matrixa[i][j] = MatrixA[i][j];
-            }
+            Snackbar.Add(resulta.Errors[0].ToString());
         }
 
-        Fraction[][] matrixb = new Fraction[MatrixB.Count][];
-        for (int i = 0; i < MatrixB.Count; i++)
+        var resultb = ConvertToFraction(MatrixB);
+        if (resultb.IsFailure)
         {
-            matrixb[i] = new Fraction[MatrixB[i].Count];
-            for (int j = 0; j < MatrixB[i].Count; j++)
-            {
-                matrixb[i][j] = MatrixB[i][j];
-            }
+            Snackbar.Add(resultb.Errors[0].ToString());
         }
-
-        A = matrixa.GetMatrix();
-        B = matrixb.GetMatrix();
     }
 }

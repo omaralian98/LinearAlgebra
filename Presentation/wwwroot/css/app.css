@@ -170,6 +170,7 @@ code {
     padding: 0 10px;
     background-color: #46355f !important;
     border: 5px solid #853ba2;
+    border-right-width: 3px;
 }
 
 .text {
@@ -195,4 +196,32 @@ code {
     }
 .matrix-input-card .mud-input.mud-input-outlined .mud-input-outlined-border {
     border-radius: 0 !important;
+}
+
+.matrix-toolbox {
+    height: fit-content;
+    background-color: #46355f !important;
+    border: 5px solid #853ba2;
+    border-left: none;
+}
+
+.matrix-toolbox-button {
+    width: 35px !important;
+    height: 35px !important;
+    margin-top: 5px;
+    color: white;
+    font-size: 1.8rem;
+    transition: 500ms ease background-color;
+}
+
+.matrix-toolbox-button:hover {
+    background-color: gray;
+}
+.matrix-toolbox-button img {
+    width: 35px;
+    height: 35px;
+}
+
+.matrix-input-card .mud-input-helper-text {
+    color: white !important;
 }
