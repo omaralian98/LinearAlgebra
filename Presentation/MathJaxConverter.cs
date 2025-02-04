@@ -4,7 +4,7 @@ using System.Text;
 
 public static class MathJaxConverter
 {
-    public static string ConvertToMathJax(this Fraction fraction, Display config = Display.Inline)
+    public static string ConvertFractionToMathJax(this Fraction fraction, Display config = Display.Inline)
     {
         if (Settings.MathJaxSettings.DiagonalFractions)
         {
@@ -22,28 +22,49 @@ public static class MathJaxConverter
         return WrapWithMathJax(math, config);
     }
 
-    public static string ConvertToMathJax(this Fraction[][] matrix, Display display)
-    {
-        return ConvertToMathJax(matrix, display, null);
-    }
-
-    public static string ConvertToMathJax(this Fraction[][] matrix, Fraction[] coefficient, Display display)
-    {
-        return ConvertToMathJax(matrix, display, coefficient);
-    }
-
-    private static string ConvertToMathJax(this Fraction[][] matrix, Display display, Fraction[]? coefficient = null)
+    public static string ConvertFractionMatrixToMathJax(this Fraction[][] matrix, Display display)
     {
         var math = new StringBuilder();
         math.AppendLine($@"\left[");
-        string style = coefficient is not null ? "|r" : string.Empty;
-        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}{style}}}");
+        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}}}");
 
         for (int i = 0; i < matrix.Length; i++)
         {
-            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertToMathJax(Display.None)))}");
-            string styleToAdd = coefficient is not null ? $" & {coefficient[i].ConvertToMathJax(Display.None)}" : string.Empty;
-            math.Append($"{styleToAdd}\\\\");
+            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertFractionToMathJax(Display.None)))}\\\\");
+        }
+
+        math.AppendLine(@"\end{array}");
+        math.AppendLine($@"\right]");
+
+        return WrapWithMathJax(math.ToString(), display);
+    }
+
+    public static string ConvertAugmentedFractionMatrixToMathJax(this Fraction[][] matrix, Fraction[] coefficient, Display display)
+    {
+        var math = new StringBuilder();
+        math.AppendLine($@"\left[");
+        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}|r}}");
+
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertFractionToMathJax(Display.None)))} & {coefficient[i].ConvertFractionToMathJax(Display.None)}\\\\");
+        }
+
+        math.AppendLine(@"\end{array}");
+        math.AppendLine($@"\right]");
+
+        return WrapWithMathJax(math.ToString(), display);
+    }
+
+    public static string ConvertTwoFractionMatricesToMathJax(this Fraction[][] matrix, Fraction[][] otherMatrix, Display display)
+    {
+        var math = new StringBuilder();
+        math.AppendLine($@"\left[");
+        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}|{new string('r', otherMatrix[0].Length)}}}");
+
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertFractionToMathJax(Display.None)))} & {string.Join(" & ", otherMatrix[i].Select(f => f.ConvertFractionToMathJax(Display.None)))}\\\\");
         }
 
         math.AppendLine(@"\end{array}");
@@ -74,4 +95,60 @@ public static class MathJaxConverter
         Display.Block => "\\]",
         _ => string.Empty,
     };
+
+    public static string ConvertToMathJax<T>(this T number, Display config = Display.Inline)
+    {
+        return WrapWithMathJax(number?.ToString() ?? string.Empty, config);
+    }
+
+    public static string ConvertMatrixToMathJax<T>(this T[][] matrix, Display display)
+    {
+        var math = new StringBuilder();
+        math.AppendLine($@"\left[");
+        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}}}");
+
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertToMathJax(Display.None)))}\\\\");
+        }
+
+        math.AppendLine(@"\end{array}");
+        math.AppendLine($@"\right]");
+
+        return WrapWithMathJax(math.ToString(), display);
+    }
+
+    public static string ConvertAugmentedMatrixToMathJax<T>(this T[][] matrix, T[] coefficient, Display display)
+    {
+        var math = new StringBuilder();
+        math.AppendLine($@"\left[");
+        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}|r}}");
+
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertToMathJax(Display.None)))} & {coefficient[i].ConvertToMathJax(Display.None)}\\\\");
+        }
+
+        math.AppendLine(@"\end{array}");
+        math.AppendLine($@"\right]");
+
+        return WrapWithMathJax(math.ToString(), display);
+    }
+
+    public static string ConvertTwoMatricesToMathJax<T>(this T[][] matrix, T[][] otherMatrix, Display display)
+    {
+        var math = new StringBuilder();
+        math.AppendLine($@"\left[");
+        math.AppendLine($@"\begin{{array}}{{{new string('r', matrix[0].Length)}|{new string('r', otherMatrix[0].Length)}}}");
+
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            math.Append($"{string.Join(" & ", matrix[i].Select(f => f.ConvertToMathJax(Display.None)))} & {string.Join(" & ", otherMatrix[i].Select(f => f.ConvertToMathJax(Display.None)))}\\\\");
+        }
+
+        math.AppendLine(@"\end{array}");
+        math.AppendLine($@"\right]");
+
+        return WrapWithMathJax(math.ToString(), display);
+    }
 }

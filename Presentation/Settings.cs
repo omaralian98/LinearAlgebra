@@ -9,6 +9,8 @@ public static class Settings
     public static int Upperbound { get; set; } = 10;
     public static int Lowerbound { get; set; } = -9;
 
+    public static bool ShowSteps { get; set; } = true;
+
 }
 
 
@@ -19,11 +21,4 @@ public class MathJaxSettings
     public Display DefaultFractionConfiguration { get; set; } = Display.Inline;
 
     public bool UseInlineModeForMatrices { get; set; } = true;
-}
-
-public enum Display
-{
-    None,
-    Inline,
-    Block
 }

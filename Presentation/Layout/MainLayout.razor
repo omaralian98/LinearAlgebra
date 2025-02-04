@@ -8,18 +8,35 @@
 
 @* Needed for snackbars *@
 <MudSnackbarProvider />
-<div class="page">
-    <div class="sidebar">
+
+<MudLayout>
+    <MudAppBar Dense Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer Style="height: 100vh;" Variant="DrawerVariant.Responsive" @bind-Open="@IsOpen" Elevation="1">
+        <MudDrawerHeader Style="border-bottom: 2px solid black;" Dense>
+            <MudStack Class="drawer-header-container" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" StretchItems="StretchItems.End">
+                <MudImage Class="drawer-header-icon" Src="/icon-512.png" />
+                <MudText Typo="Typo.body1">Linear Algebra Calculator</MudText>
+            </MudStack>
+        </MudDrawerHeader>
         <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    </MudDrawer>
+    <MudMainContent Class="pt-16">
+        <MudContainer Class="mt-6">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code {
+    public bool IsOpen { get; set; } = false;
+
+    public void ToggleDrawer()
+    {
+        IsOpen = !IsOpen;
+    }
+}

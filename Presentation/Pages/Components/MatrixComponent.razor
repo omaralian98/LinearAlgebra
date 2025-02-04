@@ -1,21 +1,26 @@
-﻿<MathJaxComponent>
-    @if(Coefficient is null)
-    {
-        @Matrix.ConvertToMathJax(Display)
-    }
-    else
-    {
-        @Matrix.ConvertToMathJax(Coefficient, Display)
-    }
-</MathJaxComponent>
+﻿@typeparam T
+
+<MathJaxComponent TextToRender="@matrixAsString" />
 
 @code {
-    [Parameter] 
-    public Fraction[][] Matrix { get; set; }
-
     [Parameter]
-    public Fraction[]? Coefficient { get; set; } = null;
+    public T[][] Matrix { get; set; }
 
     [Parameter]
     public Display Display { get; set; } = Display.Block;
+
+    private string matrixAsString { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (typeof(T) == typeof(Fraction))
+        {
+            matrixAsString = (Matrix as Fraction[][])?.ConvertFractionMatrixToMathJax(Display) ?? string.Empty;
+        }
+        else
+        {
+            matrixAsString = Matrix.ConvertMatrixToMathJax(Display);
+        }
+        base.OnParametersSet();
+    }
 }

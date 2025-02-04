@@ -90,4 +90,13 @@ public sealed class Result<T>
     public static implicit operator Result<T>(Error[] errors) => Failure(errors);
 
     public static implicit operator Result<T>(List<Error> errors) => Failure(errors);
+
+    public static implicit operator Result(Result<T> result)
+    {
+        if (result.IsSuccess)
+        {
+            return Result.Success();
+        }
+        return Result.Failure(result.Errors);
+    }
 }

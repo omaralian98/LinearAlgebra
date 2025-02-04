@@ -11,6 +11,7 @@ public class Program
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
         builder.Services.AddMudServices();
         builder.Services.AddSingleton<ClipboardService>();
+        builder.Services.AddSingleton<ShareService>();
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 

@@ -1,0 +1,210 @@
+﻿@page "/add"
+@inject IJSRuntime JS
+@inject ShareService ShareService
+
+<PageTitle>Add</PageTitle>
+<MudPaper Elevation="5" Outlined Width="100%" Style="padding: 20px;">
+
+    <MudStack Row="false" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+        <h3>Add Two Matrices Together</h3>
+        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
+            @if (_isInitialized)
+            {
+                <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
+                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixA" Character="@('A')" />
+                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixB" Character="@('B')" />
+                </MudStack>
+            }
+            else
+            {
+                <MudProgressCircular Indeterminate Size="Size.Large" Color="Color.Primary" />
+            }
+        </MudStack>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Execute" Ripple DropShadow>
+            Add
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Share" Ripple DropShadow>
+            Share
+        </MudButton>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        @if (Finished is not null)
+        {
+            @if (Finished.Value && Result is not null)
+            {
+                <MudExpansionPanels id="solution-area" Elevation="5" Dense Outlined MultiExpansion Square Gutters>
+                    <MudExpansionPanel id="solution" Text="Solution" Icon="@Icons.Material.Filled.Check" Style="padding: 20px;" Dense Expanded Gutters>
+                        <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                            <MudText Typo="Typo.h5" Inline>A + B =</MudText>
+                            <MatrixComponent Matrix="Result" Display="Display.Block" />
+                        </MudStack>
+                    </MudExpansionPanel>
+                    @if (Settings.ShowSteps && Step is not null)
+                    {
+                        <MudExpansionPanel id="steps" Text="Steps" Icon="@Icons.Material.Filled.Assignment" Style="padding: 20px;" Dense Expanded Gutters>
+                            <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                                <MatrixComponent Matrix="ConvertMatrix(MatrixA.ConvertToFraction().Value)?? []" Display="Display.Inline" />
+                                <MudText Typo="Typo.h5" Inline>+</MudText>
+                                <MatrixComponent Matrix="ConvertMatrix(MatrixB.ConvertToFraction().Value) ?? []" Display="Display.Inline" />
+                                <MudText Typo="Typo.h5" Inline>=</MudText>
+                                <MatrixComponent Matrix="Step" Display="Display.Inline" />
+                                <MudText Typo="Typo.h5" Inline>=</MudText>
+                                <MatrixComponent Matrix="Result" Display="Display.Inline" />
+                            </MudStack>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            }
+            else if (Finished.Value == false)
+            {
+                <MudProgressCircular class="d-flex justify-content-center align-items-center" Indeterminate Size="Size.Large" StrokeWidth="3" Color="Color.Success" />
+            }
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? a { get; set; } = null;
+
+    [SupplyParameterFromQuery]
+    public string? b { get; set; } = null;
+
+    [SupplyParameterFromQuery]
+    public bool? solution { get; set; } = null;
+
+    private bool _isInitialized = false;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(a))
+        {
+            var result = await a.ConvertStringToMatrixAsync(rowSeparator: "|");
+            if (result.IsSuccess)
+            {
+                MatrixA = result.Value!;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(b))
+        {
+            var result = await b.ConvertStringToMatrixAsync(rowSeparator: "|");
+            if (result.IsSuccess)
+            {
+                MatrixB = result.Value!;
+            }
+        }
+
+        if (solution.HasValue && solution.Value && !string.IsNullOrWhiteSpace(a) && !string.IsNullOrWhiteSpace(b))
+        {
+            await Execute();
+        }
+
+        _isInitialized = true;
+        await base.OnParametersSetAsync();
+    }
+
+    public List<List<string>> MatrixA { get; set; }
+    public List<List<string>> MatrixB { get; set; }
+
+    public bool? Finished { get; set; } = null;
+    public Fraction[][]? Result { get; set; } = null;
+    public string[][]? Step { get; set; } = null;
+
+    public async Task Execute()
+    {
+        try
+        {
+            Finished = false;
+            var resulta = MatrixA.ConvertToFraction();
+            if (resulta.IsFailure)
+            {
+                Snackbar.Add(resulta.Errors[0].ToString());
+            }
+
+            var resultb = MatrixB.ConvertToFraction();
+            if (resultb.IsFailure)
+            {
+                Snackbar.Add(resultb.Errors[0].ToString());
+            }
+            if (Settings.ShowSteps)
+            {
+                var result = Linear.AddWithResult(resulta.Value!, resultb.Value!);
+                Step = ConvertMatrix(result.Step);
+                Result = ConvertMatrix(result.Result);
+            }
+            else
+            {
+                var result = Linear.Add<Fraction>(resulta.Value!, resultb.Value!);
+                Result = ConvertMatrix(result);
+            }
+            solution = true;
+            await Task.Delay(3000);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+            Result = null;
+            Step = null;
+        }
+        finally
+        {
+            Finished = true;
+            await InvokeAsync(() => StateHasChanged());
+            await JS.InvokeVoidAsync("ScrollToElement", "solution-area");
+        }
+    }
+
+    public T[][]? ConvertMatrix<T>(T[,] matrix)
+    {
+        try
+        {
+            int rowsCount = matrix.GetLength(0);
+            int columnsCount = matrix.GetLength(1);
+            T[][] result = new T[rowsCount][];
+
+            for (int i = 0; i < rowsCount; i++)
+            {
+                result[i] = new T[columnsCount];
+                for (int j = 0; j < columnsCount; j++)
+                {
+                    result[i][j] = matrix[i, j];
+                }
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+            Result = null;
+            Step = null;
+        }
+        return default;
+    }
+
+    private async Task Share()
+    {
+        try
+        {
+            var parameters = new Dictionary<string, string?>
+                {
+                    [nameof(a)] = MatrixA.ConvertMatrixToString(rowSeparator: "|"),
+                    [nameof(b)] = MatrixB.ConvertMatrixToString(rowSeparator: "|"),
+                };
+            if (solution.HasValue && solution.Value)
+            {
+                parameters[nameof(solution)] = Convert.ToString(solution);
+            }
+            await ShareService.CopyUrlToClipboardAsync(parameters);
+            Snackbar.Add("Link copied to clipboard!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error sharing: {ex.Message}", Severity.Error);
+        }
+    }
+}

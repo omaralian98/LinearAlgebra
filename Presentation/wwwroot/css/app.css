@@ -225,3 +225,17 @@ code {
 .matrix-input-card .mud-input-helper-text {
     color: white !important;
 }
+
+.drawer-header-icon{
+    width: 35px;
+    height:  35px;
+}
+
+
+.matrix-input-area {
+    padding-bottom: 10px;
+}
+
+#solution-area .mud-expand-panel .mud-expand-panel-header .mud-expand-panel-icon.mud-transform {
+    transform: rotate(0deg) !important;
+}

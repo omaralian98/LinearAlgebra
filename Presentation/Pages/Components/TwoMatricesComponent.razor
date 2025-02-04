@@ -1,0 +1,12 @@
+﻿<MathJaxComponent TextToRender="@Matrix.ConvertTwoFractionMatricesToMathJax(OtherMatrix, Display)" />
+
+@code {
+    [Parameter]
+    public Fraction[][] Matrix { get; set; }
+
+    [Parameter]
+    public Fraction[][] OtherMatrix { get; set; }
+
+    [Parameter]
+    public Display Display { get; set; } = Display.Block;
+}

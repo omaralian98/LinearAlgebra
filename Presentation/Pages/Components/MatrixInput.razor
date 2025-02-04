@@ -22,8 +22,8 @@
                 </MudText>
             </MudStack>
             <MudStack Style="width: 100%;" Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                <MudNumericField Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" @bind-Value="@Rows" Immediate Placeholder="Rows" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
-                <MudNumericField Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" @bind-Value="@Columns" Immediate Placeholder="Columns" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                <MudNumericField Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" @bind-Value="@Rows" Immediate Placeholder="Rows" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                <MudNumericField Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" @bind-Value="@Columns" Immediate Placeholder="Columns" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
             </MudStack>
         </MudStack>
 
@@ -32,8 +32,7 @@
             <MudSwitch Style="color: white !important;" ThumbIcon="@(EnterMatrixAsString ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" @bind-Value="@EnterMatrixAsString" Size="Size.Small" Color="Color.Tertiary" Ripple>Enter Matrix as Text</MudSwitch>
             @if (EnterMatrixAsString)
             {
-                <MudTextField Style="background-color: white !important;" @bind-Value="@MatrixAsString" Lines="3" HelperText="Separate Rows by '|'" FullWidth Immediate AutoGrow />
-                <MudButton OnClick="@(async () => {await Paste(MatrixAsString); EnterMatrixAsString = false;})" Color="Color.Tertiary" Variant="Variant.Filled" DropShadow Ripple Size="Size.Small">Convert</MudButton>
+                <MudTextField Class="matrix-input-area" Style="background-color: white !important;" @bind-Value="@MatrixAsString" Lines="3" FullWidth Immediate AutoGrow />
             }
             else
             {
@@ -47,7 +46,7 @@
                                 {
                                     int myJ = j;
                                     <td>
-                                        <MudTextField Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][myJ]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                                        <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][myJ]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
                                     </td>
                                 }
                             </tr>
@@ -59,32 +58,32 @@
     </MudPaper>
     <MudStack Row="false" AlignItems="AlignItems.Start" Class="matrix-toolbox" Spacing="0">
         <MudTooltip Delay="1000" Text="Copy" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button @onclick="Copy" class="matrix-toolbox-button">
+            <button disabled="@Disabled" @onclick="Copy" class="matrix-toolbox-button">
                 <MudImage Src="images/Copy.png" />
             </button>
         </MudTooltip>
         <MudTooltip Delay="1000" Text="Paste" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button @onclick="@(() => Paste())" class="matrix-toolbox-button">
+            <button disabled="@Disabled" @onclick="@(() => Paste())" class="matrix-toolbox-button">
                 <MudImage Src="images/Paste.png" />
             </button>
         </MudTooltip>
         <MudTooltip Delay="1000" Text="Random" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button @onclick="Random" class="matrix-toolbox-button">
+            <button disabled="@Disabled" @onclick="Random" class="matrix-toolbox-button">
                 <MudImage Src="images/Random.png" />
             </button>
         </MudTooltip>
         <MudTooltip Delay="1000" Text="Clear" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button @onclick="Clear" class="matrix-toolbox-button">
+            <button disabled="@Disabled" @onclick="Clear" class="matrix-toolbox-button">
                 <MudImage Src="images/Clear.png" />
             </button>
         </MudTooltip>
         <MudTooltip Delay="1000" Text="Set All 0" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button @onclick="SetAllZeros" class="matrix-toolbox-button">
+            <button disabled="@Disabled" @onclick="SetAllZeros" class="matrix-toolbox-button">
                 0
             </button>
         </MudTooltip>
         <MudTooltip Delay="1000" Text="Set All 1" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button @onclick="SetAllOnes" class="matrix-toolbox-button">
+            <button disabled="@Disabled" @onclick="SetAllOnes" class="matrix-toolbox-button">
                 1
             </button>
         </MudTooltip>
@@ -113,8 +112,8 @@
             }
 
             _rows = value;
-            UpdateMatrixRows(Matrix, Rows, Columns);
-            ConvertMatrixToSting();
+            Matrix.UpdateMatrixRows(Rows, Columns);
+            ConvertMatrixToString();
         }
     }
 
@@ -133,8 +132,8 @@
             }
 
             _columns = value;
-            UpdateMatrixColumns(Matrix, Rows, Columns);
-            ConvertMatrixToSting();
+            Matrix.UpdateMatrixColumns(Rows, Columns);
+            ConvertMatrixToString();
         }
     }
     private bool _EnterMatrixAsString = false;
@@ -149,18 +148,18 @@
             }
             else if (_EnterMatrixAsString)
             {
-                Paste(MatrixAsString);
+                Paste(MatrixAsString).Wait();
             }
             else
             {
-                ConvertMatrixToSting();
+                ConvertMatrixToString();
             }
             _EnterMatrixAsString = value;
         }
     }
 
     [Parameter]
-    public List<List<string>> Matrix { get; set; } = new();
+    public List<List<string>>? Matrix { get; set; } = null;
 
     [Parameter]
     public EventCallback<List<List<string>>> MatrixChanged { get; set; }
@@ -168,71 +167,33 @@
     [Parameter]
     public char Character { get; set; } = ' ';
 
+    [Parameter]
+    public bool Disabled { get; set; } = false;
+
     public string MatrixAsString { get; set; } = string.Empty;
 
-    private static void UpdateMatrixRows(List<List<string>> Matrix, int Rows, int Columns)
+    protected override void OnParametersSet()
     {
-        int difference = Rows - Matrix.Count;
-
-        if (difference > 0)
+        if (Matrix is null)
         {
-            for (int i = 0; i < difference; i++)
+            Matrix = new();
+            for (int i = 0; i < Rows; i++)
             {
                 Matrix.Add(new List<string>(new string[Columns]));
             }
+            MatrixChanged.InvokeAsync(Matrix);
         }
-        else if (difference < 0)
+        else
         {
-            for (int i = 0; i < -difference; i++)
-            {
-                Matrix.RemoveAt(Matrix.Count - 1);
-            }
+            Rows = Matrix.Count;
+            Columns = Matrix[0].Count;
         }
-    }
-
-    private static void UpdateMatrixColumns(List<List<string>> Matrix, int Rows, int Columns)
-    {
-        if (Matrix.Count == 0)
-            return;
-
-        int currentColumnCount = Matrix[0].Count;
-        int difference = Columns - currentColumnCount;
-
-        if (difference > 0)
-        {
-            foreach (var row in Matrix)
-            {
-                for (int j = 0; j < difference; j++)
-                {
-                    row.Add(string.Empty);
-                }
-            }
-        }
-        else if (difference < 0)
-        {
-            foreach (var row in Matrix)
-            {
-                for (int j = 0; j < -difference; j++)
-                {
-                    row.RemoveAt(row.Count - 1);
-                }
-            }
-        }
-    }
-
-    protected override void OnInitialized()
-    {
-        for (int i = 0; i < Rows; i++)
-        {
-            Matrix.Add(new List<string>(new string[Columns]));
-        }
-
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     public async Task Copy()
     {
-        ConvertMatrixToSting();
+        ConvertMatrixToString();
         var result = await ClipboardService.CopyAsync(MatrixAsString);
         if (result.IsFailure)
         {
@@ -263,14 +224,14 @@
             var lines = text.Split(Environment.NewLine);
 
             oldRowsCount = lines.Length;
-            UpdateMatrixRows(copiedMatrix, oldRowsCount, oldColumnsCount);
+            copiedMatrix.UpdateMatrixRows(oldRowsCount, oldColumnsCount);
             for (int i = 0; i < oldRowsCount; i++)
             {
                 var row = lines[i].Split(' ');
                 int newcolumnsCount = row.Length;
                 if (i == 0 || newcolumnsCount > oldColumnsCount)
                 {
-                    UpdateMatrixColumns(copiedMatrix, oldRowsCount, newcolumnsCount);
+                    copiedMatrix.UpdateMatrixColumns(oldRowsCount, newcolumnsCount);
                     oldColumnsCount = newcolumnsCount;
                 }
                 for (int j = 0; j < newcolumnsCount; j++)
@@ -278,10 +239,11 @@
                     copiedMatrix[i][j] = row[j];
                 }
             }
-            Matrix = copiedMatrix;
             Rows = oldRowsCount;
             Columns = oldColumnsCount;
-            ConvertMatrixToSting();
+            Matrix = copiedMatrix;
+            await MatrixChanged.InvokeAsync(Matrix);
+            ConvertMatrixToString();
         }
         catch
         {
@@ -304,7 +266,7 @@
                 Matrix[i][j] = rand.Next(Settings.Lowerbound, Settings.Upperbound).ToString();
             }
         }
-        ConvertMatrixToSting();
+        ConvertMatrixToString();
     }
 
     public void SetAllZeros()
@@ -326,20 +288,11 @@
                 Matrix[i][j] = value;
             }
         }
-        ConvertMatrixToSting();
+        ConvertMatrixToString();
     }
 
-    public void ConvertMatrixToSting()
+    public void ConvertMatrixToString()
     {
-        StringBuilder text = new();
-        for (int i = 0; i < Matrix.Count; i++)
-        {
-            text.AppendJoin(' ', Matrix[i]);
-            if (i + 1 != Matrix.Count)
-            {
-                text.AppendLine();
-            }
-        }
-        MatrixAsString = text.ToString();
+        MatrixAsString = Matrix.ConvertMatrixToString();
     }
 }

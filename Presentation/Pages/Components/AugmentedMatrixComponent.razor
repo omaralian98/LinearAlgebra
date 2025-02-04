@@ -1,0 +1,12 @@
+﻿<MathJaxComponent TextToRender="@Matrix.ConvertAugmentedFractionMatrixToMathJax(Coefficient, Display)" />
+
+@code {
+    [Parameter]
+    public Fraction[][] Matrix { get; set; }
+
+    [Parameter]
+    public Fraction[] Coefficient { get; set; }
+
+    [Parameter]
+    public Display Display { get; set; } = Display.Block;
+}

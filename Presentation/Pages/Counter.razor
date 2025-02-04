@@ -11,36 +11,15 @@
     public List<List<string>> MatrixA { get; set; } = new();
     public List<List<string>> MatrixB { get; set; } = new();
 
-    public static Result<Fraction[][]> ConvertToFraction(List<List<string>> matrix)
-    {
-        Fraction[][] result = new Fraction[matrix.Count][];
-        for (int i = 0; i < matrix.Count; i++)
-        {
-            result[i] = new Fraction[matrix[i].Count];
-            for (int j = 0; j < matrix[i].Count; j++)
-            {
-                try
-                {
-                    result[i][j] = matrix[i][j];
-                }
-                catch (Exception ex)
-                {
-                    return new Error($"{nameof(ConvertToFraction)}", ex.Message);
-                }
-            }
-        }
-        return result;
-    }
-
     public void Action()
     {
-        var resulta = ConvertToFraction(MatrixA);
+        var resulta = MatrixA.ConvertToFractionJagged();
         if (resulta.IsFailure)
         {
             Snackbar.Add(resulta.Errors[0].ToString());
         }
 
-        var resultb = ConvertToFraction(MatrixB);
+        var resultb = MatrixB.ConvertToFractionJagged();
         if (resultb.IsFailure)
         {
             Snackbar.Add(resultb.Errors[0].ToString());

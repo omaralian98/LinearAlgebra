@@ -8,18 +8,45 @@ public class MathJaxBaseComponent : ComponentBase, IAsyncDisposable
     [Inject]
     private IJSRuntime JSRuntime { get; set; }
 
+    [Parameter]
+    public string TextToRender { get; set; } = string.Empty;
+
+    protected ElementReference ElementReference { get; set; }
+
+    private string RenderedText { get; set; } = string.Empty;
+
+
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await RenderMath();
+        if (firstRender && TextToRender is not null)
+        {
+            await RenderMath(TextToRender);
+            RenderedText = (string)TextToRender.Clone();
+        }
+        else if (TextToRender is not null && !string.IsNullOrWhiteSpace(RenderedText) && !TextToRender.Equals(RenderedText))
+        {
+            await RenderMath(TextToRender);
+            RenderedText = (string)TextToRender.Clone();
+        }
     }
 
-    protected async Task RenderMath()
+    protected async override Task OnParametersSetAsync()
     {
-        await JSRuntime.InvokeVoidAsync("MathJax.typeset");
+        await base.OnParametersSetAsync();
+    }
+
+    protected async Task RenderMath(string text)
+    {
+        await JSRuntime.InvokeVoidAsync("ReplaceElement", ElementReference, text);
+    }
+
+    protected async Task Clear()
+    {
+        await JSRuntime.InvokeVoidAsync("MathJax.typesetClear", ElementReference);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await JSRuntime.InvokeVoidAsync("MathJax.typesetClear");
+        await Clear();
     }
 }
