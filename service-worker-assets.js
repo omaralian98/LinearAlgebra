@@ -502,95 +502,95 @@
     },
     {
       "hash": "sha256-PeeE0HufqPEEwQkoqHjuh5zzMFyuUZXLpmPJwrsBles=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_ams-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_AMS-Regular.woff"
     },
     {
       "hash": "sha256-rwRUKynqrARVChQMXxdgpkl4OYlCbyVAhVv0FXgZNn0=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_calligraphic-bold.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Calligraphic-Bold.woff"
     },
     {
       "hash": "sha256-Jmg78gH7JYoiN9l1RhbenU7PTMHNOd0ZAkdt99dfHRY=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_calligraphic-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Calligraphic-Regular.woff"
     },
     {
       "hash": "sha256-chkhurDQAev\/AgbCTLXebKE2RnvxhDp6oyAwugYdHpI=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_fraktur-bold.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Fraktur-Bold.woff"
     },
     {
       "hash": "sha256-hwZz33LnD4fJGloxfVWMLDtUOSJkrXm7rcbUJK6HZf4=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_fraktur-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Fraktur-Regular.woff"
     },
     {
       "hash": "sha256-iLmMrTaIkV5Q2lVVP\/atGF4NzhNLR\/F26RsQD4qbF1w=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_main-bold.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Main-Bold.woff"
     },
     {
       "hash": "sha256-NVJU25yhCgmjtfCSnXTrRnD0T76GTAdSagYhPgoMr2w=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_main-italic.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Main-Italic.woff"
     },
     {
       "hash": "sha256-HLHDnqZC8mpN\/tIwtK6hw8IYaJQh9unAp8GBFpPE+gc=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_main-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Main-Regular.woff"
     },
     {
       "hash": "sha256-jqjbsbAub3MPVbTLXUE7eFufXDmAfQoPp9ogaggkpFc=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_math-bolditalic.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Math-BoldItalic.woff"
     },
     {
       "hash": "sha256-oAm+pAT3pQDe1I+LmtnPFuElBLMZXdniWXUom4JWsPA=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_math-italic.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Math-Italic.woff"
     },
     {
       "hash": "sha256-wB0zIeibQDxLgRqhU8TmGO2jQh+S2KByoCyNGQeCoZE=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_math-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Math-Regular.woff"
     },
     {
       "hash": "sha256-MnkhBLXvae3tkFttFZjtBdgIdoTTjnqU1S48OLoW9H4=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_sansserif-bold.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Sansserif-Bold.woff"
     },
     {
       "hash": "sha256-\/G3fXfQCsmPPsViu2OiZclQsNLcZzYex2zBGGYX3vVs=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_sansserif-italic.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Sansserif-Italic.woff"
     },
     {
       "hash": "sha256-tBgTbjs4S6qt7LcL08SKjamCUhATCyiX24CMRO\/Ig8s=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_sansserif-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Sansserif-Regular.woff"
     },
     {
       "hash": "sha256-r5b2fXrM9f0qSmgtC5+LM5+Opv40wxDBaUyLp\/bdyW8=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_script-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Script-Regular.woff"
     },
     {
       "hash": "sha256-xJgQtT7MDYfYAodixRiSQZfdnT+QWwj5nqJBMBCFucs=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_size1-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Size1-Regular.woff"
     },
     {
       "hash": "sha256-MOiJtYy8Ua37sDirGpbcQCWqNUKjz\/dxL8VezlEGdeI=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_size2-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Size2-Regular.woff"
     },
     {
       "hash": "sha256-XNpBVjoJW9cMeOLdoT0PjLkixxyQ\/\/0KAETGUXOmboM=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_size3-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Size3-Regular.woff"
     },
     {
       "hash": "sha256-O8bsqufs9vjX+OoHvdusqGAeLLbonWrvWOeNn22KOY8=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_size4-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Size4-Regular.woff"
     },
     {
       "hash": "sha256-xW2o1p8aAgi44HA2VsMmS23XSL1FJSTIKwOFtg9qaME=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_typewriter-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_TypeWriter-Regular.woff"
     },
     {
       "hash": "sha256-NuDXLYp6\/GlqPnpcc2mAdjRkDemwIle8pEe98SYiGic=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_vector-bold.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Vector-Bold.woff"
     },
     {
       "hash": "sha256-crxXM4bdHUjFu9KGMCyp40AMXrDymOfPv5RbnQj8aI8=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_vector-regular.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Vector-Regular.woff"
     },
     {
       "hash": "sha256-SB45BCUIrjE6YGGK8eNxRquT6TJMmOTHi48X\/lXUHgs=",
-      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/mathjax_zero.woff"
+      "url": "MathJax\/mathjax\/es5\/output\/chtml\/fonts\/woff-v2\/MathJax_Zero.woff"
     },
     {
       "hash": "sha256-b97lmbJAhR\/SezEBfhoYgC2ZdDrE+uggSZiZcXZkdgk=",
@@ -785,7 +785,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-iaAVAP9\/MF\/3hTr\/t1tOgAIQRNRMtmyKct4jZJj5kt4=",
+      "hash": "sha256-LobJmyztXNQWLL9FQEiFTqoa0Fj210o7dCi7iDw3LqY=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -801,7 +801,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-FQ4dsyZuIbyt6sOlbTRzF9t3FS5FaKYcDTAT9liwsGM=",
+      "hash": "sha256-YcKFml\/4m6bXJXnfb72HER6wAuTpHe8\/A3obgF7qB3I=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -897,7 +897,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-5J95rAILbPkYuryWue50Lv2zaWCf2uKPhiNH3PFTIRg=",
+      "hash": "sha256-+JegVw8JPLKyMLQMZ3qUco58PtFVHpY85Z\/yL\/6cpYA=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -1185,5 +1185,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "BOX6B0wc"
+  "version": "QJiCJTHX"
 };
