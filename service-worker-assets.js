@@ -45,7 +45,7 @@
       "url": "images\/Random.png"
     },
     {
-      "hash": "sha256-LJpFFbSXP4CG6w1On7evxFexXuaINxn5efb8p6uxPKQ=",
+      "hash": "sha256-pfdC+w5HkqLNd07tAtQnPoEcmIYYsFzDsMRi932FOEw=",
       "url": "index.html"
     },
     {
@@ -785,7 +785,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-LobJmyztXNQWLL9FQEiFTqoa0Fj210o7dCi7iDw3LqY=",
+      "hash": "sha256-OCTeaSjbjvoH\/1Ila5Zoigdbp76RttZVi0SCbSQ9Wfo=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -801,7 +801,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-YcKFml\/4m6bXJXnfb72HER6wAuTpHe8\/A3obgF7qB3I=",
+      "hash": "sha256-2lTUPqOsKsEI8pjJs3dOZGPeCRDaIlYWvPli8+YccgU=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -897,7 +897,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-+JegVw8JPLKyMLQMZ3qUco58PtFVHpY85Z\/yL\/6cpYA=",
+      "hash": "sha256-ulV+Rs\/5nO9HGV4yslTm\/iPmX7x3GBT9M5U0T+WfsBo=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -1185,5 +1185,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "QJiCJTHX"
+  "version": "JNPLpkuQ"
 };
