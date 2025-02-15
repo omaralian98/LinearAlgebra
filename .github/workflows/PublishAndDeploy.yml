@@ -24,7 +24,7 @@ jobs:
       run: sed -i 's/<base href="\/" \/>/<base href="\/LinearAlgebra\/" \/>/g' Presentation/release/wwwroot/index.html  
     
     - name: Update PWA manifest paths
-      run: > 
+      run: | 
         sed -i 's/"start_url": "\.\/"/"start_url": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
         sed -i 's/"id": "\.\/"/"id": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
 
