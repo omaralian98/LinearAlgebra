@@ -1,20 +1,20 @@
 {
   "name": "Linear Algebra Calculator",
   "short_name": "Linear Algebra",
-  "id": "./",
-  "start_url": "./",
+  "id": "/LinearAlgebra/",
+  "start_url": "/LinearAlgebra/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#03173d",
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "LinearAlgebra/icon-512.png",
+      "src": "icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "LinearAlgebra/icon-192.png",
+      "src": "icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     }
