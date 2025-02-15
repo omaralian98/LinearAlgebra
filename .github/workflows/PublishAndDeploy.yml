@@ -23,9 +23,14 @@ jobs:
     - name: Change base-tag in index.html
       run: sed -i 's/<base href="\/" \/>/<base href="\/LinearAlgebra\/" \/>/g' Presentation/release/wwwroot/index.html  
     
-    - name: Update PWA manifest icon paths
-      run: > 
-        sed -i 's/"src": "icon-/"src": "LinearAlgebra\/icon-/g' Presentation/release/wwwroot/manifest.webmanifest
+    - name: Update service worker path and PWA manifest
+      run: |
+        # Update service worker registration path in index.html
+        sed -i "s/navigator.serviceWorker.register('service-worker.js')/navigator.serviceWorker.register('LinearAlgebra\/service-worker.js')/g" Presentation/release/wwwroot/index.html
+        
+        # Update manifest start_url and id
+        sed -i 's/"start_url": "\.\/"/"start_url": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
+        sed -i 's/"id": "\.\/"/"id": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
 
     - name: Copy index.html to 404.html
       run: cp Presentation/release/wwwroot/index.html Presentation/release/wwwroot/404.html  
