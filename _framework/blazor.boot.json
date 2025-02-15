@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Presentation",
   "resources": {
-    "hash": "sha256-56KYesDctp64kFFt1XDzjO1vkaTiyvkUgmu3wS0qDsM=",
+    "hash": "sha256-8kyBJr/bwQjMMdrmALfenSCc9uFn5E6eNKHkPZHSOiw=",
     "jsModuleNative": {
       "dotnet.native.8.0.13.f1wj86lvfk.js": "sha256-xNQsYHtL1vcbrVTHDZAwJM4WovpoyjsrM2C6FQ8cW1w="
     },
@@ -20,7 +20,7 @@
       "FParsec.wasm": "sha256-PiAeWGO/6QNL5c56/mmzU9Y40u387VblkpFcmn1RjU8=",
       "FParsecCS.wasm": "sha256-ZFJupBq3OuZVnHtZAAwzUDY3/sqh8tcgaRtgG4KdRO8=",
       "FSharp.Core.wasm": "sha256-Nlk6vOXwXuSkB3AcxiFY3xjXxa584C7Mh4B+2bCTOqg=",
-      "LinearAlgebra.wasm": "sha256-iP3zbL6W9AZav7GSydAglUyLV9m5Q/a5ZcOKe24UJHI=",
+      "LinearAlgebra.wasm": "sha256-fMeCuAZF2LA3pHon5XyOAN4EXh4TU6dJwmL7pPsNlKc=",
       "MathNet.Numerics.FSharp.wasm": "sha256-8uyaMXPibSlmqIvXEtNv5KmsSq5KfBCA7QOFK9CAJp0=",
       "MathNet.Numerics.wasm": "sha256-Z60X5r7NoJrwV44B7JrzEFM6T4vm7UsWZw5A9x4QLGU=",
       "MathNet.Symbolics.wasm": "sha256-Rx4mqDtfvekvaM/HPeVLb3Kt22/wBv2aWfAGTJqmo3E=",
@@ -44,7 +44,7 @@
       "Microsoft.JSInterop.WebAssembly.wasm": "sha256-sLSiCKh0RQEV/2cl05tr7wOLWzExQfPZovvpqYLJduQ=",
       "MudBlazor.wasm": "sha256-X/ipnSvLnH0vfnSCCdasXRIMvoYYyqBUoOJ0DuMP7Uc=",
       "netstandard.wasm": "sha256-zwiw3qINuhAdEF2ZXuJlkdWiDTrBWEU0sw5+Q7T7OwI=",
-      "Presentation.wasm": "sha256-0OrWD1J8Vp+DsHSUxznPqskXMZ/n1A7b/T1Lb6j1gZ8=",
+      "Presentation.wasm": "sha256-36J0NZH4gm69RQr7XiubwvXHndsNBr6vrtFvlrEFAoA=",
       "System.Collections.Concurrent.wasm": "sha256-U9msbhH350sQ8ZrapSlObzNvmAoiUEf7OydME9Js6Oc=",
       "System.Collections.Immutable.wasm": "sha256-20Putul3aNv1USVXqt2ZNJqb1zfkDGpAWsp/EySOIAU=",
       "System.Collections.NonGeneric.wasm": "sha256-xoNOYqCXtVmPaWJ8VYEv1QGga8sXTPOWcFlCWctPc3E=",
