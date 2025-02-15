@@ -23,6 +23,10 @@ jobs:
     - name: Change base-tag in index.html
       run: sed -i 's/<base href="\/" \/>/<base href="\/LinearAlgebra\/" \/>/g' Presentation/release/wwwroot/index.html  
     
+    - name: Update PWA manifest icon paths
+      run: > 
+        sed -i 's/"src": "icon-/"src": "LinearAlgebra\/icon-/g' Presentation/release/wwwroot/manifest.webmanifest
+
     - name: Copy index.html to 404.html
       run: cp Presentation/release/wwwroot/index.html Presentation/release/wwwroot/404.html  
     
