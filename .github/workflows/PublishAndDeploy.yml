@@ -28,11 +28,8 @@ jobs:
         sed -i 's/"start_url": "\.\/"/"start_url": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
         sed -i 's/"id": "\.\/"/"id": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
 
-    - name: Update integrity hash and service worker paths
+    - name: Update integrity hash
       run: |
-        # Update service worker registration path
-        sed -i "s/service-worker.js/LinearAlgebra\/service-worker.js/g" Presentation/release/wwwroot/index.html
-    
         # Calculate new SHA-256 hash for index.html
         NEW_HASH=$(openssl dgst -sha256 -binary Presentation/release/wwwroot/index.html | openssl base64 -A)
     
