@@ -785,7 +785,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-EtsNv\/\/NjSI7jh9u59DkXVy+wGvHYYOgXO\/9ocbf4V4=",
+      "hash": "sha256-pzeBUkn\/o4ZlWhEn3uxJmIKaHjHM5YQPx0NcLYZan1o=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -801,7 +801,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-f2fDAqFSAmQYPYeQbzSXYH\/ows8DuIQygjMbrTLJK38=",
+      "hash": "sha256-08XuAS0UobL6UoyFf1CKT36z40Ba+YR79CukdrPsGIw=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -897,7 +897,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-c5KIaCbzVYXzRfpRHM6BwjHVwyle81fsyhQQiMxQCzY=",
+      "hash": "sha256-Ae9VlJMX+bwbiKpI4Bc16tsx9Sua+fJr2+5A0qSE6FE=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -1185,5 +1185,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "JfrW4Qct"
+  "version": "CdsI8aK3"
 };
