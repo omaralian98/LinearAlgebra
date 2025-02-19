@@ -12,7 +12,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.12" />
     <PackageReference Include="MudBlazor" Version="7.15.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,12 +22,6 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="wwwroot\appsettings.Production.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 	
 	<UsingTask TaskName="ReplaceBaseHRef" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
@@ -37,7 +30,6 @@
         <BaseHRefAttribute ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
-        <Reference Include="$(NugetPackageRoot)\newtonsoft.json\13.0.3\lib\netstandard2.0\Newtonsoft.Json.dll" />
         <Using Namespace="System" />
         <Using Namespace="System.IO" />
         <Using Namespace="System.Text" />
@@ -46,12 +38,7 @@
         <Using Namespace="Newtonsoft.Json.Linq" />
         <Code Type="Fragment" Language="C#">
             <![CDATA[  
-                  var inputFile = File.ReadAllText(InputFilename);                
-          var appsetting = File.ReadAllText(AppSettingsfile);
-
-                    JObject appsettings = JObject.Parse(appsetting);
-
-          var baseHRef = appsettings[BaseHRefAttribute].Value<string>();
+          var baseHRef = "LinearAlgebra";
           if (!string.IsNullOrEmpty(baseHRef)) {
                     Log.LogMessage( MessageImportance.High, baseHRef );
 
