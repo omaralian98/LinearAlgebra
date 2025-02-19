@@ -22,38 +22,31 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
-	
+
 	<UsingTask TaskName="ReplaceBaseHRef" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-        <InputFilename ParameterType="System.String" Required="true" />
-        <AppSettingsfile ParameterType="System.String" Required="true" />
-        <BaseHRefAttribute ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-        <Using Namespace="System" />
-        <Using Namespace="System.IO" />
-        <Using Namespace="System.Text" />
-        <Using Namespace="System.Text.RegularExpressions" />
-        <Code Type="Fragment" Language="C#">
-            <![CDATA[  
-          var baseHRef = "LinearAlgebra";
-          if (!string.IsNullOrEmpty(baseHRef)) {
-                    Log.LogMessage( MessageImportance.High, baseHRef );
-
-                      var outputFile = InputFilename;
-                      var matchExpression = "\\<base\\ href=\\\"(.*)\\\"\\ \\/\\>";
-            var newBaseHRef = $"<base href=\"{baseHRef}\" />";
-            File.WriteAllText(
-              outputFile,
-              Regex.Replace(inputFile, matchExpression, newBaseHRef)
-              );
-          }
+		<ParameterGroup>
+			<InputFilename ParameterType="System.String" Required="true" />
+			<BaseHRefValue ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Text.RegularExpressions" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+          var content = File.ReadAllText(InputFilename);
+          var pattern = @"<base\s+href="".*?""\s*/>";
+          var replacement = $"<base href=\"{BaseHRefValue}\" />";
+          var newContent = Regex.Replace(content, pattern, replacement);
+          File.WriteAllText(InputFilename, newContent);
         ]]>
-        </Code>
-    </Task>
-</UsingTask>
+			</Code>
+		</Task>
+	</UsingTask>
 
-<Target Name="ReplaceBaseHRef" AfterTargets="Publish">
-    <ReplaceBaseHRef InputFilename="$(PublishDir)wwwroot\index.html" AppSettingsfile="$(PublishDir)wwwroot\appsettings.Production.json" BaseHRefAttribute="BaseHRef" />
-</Target>
+	<Target Name="UpdateBaseHRef" BeforeTargets="ComputeFilesToPublish">
+		<ReplaceBaseHRef
+		  InputFilename="$(ProjectDir)wwwroot\index.html"
+		  BaseHRefValue="/LinearAlgebra/" />
+	</Target>
 </Project>
