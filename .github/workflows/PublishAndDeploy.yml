@@ -17,25 +17,8 @@ jobs:
 
     - name: Publish .NET Core Project
       working-directory: ./Presentation 
-      run: dotnet publish Presentation.csproj -c Release -o release --nologo
-    
-    # Subsequent steps remain unchanged as paths are relative to the root
-    - name: Change base-tag in index.html
-      run: sed -i 's/<base href="\/" \/>/<base href="\/LinearAlgebra\/" \/>/g' Presentation/release/wwwroot/index.html  
-    
-    - name: Update PWA manifest paths
-      run: | 
-        sed -i 's/"start_url": "\.\/"/"start_url": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
-        sed -i 's/"id": "\.\/"/"id": "\/LinearAlgebra\/"/g' Presentation/release/wwwroot/manifest.webmanifest
-
-    - name: Update integrity hash
-      run: |
-        # Calculate new SHA-256 hash for index.html
-        NEW_HASH=$(openssl dgst -sha256 -binary Presentation/release/wwwroot/index.html | openssl base64 -A)
-    
-        # Update integrity hash in index.html
-        sed -i "s|integrity='sha256-[a-zA-Z0-9+/]*=*'|integrity='sha256-$NEW_HASH'|g" Presentation/release/wwwroot/index.html
-
+      run: dotnet publish Presentation.csproj -c Release -o release --nologo -p:BlazorWebAssemblyBasePath="/LinearAlgebra/"
+   
     - name: Copy index.html to 404.html
       run: cp Presentation/release/wwwroot/index.html Presentation/release/wwwroot/404.html  
     
@@ -48,4 +31,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         BRANCH: Published
         FOLDER: Presentation/release/wwwroot
-        CREATE_BRANCH: true
