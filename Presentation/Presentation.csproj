@@ -34,8 +34,6 @@
         <Using Namespace="System.IO" />
         <Using Namespace="System.Text" />
         <Using Namespace="System.Text.RegularExpressions" />
-        <Using Namespace="Newtonsoft.Json" />
-        <Using Namespace="Newtonsoft.Json.Linq" />
         <Code Type="Fragment" Language="C#">
             <![CDATA[  
           var baseHRef = "LinearAlgebra";
