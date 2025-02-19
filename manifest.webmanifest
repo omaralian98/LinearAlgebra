@@ -1,8 +1,8 @@
 {
   "name": "Linear Algebra Calculator",
   "short_name": "Linear Algebra",
-  "id": "/LinearAlgebra/",
-  "start_url": "/LinearAlgebra/",
+  "id": "./",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#03173d",
