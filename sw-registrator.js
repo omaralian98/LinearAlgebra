@@ -7,7 +7,7 @@
         return;
     }
 
-    navigator.serviceWorker.register('service-worker.js')
+    navigator.serviceWorker.register('/LinearAlgebra/service-worker.js')
         .then(registration => {
             console.info(`Service worker registration successful (scope: ${registration.scope})`);
             alert(`Service worker registration successful (scope: ${registration.scope})`);
