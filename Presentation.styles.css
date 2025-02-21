@@ -160,3 +160,21 @@ main[b-k7poc71601] {
         overflow-y: auto;
     }
 }
+/* /Pages/UpdateAvailableDetector.razor.rz.scp.css */
+.floating-update-button[b-cs3acc3p4u] {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+    padding: 1rem 1.5rem;
+    animation: fadein-b-cs3acc3p4u 2s ease-out;
+}
+
+@keyframes fadein-b-cs3acc3p4u {
+    from {
+        right: -100%;
+    }
+
+    to {
+        right: 2rem;
+    }
+}

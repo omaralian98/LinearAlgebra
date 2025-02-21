@@ -45,7 +45,7 @@
       "url": "images\/Random.png"
     },
     {
-      "hash": "sha256-5XMeIxqL3lsMRaAZfkR3LmDUciXrCMY9HAffTaA+OnQ=",
+      "hash": "sha256-lDeffMPvO6CIaVzq96lZri5VERILw\/O5A2Ts2P31qi4=",
       "url": "index.html"
     },
     {
@@ -753,6 +753,10 @@
       "url": "sample-data\/weather.json"
     },
     {
+      "hash": "sha256-dEiT7i\/RSrAieTILGeR52Q28BB8KEl6PKQ8Hd3AKIhE=",
+      "url": "sw-registrator.js"
+    },
+    {
       "hash": "sha256-gvHfnndfEu1tRf0rFb5988rWq7ITIotOaE8+AMbKYbc=",
       "url": "_framework\/blazor.webassembly.js"
     },
@@ -785,7 +789,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-wz0fAWEUj\/JKId44N2fCpC4hHrINzRV1hAyX6qYw+pA=",
+      "hash": "sha256-YLWB5ixepfi6Ld4IQh2kic\/DOQ9DAjEGqi7gPUWp3Yo=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -801,7 +805,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-hbaaCx2kAPQte5Vi0muDuSPleJgcHV0I+glxLbzfX+8=",
+      "hash": "sha256-vKID4oz0dUlkW9vjS+3ZlTekFq7S9C1UOA7LY44zlIY=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -889,7 +893,7 @@
       "url": "_framework\/Microsoft.JSInterop.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-X\/ipnSvLnH0vfnSCCdasXRIMvoYYyqBUoOJ0DuMP7Uc=",
+      "hash": "sha256-6jwhw4Kyu7BJ2lCTbQdyqRp0eWEaYz2l64gvi13XzCw=",
       "url": "_framework\/MudBlazor.wasm"
     },
     {
@@ -897,7 +901,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-eF6kodU4o79jcsTw3W+SY1NwRh8iPeZDuu7vXR2+OTM=",
+      "hash": "sha256-WWMddBx+XaVQ2FxkuDcGsMonRD87qPzRetlOG29Ulog=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -1173,7 +1177,7 @@
       "url": "_framework\/zh-Hant\/FSharp.Core.resources.wasm"
     },
     {
-      "hash": "sha256-Z\/Z9kaoBrrlxrYEeerq9+RRkeffCDw2VLeMcSj08Dto=",
+      "hash": "sha256-hELUSw4LBGfRYF7s4WxT8aKhebWF2V38+nHKpFNGI0M=",
       "url": "Presentation.styles.css"
     },
     {
@@ -1185,5 +1189,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "IBB\/EcbG"
+  "version": "o80VT2jf"
 };
