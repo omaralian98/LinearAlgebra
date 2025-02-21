@@ -1,0 +1,40 @@
+﻿@inject IJSRuntime _jsRuntime
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RegisterForUpdateAvailableNotification();
+    }
+
+    private async Task RegisterForUpdateAvailableNotification()
+    {
+        await _jsRuntime.InvokeAsync<object>(
+            identifier: "registerForUpdateAvailableNotification",
+            DotNetObjectReference.Create(this),
+            nameof(OnUpdateAvailable));
+    }
+
+    [JSInvokable(nameof(OnUpdateAvailable))]
+    public Task OnUpdateAvailable()
+    {
+        Snackbar.Add("A new version of the application is available.", Severity.Warning, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = true;
+            config.Onclick = (async (e) =>
+            {
+                await _jsRuntime.InvokeVoidAsync("window.location.reload");
+            });
+            config.Action = "Reload";
+            config.ActionColor = Color.Primary;
+            config.SnackbarVariant = Variant.Filled;
+            config.Icon = Icons.Material.Filled.Download;
+            config.IconSize = Size.Medium;
+        });
+
+        return Task.CompletedTask;
+    }
+
+}

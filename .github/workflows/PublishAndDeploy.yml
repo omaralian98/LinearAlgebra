@@ -17,7 +17,7 @@ jobs:
 
     - name: Publish .NET Core Project
       working-directory: ./Presentation 
-      run: dotnet publish Presentation.csproj -c Release -o release --nologo
+      run: dotnet publish Presentation.csproj -c Release -o release --nologo -p:BlazorWebAssemblyBasePath="/LinearAlgebra/" -p:ServiceWorkerBasePath="/LinearAlgebra/"
    
     - name: Copy index.html to 404.html
       run: cp Presentation/release/wwwroot/index.html Presentation/release/wwwroot/404.html  
