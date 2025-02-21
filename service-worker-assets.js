@@ -753,7 +753,7 @@
       "url": "sample-data\/weather.json"
     },
     {
-      "hash": "sha256-7gohCK0bmxOXYv9GmcBQAUSgyGS56I6zQdw\/Wj8SSlw=",
+      "hash": "sha256-dEiT7i\/RSrAieTILGeR52Q28BB8KEl6PKQ8Hd3AKIhE=",
       "url": "sw-registrator.js"
     },
     {
@@ -789,7 +789,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-MxHM\/pB0yiuM9jqMbcH4NDLHuHJSnpLTZyzLLI98WeM=",
+      "hash": "sha256-X9IPW66VMbUbyoMvAN6UWMmfCLNT9IRuxYRdeaZraQo=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -805,7 +805,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-\/wn84wN7amTex\/HcNn4iZBdpbxCEZ\/2OOuT7djr+nfo=",
+      "hash": "sha256-ita0hVVh5GYV9VLkbyuELcMCx5txHewktXrJ55wK7Zc=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -901,7 +901,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-eR9OCsi+W9a8Nldlcbvy72u0nsnIDna01bFgC1eJbXA=",
+      "hash": "sha256-W5u\/4g03DBDzPi90UH18jW4EpUzkTIw+5IcYjYjYGmQ=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -1189,5 +1189,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "FZRUUGbr"
+  "version": "ERWVMEyy"
 };
