@@ -1,7 +1,7 @@
 ﻿self.assetsManifest = {
   "assets": [
     {
-      "hash": "sha256-AALpAjBgoWxSF29qb0ZufxA46eXzCj0iWLJom1JyseU=",
+      "hash": "sha256-2q19liaLoP+gZFEVa7yoMuUeF0qOqfpLIrkVM6+BlZQ=",
       "url": "css\/app.css"
     },
     {
@@ -49,7 +49,7 @@
       "url": "index.html"
     },
     {
-      "hash": "sha256-ixmQHhQO9FgcSqNDE\/fQgEIFzx5zFsus18PTrwZnAMQ=",
+      "hash": "sha256-TzmTfqWmMjF991w4fL8MtEsfjMfDZ1FCY4+WnvkaGbU=",
       "url": "js\/js.js"
     },
     {
@@ -789,7 +789,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-VNPETm7NmmkdRogDU\/OjpqO1rB5aQzZ\/P5nm43yhMO8=",
+      "hash": "sha256-2w\/AVacyJZdxNxaScLkpXkOO9zMtpwmG8Mcagwxsccs=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -805,7 +805,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-1qMPL\/ydPGxfMlPIJuvvKwHCrxWeFnyPqIIYvNGWk3k=",
+      "hash": "sha256-AtAqD5VQx3vLDjq\/+W2UW3iGOREsxPmpMnCAaRQrz3w=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -893,7 +893,7 @@
       "url": "_framework\/Microsoft.JSInterop.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-6jwhw4Kyu7BJ2lCTbQdyqRp0eWEaYz2l64gvi13XzCw=",
+      "hash": "sha256-AwQSpjOX\/Cx8JotwNh5xkbAr9GG1lzxr4stiCuwgMSQ=",
       "url": "_framework\/MudBlazor.wasm"
     },
     {
@@ -901,7 +901,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-hc\/VnWn7F2A6woVwvzQcLHr7MVteJjnRk82Q5uw4xyo=",
+      "hash": "sha256-HbCC9Liabf2wKPr1eQ1MOe5uW2HX\/rJEVotm+YpjdeI=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -977,7 +977,7 @@
       "url": "_framework\/System.Linq.Queryable.wasm"
     },
     {
-      "hash": "sha256-6asAig+HloS5M7kh0MJBbfHAHdVRuRu+ITZgvc53ZBQ=",
+      "hash": "sha256-ONEqkJ5xpQ\/h0JkZkv8r9S74i\/6ovw37LnKHNaLe5AA=",
       "url": "_framework\/System.Linq.wasm"
     },
     {
@@ -1189,5 +1189,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "65vu5vGr"
+  "version": "OD\/aZ8jM"
 };
