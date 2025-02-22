@@ -1,15 +1,15 @@
-﻿@page "/add"
+﻿@page "/subtract"
 
 <PageTitle>Add Two Matrices</PageTitle>
 
 <MudPaper Elevation="10" Outlined Height="100%" Width="100%" Style="padding: 20px;">
-    <h1>Add Two Matrices</h1>
-    <TwoMatricesPageComponent NameOftheButton="Add" OnButtonClick="Execute">
+    <h1>Subtract Two Matrices</h1>
+    <TwoMatricesPageComponent NameOftheButton="Subtract" OnButtonClick="Execute">
         <Result>
             @if (result is not null)
             {
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
-                    <MudText Typo="Typo.h5" Inline>A + B =</MudText>
+                    <MudText Typo="Typo.h5" Inline>A - B =</MudText>
                     <MatrixComponent Matrix="result" Display="Display.Block" />
                 </MudStack>
             }
@@ -19,7 +19,7 @@
             {
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MatrixComponent Matrix="(MatrixA.ConvertMatrix() ?? [])" Display="Display.Inline" />
-                    <MudText Typo="Typo.h5" Inline>+</MudText>
+                    <MudText Typo="Typo.h5" Inline>-</MudText>
                     <MatrixComponent Matrix="(MatrixB.ConvertMatrix() ?? [])" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
                     <MatrixComponent Matrix="step" Display="Display.Inline" />
@@ -47,13 +47,13 @@
             MatrixB = matrics.b;
             if (Settings.ShowSteps)
             {
-                var result = Linear.AddWithResult(matrics.a, matrics.b);
+                var result = Linear.SubtractWithResult(matrics.a, matrics.b);
                 step = result.Step.ConvertMatrix();
                 this.result = result.Result.ConvertMatrix();
             }
             else
             {
-                var result = Linear.Add<Fraction>(matrics.a, matrics.b);
+                var result = Linear.Subtract<Fraction>(matrics.a, matrics.b);
                 this.result = result.ConvertMatrix();
             }
         });

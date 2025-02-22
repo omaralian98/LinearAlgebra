@@ -25,3 +25,7 @@ function ScrollToElement(elementId) {
         });
     }
 }
+
+function ChangeUrl(url) {
+    history.pushState(null, '', url);
+}

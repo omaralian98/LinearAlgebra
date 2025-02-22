@@ -98,7 +98,8 @@ public static class MathJaxConverter
 
     public static string ConvertToMathJax<T>(this T number, Display config = Display.Inline)
     {
-        return WrapWithMathJax(number?.ToString() ?? string.Empty, config);
+        string str = number?.ToString() ?? string.Empty;
+        return WrapWithMathJax(str.Replace("[", "\\lbrack").Replace("]", "\\rbrack").Replace("*", "\\times"), config);
     }
 
     public static string ConvertMatrixToMathJax<T>(this T[][] matrix, Display display)

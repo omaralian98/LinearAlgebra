@@ -15,7 +15,7 @@
         <MudSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer Style="height: 100vh;" Variant="DrawerVariant.Responsive" @bind-Open="@IsOpen" Elevation="1">
+    <MudDrawer Style="height: 100vh;" Variant="DrawerVariant.Responsive" OverlayAutoClose @bind-Open="@IsOpen" Elevation="1">
         <MudDrawerHeader Style="border-bottom: 2px solid black;" Dense>
             <MudStack Class="drawer-header-container" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" StretchItems="StretchItems.End">
                 <MudImage Class="drawer-header-icon" Src="icon-512.png" />
@@ -24,10 +24,8 @@
         </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
-    <MudMainContent Class="pt-16">
-        <MudContainer Class="mt-6">
-            @Body
-        </MudContainer>
+    <MudMainContent Class="pt-16 m-2">
+        @Body
     </MudMainContent>
     <UpdateAvailableDetector/>
 </MudLayout>

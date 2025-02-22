@@ -34,7 +34,7 @@ public sealed class ClipboardService(IJSRuntime JS)
     {
         try
         {
-            JS.InvokeVoidAsync("navigator.clipboard.writeText", text).AsTask().Wait();
+            _ = JS.InvokeVoidAsync("navigator.clipboard.writeText", text).AsTask();
         }
         catch (Exception ex)
         {

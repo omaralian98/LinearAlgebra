@@ -6,6 +6,8 @@ public static class Settings
     public static int MaxRowsAllowed { get; set; } = 8;
     public static int MaxColumnsAllowed { get; set; } = 8;
 
+    public static bool ShowErrorMessageWhenExceedingMaxRowsOrColumnsAllowed { get; set; } = true;
+
     public static int Upperbound { get; set; } = 10;
     public static int Lowerbound { get; set; } = -9;
 

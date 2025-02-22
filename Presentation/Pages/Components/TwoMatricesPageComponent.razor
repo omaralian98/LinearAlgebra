@@ -1,0 +1,215 @@
+﻿@inject IJSRuntime JS
+@inject ShareService ShareService
+@inject ClipboardService ClipboardService
+@inject NavigationManager Nav
+
+<MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Stretch" Wrap="Wrap.Wrap" Spacing="1" StretchItems="StretchItems.End">
+    <MudPaper Elevation="10" Style="padding: 5px;" Outlined Square>
+        <MudStack Row="false" Justify="Justify.Center" AlignItems="AlignItems.Start">
+            @if (_isInitialized)
+            {
+                <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
+                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixA" Character="@('A')" />
+                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixB" Character="@('B')" />
+                </MudStack>
+                <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Execute" Ripple DropShadow>
+                        @NameOftheButton
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Share" Ripple DropShadow>
+                        Share
+                    </MudButton>
+                </MudStack>
+            }
+            else
+            {
+                <MudProgressCircular Indeterminate Size="Size.Large" Color="Color.Primary" />
+            }
+        </MudStack>
+    </MudPaper>
+    <MudPaper Elevation="10" Height="400px" Outlined Square>
+        @if (Finished is not null)
+        {
+            @if (Finished.Value && Result is not null)
+            {
+                <MudExpansionPanels id="solution-area" Elevation="5" Outlined MultiExpansion Square Gutters>
+                    <MudExpansionPanel id="solution" Style="padding: 20px;" HideIcon Dense Expanded Gutters>
+                        <TitleContent>
+                            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <MudText Class="mt-1" Typo="Typo.h5">Solution</MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Large" Color="Color.Success" />
+                            </MudStack>
+                        </TitleContent>
+                        <ChildContent>
+                            @Result
+                        </ChildContent>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+                <MudExpansionPanels id="steps-area" Class="mt-6" Elevation="5" Outlined MultiExpansion Square Gutters>
+                    @if (Settings.ShowSteps && Steps is not null)
+                    {
+                        <MudExpansionPanel id="steps" Style="padding: 20px;" HideIcon Dense Expanded Gutters>
+                            <TitleContent>
+                                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                    <MudText Class="mt-1" Typo="Typo.h5">Steps</MudText>
+                                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Size="Size.Large" Color="Color.Success" />
+                                </MudStack>
+                            </TitleContent>
+                            <ChildContent>
+                                @Steps
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            }
+            else if (Finished.Value == false)
+            {
+                <MudStack Style="height: 100%;" Row Justify="Justify.Center" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                    <MudProgressCircular Indeterminate Size="Size.Large" StrokeWidth="3" Color="Color.Success" />
+                </MudStack>
+            }
+        }
+    </MudPaper>
+</MudStack>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? a { get; set; } = null;
+
+    [SupplyParameterFromQuery]
+    public string? b { get; set; } = null;
+
+    [SupplyParameterFromQuery]
+    public bool? solution { get; set; } = null;
+
+    private bool _isInitialized = false;
+
+    [Parameter]
+    public string NameOftheButton { get; set; } = "Execute";
+
+    [Parameter]
+    public EventCallback<(Fraction[,], Fraction[,])> OnButtonClick { get; set; }
+
+    [Parameter]
+    public RenderFragment? Result { get; set; } = null;
+
+    [Parameter]
+    public RenderFragment? Steps { get; set; } = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(a))
+        {
+            var result = await a.ConvertStringToMatrixAsync(rowSeparator: "|");
+            if (result.IsSuccess)
+            {
+                MatrixA = result.Value!;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(b))
+        {
+            var result = await b.ConvertStringToMatrixAsync(rowSeparator: "|");
+            if (result.IsSuccess)
+            {
+                MatrixB = result.Value!;
+            }
+        }
+        _isInitialized = true;
+
+        if (solution.HasValue && solution.Value && !string.IsNullOrWhiteSpace(a) && !string.IsNullOrWhiteSpace(b))
+        {
+            await Execute();
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    public List<List<string>> MatrixA { get; set; }
+    public List<List<string>> MatrixB { get; set; }
+
+    public bool? Finished { get; set; } = null;
+
+    public async Task Execute()
+    {
+        try
+        {
+            Finished = false;
+            var resulta = MatrixA.ConvertToFraction();
+            if (resulta.IsFailure)
+            {
+                Snackbar.Add(resulta.Errors[0].ToString());
+            }
+
+            var resultb = MatrixB.ConvertToFraction();
+            if (resultb.IsFailure)
+            {
+                Snackbar.Add(resultb.Errors[0].ToString());
+            }
+
+            await OnButtonClick.InvokeAsync((resulta.Value!, resultb.Value!));
+
+            await Task.Delay(3000);
+            solution = true;
+            UpdateUrl();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+            Result = null;
+            Steps = null;
+            return;
+        }
+        finally
+        {
+            Finished = true;
+            await InvokeAsync(() => StateHasChanged());
+            await JS.InvokeVoidAsync("ScrollToElement", "solution-area");
+        }
+    }
+
+    private void Share()
+    {
+        var currentUrlResult = GetCurrentURL();
+        if (currentUrlResult.IsFailure)
+        {
+            Snackbar.Add("Failed to prepare the link", Severity.Error);
+            return;
+        }
+        var result = ClipboardService.Copy(currentUrlResult.Value!);
+        if (result.IsFailure)
+        {
+            Snackbar.Add("Failed to copy to the clipboard", Severity.Error);
+            return;
+        }
+        Snackbar.Add("Link copied to the clipboard!", Severity.Success);
+    }
+
+    private void UpdateUrl()
+    {
+        var urlResult = GetCurrentURL();
+        if (urlResult.IsSuccess)
+        {
+            var url = urlResult.Value!;
+            JS.InvokeVoidAsync("ChangeUrl", url);
+        }
+        else
+        {
+            Snackbar.Add(urlResult.Errors[0].Description, Severity.Error);
+        }
+    }
+
+    private Result<string> GetCurrentURL()
+    {
+        var parameters = new Dictionary<string, string?>
+            {
+                [nameof(a)] = MatrixA.ConvertMatrixToString(rowSeparator: "|"),
+                [nameof(b)] = MatrixB.ConvertMatrixToString(rowSeparator: "|"),
+            };
+        if (solution.HasValue && solution.Value)
+        {
+            parameters[nameof(solution)] = Convert.ToString(solution);
+        }
+        return ShareService.GetUrl(parameters);
+    }
+}

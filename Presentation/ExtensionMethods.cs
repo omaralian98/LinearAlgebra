@@ -1,9 +1,39 @@
-﻿using System.Text;
+﻿using MudBlazor;
+using System.Text;
 
 namespace Presentation;
 
 public static class ExtensionMethods
 {
+    public static T[][]? ConvertMatrix<T>(this T[,]? matrix)
+    {
+        if (matrix is null)
+        {
+            return null;
+        }
+        try
+        {
+            int rowsCount = matrix.GetLength(0);
+            int columnsCount = matrix.GetLength(1);
+            T[][] result = new T[rowsCount][];
+
+            for (int i = 0; i < rowsCount; i++)
+            {
+                result[i] = new T[columnsCount];
+                for (int j = 0; j < columnsCount; j++)
+                {
+                    result[i][j] = matrix[i, j];
+                }
+            }
+            return result;
+        }
+        catch
+        {
+        }
+        return default;
+    }
+
+
     public static Result<Fraction[][]> ConvertToFractionJagged(this List<List<string>> matrix)
     {
         int rowsCount = matrix.Count;

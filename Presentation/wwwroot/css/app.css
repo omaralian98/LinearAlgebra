@@ -235,7 +235,3 @@ code {
 .matrix-input-area {
     padding-bottom: 10px;
 }
-
-#solution-area .mud-expand-panel .mud-expand-panel-header .mud-expand-panel-icon.mud-transform {
-    transform: rotate(0deg) !important;
-}
