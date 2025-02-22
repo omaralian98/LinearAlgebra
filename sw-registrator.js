@@ -2,7 +2,6 @@
     if (!('serviceWorker' in navigator)) {
         const errorMessage = `This browser doesn't support service workers`;
         console.error(errorMessage);
-        alert(errorMessage);
         reject(errorMessage);
         return;
     }
@@ -10,7 +9,6 @@
     navigator.serviceWorker.register('service-worker.js')
         .then(registration => {
             console.info(`Service worker registration successful (scope: ${registration.scope})`);
-            alert(`Service worker registration successful (scope: ${registration.scope})`);
 
             setInterval(() => {
                 registration.update();
