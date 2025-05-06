@@ -789,7 +789,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-WuRW1qegSZ6pCGQOoLaf3w4zFdLclg3bn1jgN0SmhrQ=",
+      "hash": "sha256-pZ3Q5pcT4DJJuDj+zwtQJ0Y0p\/LT+eX6e29uAMGP6zk=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -805,7 +805,7 @@
       "url": "_framework\/FSharp.Core.wasm"
     },
     {
-      "hash": "sha256-EqPfpr0I86SyJTWTxBDHJc6vcgwCXjFf8UHCBSCmMrM=",
+      "hash": "sha256-II1cte2I7luyXWG6h7AQygeEy13DmRtx8B6c7\/UGL0w=",
       "url": "_framework\/LinearAlgebra.wasm"
     },
     {
@@ -901,7 +901,7 @@
       "url": "_framework\/netstandard.wasm"
     },
     {
-      "hash": "sha256-CzdCW2V7GJUMtHUoXwEHINU7gh8\/ucOYarXUQ1CmkY0=",
+      "hash": "sha256-VdQSO6pcfeFX4O0hletjmsOeykYKK1VTdqwYodlg4a0=",
       "url": "_framework\/Presentation.wasm"
     },
     {
@@ -985,11 +985,7 @@
       "url": "_framework\/System.Memory.wasm"
     },
     {
-      "hash": "sha256-5NL+iGQojq2kMm5Zkyht1RekJj5lYv5mJ2JXVk0rSAU=",
-      "url": "_framework\/System.Net.Http.Json.wasm"
-    },
-    {
-      "hash": "sha256-Qjx+2V4Qv7dqDwYkUXHKOzmivRdDhJE20Lux7xxA6A8=",
+      "hash": "sha256-BaBbEVB13FxB6alSnGaIyuasirw7Dl+qSGqkclU4yCw=",
       "url": "_framework\/System.Net.Http.wasm"
     },
     {
@@ -1005,7 +1001,7 @@
       "url": "_framework\/System.ObjectModel.wasm"
     },
     {
-      "hash": "sha256-UGmlw+O3Gra78UXGx12maSrr1rhI8tw\/HJCfRQcIE3Q=",
+      "hash": "sha256-uaZ6tgNAnEzrhXtnTtlPDwf9PKG05qz6JxI9gVB9qW0=",
       "url": "_framework\/System.Private.CoreLib.wasm"
     },
     {
@@ -1057,7 +1053,7 @@
       "url": "_framework\/System.Runtime.Serialization.Primitives.wasm"
     },
     {
-      "hash": "sha256-TTOWGo7q4pBYccbzQLE2cqUpaaaco8rULycAVgpUma0=",
+      "hash": "sha256-\/BPD4fE\/XmZ9gAPCN72PsikjEN5V3jrFFLUN3KfN2yc=",
       "url": "_framework\/System.Runtime.wasm"
     },
     {
@@ -1077,7 +1073,7 @@
       "url": "_framework\/System.Text.Encodings.Web.wasm"
     },
     {
-      "hash": "sha256-WUpxcp2hultmZFIM4Ffk6izDD+5TIbVLY0i3AlXnTPQ=",
+      "hash": "sha256-5aTA+1usynjV2AOXw62JT8mOxy+cT5agQjXiRRgONrQ=",
       "url": "_framework\/System.Text.Json.wasm"
     },
     {
@@ -1189,5 +1185,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "E+5FAqoO"
+  "version": "DusNpMP0"
 };
