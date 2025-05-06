@@ -1,4 +1,4 @@
-﻿namespace LinearAlgebra.Classes;
+﻿namespace LinearAlgebra.Classes.SolutionSteps;
 
 public record Multiplication_Result<T>
 {

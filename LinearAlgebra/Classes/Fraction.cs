@@ -551,6 +551,7 @@ public struct Fraction : IConvertible, IXunitSerializable, ICoefficient, IEquata
     public object ToType(Type conversionType, IFormatProvider? provider)
     {
         if (conversionType == typeof(string)) return this.ToString();
+        if (conversionType == typeof(Fraction)) return this;
         return Convert.ChangeType(Quotient, conversionType, provider);
     }
 

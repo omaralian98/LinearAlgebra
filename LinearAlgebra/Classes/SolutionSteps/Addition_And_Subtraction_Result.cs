@@ -1,4 +1,4 @@
-﻿namespace LinearAlgebra.Classes;
+﻿namespace LinearAlgebra.Classes.SolutionSteps;
 
 
 public record Addition_And_Subtraction_Result<T>

@@ -1,4 +1,4 @@
-﻿using LinearAlgebra.Classes;
+﻿using LinearAlgebra.Classes.SolutionSteps;
 
 namespace LinearAlgebra;
 

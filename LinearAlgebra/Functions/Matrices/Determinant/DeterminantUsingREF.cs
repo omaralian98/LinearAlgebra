@@ -1,5 +1,6 @@
 ﻿// Ignore Spelling: cancellationoken
 
+using LinearAlgebra.Classes.SolutionSteps;
 using MathNet.Numerics;
 
 namespace LinearAlgebra;
