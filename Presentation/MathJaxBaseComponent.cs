@@ -37,12 +37,20 @@ public class MathJaxBaseComponent : ComponentBase, IAsyncDisposable
 
     protected async Task RenderMath(string text)
     {
-        await JSRuntime.InvokeVoidAsync("ReplaceElement", ElementReference, text);
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("ReplaceElement", ElementReference, text);
+        }
+        catch { }
     }
 
     protected async Task Clear()
     {
-        await JSRuntime.InvokeVoidAsync("MathJax.typesetClear", ElementReference);
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("MathJax.typesetClear", ElementReference);
+        }
+        catch { }
     }
 
     public async ValueTask DisposeAsync()

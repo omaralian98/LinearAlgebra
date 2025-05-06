@@ -45,8 +45,6 @@
 	</UsingTask>
 
 	<Target Name="UpdateBaseHRef" BeforeTargets="ComputeFilesToPublish">
-		<ReplaceBaseHRef
-		  InputFilename="$(ProjectDir)wwwroot\index.html"
-		  BaseHRefValue="/LinearAlgebra/" />
+		<ReplaceBaseHRef InputFilename="$(ProjectDir)wwwroot\index.html" BaseHRefValue="/LinearAlgebra/" />
 	</Target>
 </Project>

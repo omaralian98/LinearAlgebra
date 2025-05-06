@@ -9,8 +9,7 @@
             @if (_isInitialized)
             {
                 <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
-                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixA" MatrixDisplayType="MatrixDisplayTypeForA" Character="@('A')" />
-                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixB" MatrixDisplayType="MatrixDisplayTypeForB" Character="@('B')" />
+                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixA" Character="@('A')" />
                 </MudStack>
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Execute" Ripple DropShadow>
@@ -77,9 +76,6 @@
     public string? a { get; set; } = null;
 
     [SupplyParameterFromQuery]
-    public string? b { get; set; } = null;
-
-    [SupplyParameterFromQuery]
     public bool? solution { get; set; } = null;
 
     private bool _isInitialized = false;
@@ -88,22 +84,13 @@
     public string NameOftheButton { get; set; } = "Execute";
 
     [Parameter]
-    public EventCallback<(Fraction[,], Fraction[,])> OnButtonClick { get; set; }
+    public EventCallback<Fraction[,]> OnButtonClick { get; set; }
 
     [Parameter]
     public RenderFragment? Result { get; set; } = null;
 
     [Parameter]
     public RenderFragment? Steps { get; set; } = null;
-
-    [Parameter]
-    public MatrixDisplayType MatrixDisplayTypeForA { get; set; } = MatrixDisplayType.Matrix;
-
-    [Parameter]
-    public MatrixDisplayType MatrixDisplayTypeForB { get; set; } = MatrixDisplayType.Matrix;
-
-    [Parameter]
-    public bool Reverse { get; set; } = false;
 
     protected async override Task OnInitializedAsync()
     {
@@ -115,18 +102,9 @@
                 MatrixA = result.Value!;
             }
         }
-
-        if (!string.IsNullOrWhiteSpace(b))
-        {
-            var result = await b.ConvertStringToMatrixAsync(rowSeparator: "|");
-            if (result.IsSuccess)
-            {
-                MatrixB = result.Value!;
-            }
-        }
         _isInitialized = true;
 
-        if (solution.HasValue && solution.Value && !string.IsNullOrWhiteSpace(a) && !string.IsNullOrWhiteSpace(b))
+        if (solution.HasValue && solution.Value && !string.IsNullOrWhiteSpace(a))
         {
             await Execute();
         }
@@ -135,7 +113,6 @@
     }
 
     public List<List<string>> MatrixA { get; set; }
-    public List<List<string>> MatrixB { get; set; }
 
     public bool? Finished { get; set; } = null;
 
@@ -150,13 +127,7 @@
                 Snackbar.Add(resulta.Errors[0].ToString());
             }
 
-            var resultb = MatrixB.ConvertToFraction();
-            if (resultb.IsFailure)
-            {
-                Snackbar.Add(resultb.Errors[0].ToString());
-            }
-
-            await OnButtonClick.InvokeAsync((resulta.Value!, resultb.Value!));
+            await OnButtonClick.InvokeAsync(resulta.Value!);
 
             solution = true;
             UpdateUrl();
@@ -212,7 +183,6 @@
         var parameters = new Dictionary<string, string?>
             {
                 [nameof(a)] = MatrixA.ConvertMatrixToString(rowSeparator: "|"),
-                [nameof(b)] = MatrixB.ConvertMatrixToString(rowSeparator: "|"),
             };
         if (solution.HasValue && solution.Value)
         {

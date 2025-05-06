@@ -1,93 +1,105 @@
 ﻿@inject ISnackbar Snackbar
 @inject ClipboardService ClipboardService
 
-<MudStack Row Spacing="0" Justify="Justify.FlexStart" StretchItems="StretchItems.None">
+<MudStack Style="@(MatrixDisplayType == MatrixDisplayType.None ? "display:none !important;" : "")" Row Spacing="0" Justify="Justify.FlexStart" StretchItems="StretchItems.None">
     <MudPaper Class="matrix-input-card text" Elevation="10" Square>
-        <MudPaper Style="background-color: #35d446; margin: 5px -5px 0px -5px;" Outlined Square Elevation="5">
-            <MudText Class="text" Align="Align.Center" Color="Color.Dark" Style="margin: 0 5px;" Typo="Typo.h5">
-                Matrix @(Character) Input
-            </MudText>
-        </MudPaper>
-
-        <MudStack Style="width: fit-content;" Row="false" Justify="Justify.Center" AlignItems="AlignItems.Start">
-            <MudStack Style="width: 100%;" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
-                    Rows
+        @if (DisplayTools)
+        {
+            <MudPaper Style="background-color: #35d446; margin: 5px -5px 0px -5px;" Outlined Square Elevation="5">
+                <MudText Class="text" Align="Align.Center" Color="Color.Dark" Style="margin: 0 5px;" Typo="Typo.h5">
+                    Matrix @(Character) Input
                 </MudText>
-                <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Error">
-                    ×
-                </MudText>
-                <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
-                    Columns
-                </MudText>
+            </MudPaper>
+            <MudStack Style="width: fit-content;" Row="false" Justify="Justify.Center" AlignItems="AlignItems.Start">
+                <MudStack Style="width: 100%;" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                    <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
+                        Rows
+                    </MudText>
+                    <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Error">
+                        ×
+                    </MudText>
+                    <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
+                        Columns
+                    </MudText>
+                </MudStack>
+                <MudStack Style="width: 100%;" Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                    <MudNumericField T="int" Value="CurrentRowsCount" ValueChanged="ChangeRow" Placeholder="Rows" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                    <MudNumericField T="int" Value="CurrentColumnsCount" ValueChanged="ChangeColumn" Placeholder="Columns" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                </MudStack>
             </MudStack>
-            <MudStack Style="width: 100%;" Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                <MudNumericField T="int" Value="CurrentRowsCount" ValueChanged="ChangeRow" Placeholder="Rows" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
-                <MudNumericField T="int" Value="CurrentColumnsCount" ValueChanged="ChangeColumn" Placeholder="Columns" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
-            </MudStack>
-        </MudStack>
+            <br />
+        }
 
-        <br />
         <MudStack Row="false" Justify="Justify.FlexStart" AlignItems="AlignItems.Start">
-            <MudSwitch Style="color: white !important;" ThumbIcon="@(EnterMatrixAsString ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" @bind-Value="@EnterMatrixAsString" Size="Size.Small" Color="Color.Tertiary" Ripple>Enter Matrix as Text</MudSwitch>
-            @if (EnterMatrixAsString)
+            @if (DisplayTools)
             {
-                <MudTextField Class="matrix-input-area" Style="background-color: white !important;" @bind-Value="@MatrixAsString" Lines="3" FullWidth Immediate AutoGrow />
+                <MudSwitch Style="color: white !important;" ThumbIcon="@(EnterMatrixAsString ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" @bind-Value="@EnterMatrixAsString" Size="Size.Small" Color="Color.Tertiary" Ripple>Enter Matrix as Text</MudSwitch>
+                @if (EnterMatrixAsString)
+                {
+                    <MudTextField Class="matrix-input-area" Style="background-color: white !important;" @bind-Value="@MatrixAsString" Lines="3" FullWidth Immediate AutoGrow />
+                }
+                else
+                {
+                    <div align="center">
+                        <table class="matrix">
+                            @for (int i = 0; i < Matrix.Count; i++)
+                            {
+                                int myI = i;
+                                <tr>
+                                    @for (int j = 0; j < Matrix[i].Count; j++)
+                                    {
+                                        int myJ = j;
+                                        <td>
+                                            <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][myJ]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
             }
-            else
+            else if (MatrixDisplayType == MatrixDisplayType.Scalar)
             {
-                <div align="center">
-                    <table class="matrix">
-                        @for (int i = 0; i < Matrix.Count; i++)
-                        {
-                            int myI = i;
-                            <tr>
-                                @for (int j = 0; j < Matrix[i].Count; j++)
-                                {
-                                    int myJ = j;
-                                    <td>
-                                        <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][myJ]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </table>
-                </div>
+                <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px; margin: 20px 0;" Class="matrix-input text" @bind-Value="@Scalar" Variant="Variant.Filled" Underline="false" FullWidth="false" />
             }
         </MudStack>
     </MudPaper>
-    <MudStack Row="false" AlignItems="AlignItems.Start" Class="matrix-toolbox" Spacing="0">
-        <MudTooltip Delay="1000" Text="Copy" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button disabled="@Disabled" @onclick="Copy" class="matrix-toolbox-button">
-                <MudImage Src="images/Copy.png" />
-            </button>
-        </MudTooltip>
-        <MudTooltip Delay="1000" Text="Paste" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button disabled="@Disabled" @onclick="@(() => Paste())" class="matrix-toolbox-button">
-                <MudImage Src="images/Paste.png" />
-            </button>
-        </MudTooltip>
-        <MudTooltip Delay="1000" Text="Random" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button disabled="@Disabled" @onclick="Random" class="matrix-toolbox-button">
-                <MudImage Src="images/Random.png" />
-            </button>
-        </MudTooltip>
-        <MudTooltip Delay="1000" Text="Clear" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button disabled="@Disabled" @onclick="Clear" class="matrix-toolbox-button">
-                <MudImage Src="images/Clear.png" />
-            </button>
-        </MudTooltip>
-        <MudTooltip Delay="1000" Text="Set All 0" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button disabled="@Disabled" @onclick="SetAllZeros" class="matrix-toolbox-button">
-                0
-            </button>
-        </MudTooltip>
-        <MudTooltip Delay="1000" Text="Set All 1" Placement="Placement.Top" Color="Color.Success" Arrow>
-            <button disabled="@Disabled" @onclick="SetAllOnes" class="matrix-toolbox-button">
-                1
-            </button>
-        </MudTooltip>
-    </MudStack>
+    @if (DisplayTools)
+    {
+        <MudStack Row="false" AlignItems="AlignItems.Start" Class="matrix-toolbox" Spacing="0">
+            <MudTooltip Delay="1000" Text="Copy" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="Copy" class="matrix-toolbox-button">
+                    <MudImage Src="images/Copy.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Paste" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="@(() => Paste())" class="matrix-toolbox-button">
+                    <MudImage Src="images/Paste.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Random" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="Random" class="matrix-toolbox-button">
+                    <MudImage Src="images/Random.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Clear" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="Clear" class="matrix-toolbox-button">
+                    <MudImage Src="images/Clear.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Set All 0" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="SetAllZeros" class="matrix-toolbox-button">
+                    0
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Set All 1" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="SetAllOnes" class="matrix-toolbox-button">
+                    1
+                </button>
+            </MudTooltip>
+        </MudStack>
+    }
 </MudStack>
 
 
@@ -182,7 +194,26 @@
     [Parameter]
     public EventCallback OnContentChange { get; set; }
 
+    [Parameter]
+    public MatrixDisplayType MatrixDisplayType { get; set; } = MatrixDisplayType.Matrix;
+
+    [Parameter]
+    public string Scalar { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ScalarChanged { get; set; }
+
+    [Parameter]
+    public List<string> Coefficient { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<List<string>> CoefficientChanged { get; set; }
+
     public string MatrixAsString { get; set; } = string.Empty;
+
+    private bool DisplayTools => MatrixDisplayType == MatrixDisplayType.Matrix || MatrixDisplayType == MatrixDisplayType.AugmentedMatrix;
+
+
 
     protected override void OnParametersSet()
     {
