@@ -23,4 +23,6 @@ public class MathJaxSettings
     public Display DefaultFractionConfiguration { get; set; } = Display.Inline;
 
     public bool UseInlineModeForMatrices { get; set; } = true;
+
+    public bool ForceBreakModeForMatrices { get; set; } = false;
 }
