@@ -1,21 +1,12 @@
-﻿function ReplaceElement(element, text) {
-    if (element && element.parentNode) {
-        MathJax.typesetClear([element])
-        element.innerHTML = text;
-        MathJax.typeset([element]);
-    }
+﻿function Render(elementId, equation, displayMode = false) {
+    let element = document.getElementById(elementId);
+    katex.render(equation, element, {
+        throwOnError: true,
+        displayMode: displayMode,
+    });
 }
 
-function GetElementText(element) {
-    if (element) {
-        return element.innerHTML;
-    }
-}
 
-function ReplaceElementById(elementId, text) {
-    var element = document.getElementById(elementId);
-    ReplaceElement(element, text);
-}
 
 function ScrollToElement(elementId) {
         var element = document.getElementById(elementId);

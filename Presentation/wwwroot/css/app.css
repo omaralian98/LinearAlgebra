@@ -9,6 +9,83 @@
     font-family: Changa !important;
 }
 
+.matrix-grid-wrapper{
+    display: inline-block;
+}
+
+.block {
+    display: flex;
+    justify-content: center;
+}
+
+.matrix-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    position: relative;
+    user-select: none;
+    color: #424242;
+    width: fit-content;
+    padding: 10px;
+}
+
+.left-bracket, .right-bracket {
+    position: relative;
+    top: 0;
+    border: 2px solid #424242;
+    border-block-width: 2px;
+    width: 6px;
+}
+
+.left-bracket {
+    left: -6px;
+    border-right: 0;
+}
+
+.right-bracket {
+    right: -6px;
+    border-left: 0;
+}
+/*.matrix-grid:before, .matrix-grid:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    border: 3px solid rgb(0, 0, 0, 0.7);
+    border-block-width: 3px;
+    width: 12px;
+    height: calc(100% + 10px);
+}
+
+.matrix-grid:before {
+    left: -6px;
+    border-right: 0;
+}
+
+.matrix-grid:after {
+    right: -6px;
+    border-left: 0;
+}*/
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.cell {
+    padding: 4px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+.math-content{
+    max-width: 90vw;
+    padding:0 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    user-select: none;
+}
 
 h1:focus {
     outline: none;

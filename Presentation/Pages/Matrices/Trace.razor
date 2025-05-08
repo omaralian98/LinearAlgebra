@@ -10,7 +10,7 @@
             {
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MudText Typo="Typo.h5" Inline>
-                        <MathJaxComponent TextToRender="\(\mathrm{ Tr } A\)" />
+                        <Equation TextToRender="\(\mathrm{ Tr } A\)" />
                     </MudText>
                     <MudText Typo="Typo.h5" Inline>
                         =
@@ -25,7 +25,7 @@
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MatrixComponent Matrix="(Matrix.ConvertMatrix() ?? [])" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
-                    <MathJaxComponent TextToRender="@($"\\(\\mathrm{{ [{step}] }}\\)")" />
+                    <Equation TextToRender="@($"\\(\\mathrm{{ [{step}] }}\\)")" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
                     <FractionComponent Fraction="result!.Value" Display="Display.Inline" />
                 </MudStack>

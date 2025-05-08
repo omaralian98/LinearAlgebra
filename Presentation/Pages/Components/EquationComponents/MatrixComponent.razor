@@ -1,0 +1,76 @@
+﻿@typeparam T
+@inject IJSRuntime JS
+
+@if (ForceBreakMode)
+{
+    <div class="@(Display == Display.Block ? "block" : "matrix-grid-wrapper")">
+        <div class="matrix-grid">
+            <div class="left-bracket"></div>
+            @for (int i = 0; i < Matrix.Length; i++)
+            {
+                <div class="column">
+                    @for (int j = 0; j < Matrix[i].Length; j++)
+                    {
+                        <div class="cell" id="@CellId(i, j)">
+                        </div>
+                    }
+                </div>
+            }
+            <div class="right-bracket"></div>
+        </div>
+    </div>
+}
+else
+{
+    <Equation Display="Display" Equation="@matrixAsString"/>
+}
+
+
+@code {
+    [Parameter]
+    public T[][] Matrix { get; set; }
+
+    [Parameter]
+    public Display Display { get; set; } = Display.Block;
+
+    public bool ForceBreakMode => Settings.MathJaxSettings.ForceBreakModeForMatrices; 
+
+    private string matrixId = $"matrix{Guid.NewGuid():N}";
+
+    private string CellId(int i, int j) => $"{matrixId}_cell_{i}_{j}";
+    private string matrixAsString { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (ForceBreakMode && first)
+        {
+            for (int i = 0; i < Matrix.Length; i++)
+                for (int j = 0; j < Matrix[i].Length; j++)
+                    await JS.InvokeVoidAsync("Render",
+                                             CellId(i, j),
+                                             Matrix[i][j]?.ConvertToLaTeX(),
+                                             false);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ForceBreakMode == false)
+        {
+            GetMatrixEquation();
+        }
+    }
+
+    private void GetMatrixEquation()
+    {
+        if (typeof(T) == typeof(Fraction))
+        {
+            matrixAsString = (Matrix as Fraction[][])?.ConvertFractionMatrixToLaTeX() ?? string.Empty;
+        }
+        else
+        {
+            matrixAsString = Matrix.ConvertMatrixToLaTeX();
+        }
+        base.OnParametersSet();
+    }
+}

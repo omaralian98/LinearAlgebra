@@ -22,6 +22,10 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\katex\" />
+  </ItemGroup>
+
 
 	<UsingTask TaskName="ReplaceBaseHRef" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
 		<ParameterGroup>

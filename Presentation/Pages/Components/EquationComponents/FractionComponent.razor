@@ -1,0 +1,9 @@
+﻿<Equation Display="Display" Equation="@Fraction.ConvertFractionToLaTeX()" />
+
+@code {
+    [Parameter]
+    public Fraction Fraction { get; set; }
+
+    [Parameter]
+    public Display Display { get; set; } = Display.Block;
+}

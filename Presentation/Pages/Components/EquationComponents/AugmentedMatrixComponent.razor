@@ -1,0 +1,12 @@
+﻿<Equation Display="Display" Equation="@Matrix.ConvertAugmentedFractionMatrixToLaTeX(Coefficient)" />
+
+@code {
+    [Parameter]
+    public Fraction[][] Matrix { get; set; }
+
+    [Parameter]
+    public Fraction[] Coefficient { get; set; }
+
+    [Parameter]
+    public Display Display { get; set; } = Display.Block;
+}

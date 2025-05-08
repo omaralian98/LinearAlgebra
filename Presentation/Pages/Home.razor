@@ -8,27 +8,29 @@
 
 Welcome to your new app.
 
+<Equation Equation="c = \pm\sqrt{a^2 + b^2}"></Equation>
+
 <FractionComponent Fraction="@new("-5/7")" Display="Display.Inline" />
 <FractionComponent Fraction="@new("-5/7")" />
-@for (int i = 0; i < 7; i++)
-{
-    <MatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(3, 3)" Display="Display.Inline" />
-}
+ @for (int i = 0; i < 7; i++) 
+ { 
+     <MatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(8, 8, RandomFractionGenerationType.IntegersPrefered)" Display="Display.Inline" /> 
+ } 
 
-<br/>
-<br/>
-@for (int i = 0; i < 7; i++)
-{
-    <AugmentedMatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Coefficient="Fraction.GenerateRandomVector(5)" Display="Display.Inline" />
-}
+ <br/> 
+ <br/> 
+ @for (int i = 0; i < 7; i++) 
+ { 
+     <AugmentedMatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Coefficient="Fraction.GenerateRandomVector(5)" Display="Display.Inline" /> 
+ } 
 
-<br />
-<br />
-@for (int i = 0; i < 7; i++)
-{
-    <TwoMatricesComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" OtherMatrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Display="Display.Inline" />
-}
-@* <MathJaxComponent>
+ <br /> 
+ <br /> 
+ @for (int i = 0; i < 7; i++) 
+ { 
+     <TwoMatricesComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" OtherMatrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Display="Display.Inline" /> 
+ } 
+@* <Equation>
     \[
     \left[
     \begin{array}{rrr|r}
@@ -38,8 +40,8 @@ Welcome to your new app.
     \end{array}
     \right]
     \]
-</MathJaxComponent>
-<MathJaxComponent>
+</Equation>
+<Equation>
     \[
     \left[
     \begin{array}{rrr}
@@ -49,7 +51,7 @@ Welcome to your new app.
     \end{array}
     \right]
     \]
-</MathJaxComponent> *@
+</Equation> *@
 
 
 @code {
