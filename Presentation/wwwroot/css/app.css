@@ -9,6 +9,19 @@
     font-family: Changa !important;
 }
 
+.math-content {
+}
+
+.math-content.block {
+    max-width: 90vw;
+    padding: 0 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    user-select: none;
+}
+.math-content.inline{
+
+}
 
 h1:focus {
     outline: none;

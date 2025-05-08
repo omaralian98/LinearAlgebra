@@ -11,6 +11,9 @@ public class MathJaxBaseComponent : ComponentBase, IAsyncDisposable
     [Parameter]
     public string TextToRender { get; set; } = string.Empty;
 
+    [Parameter]
+    public Display Display { get; set; } = Display.Inline;
+
     protected ElementReference ElementReference { get; set; }
 
     private string RenderedText { get; set; } = string.Empty;

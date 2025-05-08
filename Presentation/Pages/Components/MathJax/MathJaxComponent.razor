@@ -1,5 +1,5 @@
 ﻿@inherits MathJaxBaseComponent
 
-<span @ref="ElementReference" class="math-content">
+<span @ref="ElementReference" class="math-content @(Display == Display.Block ? "block" : "inline")">
     @TextToRender
 </span>
