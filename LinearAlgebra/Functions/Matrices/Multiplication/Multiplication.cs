@@ -80,8 +80,8 @@ public partial class Linear
             {
                 for (int j = 0; j < q; j++)
                 {
-                    var row = a.GetRow(i);
-                    var column = b.GetColumn(j);
+                    var row = a.GetRow(i).ToArray();
+                    var column = b.GetColumn(j).ToArray();
                     result[i, j] = MultiplyRowAColumn(row, column);
                 }
             }
@@ -121,8 +121,8 @@ public partial class Linear
             {
                 for (int j = 0; j < q; j++)
                 {
-                    var row = a.GetRow(i);
-                    var column = b.GetColumn(j);
+                    var row = a.GetRow(i).ToArray();
+                    var column = b.GetColumn(j).ToArray();
                     step[i, j] = MultiplyRowAColumnWithResult(row, column, out result[i, j]);
                 }
             }

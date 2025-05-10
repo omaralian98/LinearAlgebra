@@ -23,7 +23,7 @@
             @if (step is not null)
             {
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
-                    <MatrixComponent Matrix="(Matrix.ConvertMatrix() ?? [])" Display="Display.Inline" />
+                    <MatrixComponent Matrix="Matrix" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
                     <Equation TextToRender="@($"\\(\\mathrm{{ [{step}] }}\\)")" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>

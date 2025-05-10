@@ -1,4 +1,4 @@
-﻿@typeparam T
+﻿@typeparam TMatrix
 @inject IJSRuntime JS
 
 @if(_forceBreak)
@@ -6,10 +6,10 @@
     <div class="@(Display == Display.Block ? "block" : "matrix-grid-wrapper")">
         <div class="matrix-grid">
             <div class="left-bracket"></div>
-            @for (int x = 0; x < Matrix.Length; x++)
+            @for (int y = 0; y < _columnsCount; y++)
             {
                 <div class="column">
-                    @for (int y = 0; y < Matrix[x].Length; y++)
+                    @for (int x = 0; x < _rowsCount; x++)
                     {
                         <div class="cell" id="@CellId(x, y)"></div>
                     }
@@ -28,10 +28,13 @@ else
 
 @code {
     [Parameter]
-    public T[][] Matrix { get; set; }
+    public TMatrix[,] Matrix { get; set; }
 
     [Parameter]
     public Display Display { get; set; } = Display.Block;
+
+    private int _rowsCount => Matrix.GetLength(0);
+    private int _columnsCount => Matrix.GetLength(1);
 
     private bool _forceBreak => Settings.EquationSettings.ForceBreakMatrices;
 
@@ -44,15 +47,15 @@ else
     {
         if (_forceBreak && first)
         {
-            for (int i = 0; i < Matrix.Length; i++)
+            for (int y = 0; y < _columnsCount; y++)
             {
-                for (int j = 0; j < Matrix[i].Length; j++)
+                for (int x = 0; x < _rowsCount; x++)
                 {
                     await JS.InvokeVoidAsync
                     (
                         "Render",
-                         CellId(i, j),
-                         Matrix[i][j].ConvertToLaTeX(),
+                         CellId(x, y),
+                         Matrix[x, y].ConvertToLaTeX(),
                          false
                     );
                 }

@@ -56,28 +56,14 @@ body{
     border-left: 0;
 }
 
-.augmented-line{
-
-}
-/*.matrix-grid:before, .matrix-grid:after {
-    content: "";
-    position: absolute;
+.augmented-line {
+    position: relative;
     top: 0;
-    border: 3px solid rgb(0, 0, 0, 0.7);
-    border-block-width: 3px;
-    width: 12px;
-    height: calc(100% + 10px);
+    border: 1px solid #424242;
+    border-right-width: 0;
+    width: 0;
 }
 
-.matrix-grid:before {
-    left: -6px;
-    border-right: 0;
-}
-
-.matrix-grid:after {
-    right: -6px;
-    border-left: 0;
-}*/
 .column {
     display: flex;
     flex-direction: column;

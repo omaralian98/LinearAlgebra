@@ -12,23 +12,23 @@ Welcome to your new app.
 
 <FractionComponent Fraction="@new("-5/7")" Display="Display.Inline" />
 <FractionComponent Fraction="@new("-5/7")" />
- @for (int i = 0; i < 7; i++) 
- { 
-     <MatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(8, 8, RandomFractionGenerationType.IntegersPrefered)" Display="Display.Inline" /> 
+ @for (int i = 0; i < 8; i++) 
+ {
+    <MatrixComponent Matrix="Fraction.GenerateRandomMatrix(i + 1, i + 1, RandomFractionGenerationType.IntegersPrefered)" Display="Display.Inline" />
  } 
 
  <br/> 
  <br/> 
- @for (int i = 0; i < 7; i++) 
+ @for (int i = 0; i < 8; i++) 
  { 
-     <AugmentedMatrixComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Coefficient="Fraction.GenerateRandomVector(5)" Display="Display.Inline" /> 
+     <AugmentedMatrixComponent Matrix="Fraction.GenerateRandomMatrix(5, i + 1)" Coefficient="Fraction.GenerateRandomVector(5)" Display="Display.Inline" /> 
  } 
 
  <br /> 
  <br /> 
  @for (int i = 0; i < 7; i++) 
  { 
-     <TwoMatricesComponent Matrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" OtherMatrix="Fraction.GenerateRandomMatrixJagged(5, i + 1)" Display="Display.Inline" /> 
+     <TwoMatricesComponent Matrix="Fraction.GenerateRandomMatrix(5, i + 1)" OtherMatrix="Fraction.GenerateRandomMatrix(5, i + 1)" Display="Display.Inline" /> 
  } 
 @* <Equation>
     \[

@@ -283,7 +283,7 @@ public static class Extensions
         for (int j = 0; j < matrix.GetLength(1); j++)
         {
             index = 1;
-            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            int vart = GetPad(matrix.GetColumn(j).ToArray()) + 2;
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i, j]);
@@ -300,7 +300,7 @@ public static class Extensions
         for (int j = 0; j < matrix[0].Length; j++)
         {
             index = 1;
-            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            int vart = GetPad(matrix.GetColumn(j).ToArray()) + 2;
             for (int i = 0; i < matrix.Length; i++)
             {
                 Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i][j]);
@@ -379,15 +379,22 @@ public static class Extensions
     /// <param name="columnIndex">The index of the required column</param>
     /// <param name="startFromIndex">The index of the start row</param>
     /// <returns>The required column as an array</returns>
-    public static T[] GetColumn<T>(this T[,] matrix, int columnIndex, int startFromIndex = 0) =>
+    public static IEnumerable<T> GetColumn<T>(this T[,] matrix, int columnIndex, int startFromIndex = 0) =>
         Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
-            .Select(x => matrix[x, columnIndex])
-             .ToArray();
+            .Select(x => matrix[x, columnIndex]);
 
-    public static T[] GetColumn<T>(this T[][] matrix, int columnIndex, int startFromIndex = 0) =>
+
+    /// <summary>
+    /// Get's a specific column from a 2d jagged array.
+    /// </summary>
+    /// <typeparam name="T">Any type of array</typeparam>
+    /// <param name="matrix">The original 2d jagged array</param>
+    /// <param name="columnIndex">The index of the required column</param>
+    /// <param name="startFromIndex">The index of the start row</param>
+    /// <returns>The required column as an array</returns>
+    public static IEnumerable<T> GetColumn<T>(this T[][] matrix, int columnIndex, int startFromIndex = 0) =>
     Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
-        .Select(x => matrix[x][columnIndex])
-         .ToArray();
+        .Select(x => matrix[x][columnIndex]);
 
     /// <summary>
     /// Get's a specific row from a 2d array.
@@ -397,10 +404,10 @@ public static class Extensions
     /// <param name="rowIndex">The index of the required row</param>
     /// <param name="startFromIndex">The index of the start column</param>
     /// <returns>The required row as an array</returns>
-    public static T[] GetRow<T>(this T[,] matrix, int rowIndex, int startFromIndex = 0) =>
+    public static IEnumerable<T> GetRow<T>(this T[,] matrix, int rowIndex, int startFromIndex = 0) =>
         Enumerable.Range(startFromIndex, matrix.GetLength(1) - startFromIndex)
-            .Select(y => matrix[rowIndex, y])
-             .ToArray();
+            .Select(y => matrix[rowIndex, y]);
+
 
     public static T[,] ConvertTo2D<T>(this T[] a, int columns = 0, int rows = 0)
     {

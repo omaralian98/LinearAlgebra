@@ -18,9 +18,9 @@
             @if (step is not null)
             {
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
-                    <MatrixComponent Matrix="(MatrixA.ConvertMatrix() ?? [])" Display="Display.Inline" />
+                    <MatrixComponent Matrix="MatrixA" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>+</MudText>
-                    <MatrixComponent Matrix="(MatrixB.ConvertMatrix() ?? [])" Display="Display.Inline" />
+                    <MatrixComponent Matrix="MatrixB" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
                     <MatrixComponent Matrix="step" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
@@ -36,8 +36,8 @@
     private Fraction[,]? MatrixA;
     private Fraction[,]? MatrixB;
 
-    public Fraction[][]? result = null;
-    public string[][]? step = null;
+    public Fraction[,]? result = null;
+    public string[,]? step = null;
 
     public async Task Execute((Fraction[,] a, Fraction[,] b) matrics)
     {
@@ -48,13 +48,13 @@
             if (Settings.ShowSteps)
             {
                 var result = Linear.AddWithResult(matrics.a, matrics.b);
-                step = result.Step.ConvertMatrix();
-                this.result = result.Result.ConvertMatrix();
+                step = result.Step;
+                this.result = result.Result;
             }
             else
             {
                 var result = Linear.Add<Fraction>(matrics.a, matrics.b);
-                this.result = result.ConvertMatrix();
+                this.result = result;
             }
         });
     }
