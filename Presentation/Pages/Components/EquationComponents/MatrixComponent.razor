@@ -1,28 +1,28 @@
 ﻿@typeparam T
 @inject IJSRuntime JS
 
-@if (ForceBreakMode)
+@if(_forceBreak)
 {
     <div class="@(Display == Display.Block ? "block" : "matrix-grid-wrapper")">
         <div class="matrix-grid">
             <div class="left-bracket"></div>
-            @for (int i = 0; i < Matrix.Length; i++)
+            @for (int x = 0; x < Matrix.Length; x++)
             {
                 <div class="column">
-                    @for (int j = 0; j < Matrix[i].Length; j++)
+                    @for (int y = 0; y < Matrix[x].Length; y++)
                     {
-                        <div class="cell" id="@CellId(i, j)">
-                        </div>
+                        <div class="cell" id="@CellId(x, y)"></div>
                     }
                 </div>
             }
             <div class="right-bracket"></div>
         </div>
     </div>
+
 }
 else
 {
-    <Equation Display="Display" Equation="@matrixAsString"/>
+    <Equation Display="Display" Equation="@matrixAsString" />
 }
 
 
@@ -33,7 +33,7 @@ else
     [Parameter]
     public Display Display { get; set; } = Display.Block;
 
-    public bool ForceBreakMode => Settings.MathJaxSettings.ForceBreakModeForMatrices; 
+    private bool _forceBreak => Settings.EquationSettings.ForceBreakMatrices;
 
     private string matrixId = $"matrix{Guid.NewGuid():N}";
 
@@ -42,35 +42,29 @@ else
 
     protected override async Task OnAfterRenderAsync(bool first)
     {
-        if (ForceBreakMode && first)
+        if (_forceBreak && first)
         {
             for (int i = 0; i < Matrix.Length; i++)
+            {
                 for (int j = 0; j < Matrix[i].Length; j++)
-                    await JS.InvokeVoidAsync("Render",
-                                             CellId(i, j),
-                                             Matrix[i][j]?.ConvertToLaTeX(),
-                                             false);
+                {
+                    await JS.InvokeVoidAsync
+                    (
+                        "Render",
+                         CellId(i, j),
+                         Matrix[i][j].ConvertToLaTeX(),
+                         false
+                    );
+                }
+            }
         }
     }
 
     protected override void OnParametersSet()
     {
-        if (ForceBreakMode == false)
-        {
-            GetMatrixEquation();
-        }
-    }
-
-    private void GetMatrixEquation()
-    {
-        if (typeof(T) == typeof(Fraction))
-        {
-            matrixAsString = (Matrix as Fraction[][])?.ConvertFractionMatrixToLaTeX() ?? string.Empty;
-        }
-        else
+        if (_forceBreak == false)
         {
             matrixAsString = Matrix.ConvertMatrixToLaTeX();
         }
-        base.OnParametersSet();
     }
 }

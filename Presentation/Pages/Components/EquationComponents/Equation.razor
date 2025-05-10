@@ -1,5 +1,5 @@
 ﻿@inherits EquationComponent
 
-<span id="@Id" class="math-content">
+<span id="@Id" class="math-content @(Display == Display.Block ? "block" : "inline")">
     @Equation
 </span>

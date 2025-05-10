@@ -26,7 +26,7 @@
             }
         </MudStack>
     </MudPaper>
-    <MudPaper Elevation="10" Height="400px" Outlined Square>
+    <MudPaper Elevation="10" MinHeight="400px" Height="fit-content" MaxWidth="100%" Outlined Square>
         @if (Finished is not null)
         {
             @if (Finished.Value && Result is not null)

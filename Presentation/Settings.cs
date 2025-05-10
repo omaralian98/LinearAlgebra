@@ -2,7 +2,7 @@
 
 public static class Settings
 {
-    public static MathJaxSettings MathJaxSettings { get; set; } = new();
+    public static EquationSettings EquationSettings { get; set; } = new();
     public static int MaxRowsAllowed { get; set; } = 8;
     public static int MaxColumnsAllowed { get; set; } = 8;
 
@@ -12,17 +12,15 @@ public static class Settings
     public static int Lowerbound { get; set; } = -9;
 
     public static bool ShowSteps { get; set; } = true;
-
 }
 
 
-public class MathJaxSettings
+public class EquationSettings
 {
     public bool ShowNegativeBesideTheFractionBar { get; set; } = true;
     public bool DiagonalFractions { get; set; } = false;
     public Display DefaultFractionConfiguration { get; set; } = Display.Inline;
     
     public bool UseInlineModeForMatrices { get; set; } = true;
-
-    public bool ForceBreakModeForMatrices { get; set; } = false;
+    public bool ForceBreakMatrices { get; set; } = true;
 }

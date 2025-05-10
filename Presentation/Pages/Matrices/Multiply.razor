@@ -8,23 +8,23 @@
         <Result>
             @if (result is not null)
             {
-                <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
-                    <MudText Typo="Typo.h5" Inline>A × B =</MudText>
-                    <MatrixComponent Matrix="result" Display="Display.Block" />
+                <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
+                    <Equation Equation="A \times B =" />
+                    <MatrixComponent Matrix="result" Display="Display.Inline" />
                 </MudStack>
             }
         </Result>
         <Steps>
             @if (step is not null)
             {
-                <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
                     <MatrixComponent Matrix="(MatrixA.ConvertMatrix() ?? [])" Display="Display.Inline" />
-                    <MudText Typo="Typo.h5" Inline>×</MudText>
+                    <Equation Equation="\times" />
                     <MatrixComponent Matrix="(MatrixB.ConvertMatrix() ?? [])" Display="Display.Inline" />
-                    <MudText Typo="Typo.h5" Inline>=</MudText>
+                    <Equation Equation="=" />
                     <MatrixComponent Matrix="step" Display="Display.Inline" />
-                    <MudText Typo="Typo.h5" Inline>=</MudText>
-                    <MatrixComponent Matrix="result" Display="Display.Block" />
+                    <Equation Equation="=" />
+                    <MatrixComponent Matrix="result" Display="Display.Inline" />
                 </MudStack>
             }
         </Steps>

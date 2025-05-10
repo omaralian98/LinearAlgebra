@@ -5,6 +5,14 @@
     font-style: normal;
 }
 
+.katex {font-size: 1.3em !important;}
+
+
+body{
+    max-width: 100dvw;
+    overflow-x: hidden;
+}
+
 *:not(.math-content):not(.math-content *) {
     font-family: Changa !important;
 }
@@ -30,7 +38,7 @@
     padding: 10px;
 }
 
-.left-bracket, .right-bracket {
+.left-bracket, .right-bracket, .augmented-line {
     position: relative;
     top: 0;
     border: 2px solid #424242;
@@ -46,6 +54,10 @@
 .right-bracket {
     right: -6px;
     border-left: 0;
+}
+
+.augmented-line{
+
 }
 /*.matrix-grid:before, .matrix-grid:after {
     content: "";
@@ -78,13 +90,18 @@
     white-space: nowrap;
 }
 
+.math-content {
+}
 
-.math-content{
+.math-content.block{
     max-width: 90vw;
     padding:0 2px;
     overflow-x: auto;
     overflow-y: hidden;
     user-select: none;
+}
+
+.math-content.inline {
 }
 
 h1:focus {
