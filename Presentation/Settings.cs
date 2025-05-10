@@ -22,5 +22,5 @@ public class EquationSettings
     public Display DefaultFractionConfiguration { get; set; } = Display.Inline;
     
     public bool UseInlineModeForMatrices { get; set; } = true;
-    public bool ForceBreakMatrices { get; set; } = true;
+    public bool ForceBreakMatrices { get; set; } = false;
 }

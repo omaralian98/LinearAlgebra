@@ -169,7 +169,7 @@ public static class EquationConverter
     {
         if (matrix is Fraction[,] matrixFrac && otherMatrix is Fraction[,] otherMatrixFrac)
         {
-            return ConvertTwoMatricesToLaTeX(matrixFrac, otherMatrixFrac);
+            return ConvertTwoFractionMatricesToLaTeX(matrixFrac, otherMatrixFrac);
         }
 
 
