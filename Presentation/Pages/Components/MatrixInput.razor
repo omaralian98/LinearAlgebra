@@ -24,7 +24,7 @@
                 </MudStack>
                 <MudStack Style="width: 100%;" Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                     <MudNumericField T="int" Value="CurrentRowsCount" ValueChanged="ChangeRow" Placeholder="Rows" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
-                    <MudNumericField T="int" Value="CurrentColumnsCount" ValueChanged="ChangeColumn" Placeholder="Columns" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                    <MudNumericField T="int" Value="@(MatrixDisplayType == MatrixDisplayType.AugmentedMatrix ? CurrentColumnsCount - 1 : CurrentColumnsCount)" ValueChanged="ChangeColumn" Placeholder="Columns" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
                 </MudStack>
             </MudStack>
             <br />
@@ -41,27 +41,44 @@
                 else
                 {
                     <div align="center">
-                        <table class="matrix">
-                            @for (int i = 0; i < Matrix.Count; i++)
-                            {
-                                int myI = i;
-                                <tr>
-                                    @for (int j = 0; j < Matrix[i].Count; j++)
-                                    {
-                                        int myJ = j;
-                                        <td>
-                                            <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][myJ]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
-                                        </td>
-                                    }
-                                </tr>
+                        <div class="matrix">
+                            @{
+                                int length = MatrixDisplayType == MatrixDisplayType.AugmentedMatrix ? CurrentColumnsCount - 1 : CurrentColumnsCount;
                             }
-                        </table>
+
+                            @for (int y = 0; y < length; y++)
+                            {
+                                int myY = y;
+                                <div class="column">
+                                    @for (int x = 0; x < CurrentRowsCount; x++)
+                                    {
+                                        int myX = x;
+                                        <div class="cell">
+                                            <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myX][myY]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <div class="matrix-line"></div>
+                            @if (MatrixDisplayType == MatrixDisplayType.AugmentedMatrix)
+                            {
+                                <div class="column">
+                                    @for (int i = 0; i < CurrentRowsCount; i++)
+                                    {
+                                        int myI = i;
+                                        <div class="cell">
+                                            <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][^1]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
                 }
             }
             else if (MatrixDisplayType == MatrixDisplayType.Scalar)
             {
-                <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px; margin: 20px 0;" Class="matrix-input text" @bind-Value="@Scalar" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px; margin: 20px 0;" Class="matrix-input text" @bind-Value="Matrix[0][0]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
             }
         </MudStack>
     </MudPaper>
@@ -135,17 +152,19 @@
 
     public void ChangeColumn(int newColumnsCount)
     {
+        int augmentedBouns = MatrixDisplayType == MatrixDisplayType.AugmentedMatrix ? 1 : 0;
+        newColumnsCount += augmentedBouns;
         if (newColumnsCount == CurrentColumnsCount)
         {
             return;
         }
-        if (newColumnsCount < 1)
+        if (newColumnsCount - augmentedBouns < 1)
         {
-            newColumnsCount = 1;
+            newColumnsCount = 1 + augmentedBouns;
         }
-        else if (newColumnsCount > Settings.MaxRowsAllowed)
+        else if (newColumnsCount - augmentedBouns > Settings.MaxRowsAllowed)
         {
-            newColumnsCount = Settings.MaxRowsAllowed;
+            newColumnsCount = Settings.MaxRowsAllowed + augmentedBouns;
             if (Settings.ShowErrorMessageWhenExceedingMaxRowsOrColumnsAllowed)
             {
                 Snackbar.Add($"The {nameof(Settings.MaxColumnsAllowed)} is only: {Settings.MaxColumnsAllowed}", Severity.Error);
@@ -197,34 +216,16 @@
     [Parameter]
     public MatrixDisplayType MatrixDisplayType { get; set; } = MatrixDisplayType.Matrix;
 
-    [Parameter]
-    public string Scalar { get; set; }
-
-    [Parameter]
-    public EventCallback<string> ScalarChanged { get; set; }
-
-    [Parameter]
-    public List<string> Coefficient { get; set; } = [];
-
-    [Parameter]
-    public EventCallback<List<string>> CoefficientChanged { get; set; }
-
     public string MatrixAsString { get; set; } = string.Empty;
 
     private bool DisplayTools => MatrixDisplayType == MatrixDisplayType.Matrix || MatrixDisplayType == MatrixDisplayType.AugmentedMatrix;
-
 
 
     protected override void OnParametersSet()
     {
         if (Matrix is null || Matrix.Count == 0)
         {
-            Matrix = new();
-            for (int i = 0; i < CurrentRowsCount; i++)
-            {
-                Matrix.Add(new List<string>(new string[CurrentColumnsCount]));
-            }
-            MatrixChanged.InvokeAsync(Matrix);
+            CreateDefualtMatrix();
         }
         else
         {
@@ -232,6 +233,32 @@
             CurrentColumnsCount = Matrix[0].Count;
         }
         base.OnParametersSet();
+    }
+
+
+    private void CreateDefualtMatrix()
+    {
+        Matrix = new();
+        if (MatrixDisplayType == MatrixDisplayType.None)
+        {
+            return;
+        }
+
+        if (MatrixDisplayType == MatrixDisplayType.Scalar)
+        {
+            CurrentRowsCount = 1;
+            CurrentColumnsCount = 1;
+        }
+        else if (MatrixDisplayType == MatrixDisplayType.AugmentedMatrix)
+        {
+            CurrentColumnsCount++;
+        }
+
+        for (int i = 0; i < CurrentRowsCount; i++)
+        {
+            Matrix.Add(new List<string>(new string[CurrentColumnsCount]));
+        }
+        MatrixChanged.InvokeAsync(Matrix);
     }
 
     public async Task Copy()

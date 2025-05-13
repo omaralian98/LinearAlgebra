@@ -409,6 +409,41 @@ public static class Extensions
             .Select(y => matrix[rowIndex, y]);
 
 
+
+    public static (T[,], T[]) SliceColumn<T>(this T[,] matrix, int columnIndex)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+
+        if (columnIndex < 0 || columnIndex >= cols)
+        {
+            throw new ArgumentOutOfRangeException(nameof(columnIndex), "Column index is out of range.");
+        }
+
+        T[] slicedColumn = new T[rows];
+
+        T[,] newMatrix = new T[rows, cols - 1];
+
+        for (int i = 0; i < rows; i++)
+        {
+            slicedColumn[i] = matrix[i, columnIndex];
+
+            int newCol = 0;
+            for (int j = 0; j < cols; j++)
+            {
+                if (j == columnIndex)
+                {
+                    continue;
+                }
+
+                newMatrix[i, newCol++] = matrix[i, j];
+            }
+        }
+
+        return (newMatrix, slicedColumn);
+    }
+
+
     public static T[,] ConvertTo2D<T>(this T[] a, int columns = 0, int rows = 0)
     {
         if (columns == 0 && rows == 0)

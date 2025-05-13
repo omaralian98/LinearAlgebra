@@ -39,25 +39,25 @@
 
 @code {
     public int MatricesCount { get; set; } = 2;
-    private Fraction[][,] _matrices = [];
+    private Fraction[,]?[] _matrices = [];
 
     public Fraction[,]? result = null;
     public string[,]? step = null;
 
-    public async Task Execute(Fraction[][,] matrices)
+    public async Task Execute(MatrixInputDto[] matrices)
     {
         await Task.Run(() =>
         {
-            _matrices = matrices;
+            _matrices = matrices.Select(x => x.Matrix).ToArray() ?? [];
             if (Settings.ShowSteps)
             {
-                var result = Linear.SubtractWithResult(matrices[0], matrices[1]);
+                var result = Linear.SubtractWithResult(_matrices[0], _matrices[1]);
                 step = result.Step;
                 this.result = result.Result;
             }
             else
             {
-                var result = Linear.Subtract<Fraction>(matrices);
+                var result = Linear.Subtract<Fraction>(_matrices);
                 this.result = result;
             }
         });

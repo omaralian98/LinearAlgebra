@@ -193,7 +193,7 @@ code {
 .matrix {
     margin: 10px;
     position: relative;
-    display: table;
+    display: flex;
 }
 
     .matrix:before, .matrix:after {
@@ -216,12 +216,9 @@ code {
         border-left: 0;
     }
 
-    .matrix td {
-        width: 25px;
-        padding: 5px;
-        text-align: center;
-        display: table-cell;
-    }
+.matrix-line {
+    border: 2px solid slategrey;
+}
 
 .fraction {
     display: inline-block;

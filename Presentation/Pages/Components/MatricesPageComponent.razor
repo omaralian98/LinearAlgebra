@@ -90,7 +90,7 @@
     public string NameOftheButton { get; set; } = "Execute";
 
     [Parameter]
-    public EventCallback<Fraction[][,]> OnButtonClick { get; set; }
+    public EventCallback<MatrixInputDto[]> OnButtonClick { get; set; }
 
     [Parameter]
     public RenderFragment? Result { get; set; } = null;
@@ -149,7 +149,7 @@
         try
         {
             Finished = false;
-            List<Fraction[,]> results = [];
+            List<MatrixInputDto> results = [];
 
             for (int i = 0; i < Matrices.Count; i++)
             {
@@ -158,7 +158,16 @@
                 {
                     Snackbar.Add(result.Errors[0].ToString());
                 }
-                results.Add(result.IsFailure ? new Fraction[1, 1] : result.Value!);
+
+                MatrixInputDto matrix = GetMatrixDisplayType(i) switch
+                {
+                    MatrixDisplayType.Scalar => MatrixInputDto.FormScalar(result.Value!),
+                    MatrixDisplayType.Matrix => MatrixInputDto.FormMatrix(result.Value!),
+                    MatrixDisplayType.AugmentedMatrix => MatrixInputDto.FormAugmentedMatrix(result.Value!),
+                    MatrixDisplayType.None => new(),
+                    _ => new()
+                };
+                results.Add(matrix);
             }
             await OnButtonClick.InvokeAsync(results.ToArray());
 

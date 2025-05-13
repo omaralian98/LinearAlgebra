@@ -8,25 +8,18 @@
         <Result>
             @if (result.HasValue)
             {
-                <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
-                    <MudText Typo="Typo.h5" Inline>
-                        <Equation Equation="\mathrm{ Tr } A" />
-                    </MudText>
-                    <MudText Typo="Typo.h5" Inline>
-                        =
-                        <FractionComponent Fraction="result.Value" Display="Display.Inline" />
-                    </MudText>
+                <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
+                    <Equation Equation="\mathrm{ Tr } A = " />
+                    <FractionComponent Fraction="result.Value" Display="Display.Inline" />
                 </MudStack>
             }
         </Result>
         <Steps>
             @if (step is not null)
             {
-                <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
                     <MatrixComponent Matrix="Matrix" Display="Display.Inline" />
-                    <MudText Typo="Typo.h5" Inline>=</MudText>
-                    <Equation Equation="@($"\\mathrm{{ [{step}] }}")" />
-                    <MudText Typo="Typo.h5" Inline>=</MudText>
+                    <Equation Equation="@($"= \\mathrm{{ [{step}] }} = ")" />
                     <FractionComponent Fraction="result!.Value" Display="Display.Inline" />
                 </MudStack>
             }
@@ -41,20 +34,20 @@
     public Fraction? result = null;
     public string? step = null;
 
-    public async Task Execute(Fraction[][,] matrix)
+    public async Task Execute(MatrixInputDto[] matrices)
     {
         await Task.Run(() =>
         {
-            Matrix = matrix[0];
+            Matrix = matrices[0].Matrix;
             if (Settings.ShowSteps)
             {
-                var result = Linear.TraceWithResult(matrix[0]);
+                var result = Linear.TraceWithResult(Matrix);
                 step = result.Step;
                 this.result = result.Result;
             }
             else
             {
-                result = Linear.Trace(matrix[0]);
+                result = Linear.Trace(Matrix);
             }
         });
     }
