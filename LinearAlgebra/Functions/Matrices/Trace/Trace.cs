@@ -54,7 +54,7 @@ public partial class Linear
 
             return new Trace_Result<Fraction>
             {
-                Result = matrix[0, 0],
+                Result = trace,
                 Step = step.ToString().TrimEnd()
             };
         }

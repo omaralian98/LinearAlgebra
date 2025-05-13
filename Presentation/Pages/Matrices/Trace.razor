@@ -4,13 +4,13 @@
 
 <MudPaper Elevation="10" Outlined Height="100%" Width="100%" Style="padding: 20px;">
     <h1>Trace Of A Matrix</h1>
-    <TwoMatricesPageComponent NameOftheButton="Get The Trace" MatrixDisplayTypeForA="MatrixDisplayType.Matrix" MatrixDisplayTypeForB="MatrixDisplayType.None">
+    <MatricesPageComponent MatricesCount="1" NameOftheButton="Get The Trace" OnButtonClick="Execute">
         <Result>
             @if (result.HasValue)
             {
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MudText Typo="Typo.h5" Inline>
-                        <Equation TextToRender="\(\mathrm{ Tr } A\)" />
+                        <Equation Equation="\mathrm{ Tr } A" />
                     </MudText>
                     <MudText Typo="Typo.h5" Inline>
                         =
@@ -25,13 +25,13 @@
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MatrixComponent Matrix="Matrix" Display="Display.Inline" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
-                    <Equation TextToRender="@($"\\(\\mathrm{{ [{step}] }}\\)")" />
+                    <Equation Equation="@($"\\mathrm{{ [{step}] }}")" />
                     <MudText Typo="Typo.h5" Inline>=</MudText>
                     <FractionComponent Fraction="result!.Value" Display="Display.Inline" />
                 </MudStack>
             }
         </Steps>
-    </TwoMatricesPageComponent>
+    </MatricesPageComponent>
 </MudPaper>
 
 
@@ -41,20 +41,20 @@
     public Fraction? result = null;
     public string? step = null;
 
-    public async Task Execute(Fraction[,] matrix)
+    public async Task Execute(Fraction[][,] matrix)
     {
         await Task.Run(() =>
         {
-            Matrix = matrix;
+            Matrix = matrix[0];
             if (Settings.ShowSteps)
             {
-                var result = Linear.TraceWithResult(matrix);
+                var result = Linear.TraceWithResult(matrix[0]);
                 step = result.Step;
                 this.result = result.Result;
             }
             else
             {
-                result = Linear.Trace(matrix);
+                result = Linear.Trace(matrix[0]);
             }
         });
     }

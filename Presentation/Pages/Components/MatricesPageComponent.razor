@@ -9,8 +9,11 @@
             @if (_isInitialized)
             {
                 <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
-                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixA" MatrixDisplayType="MatrixDisplayTypeForA" Character="@('A')" />
-                    <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@MatrixB" MatrixDisplayType="MatrixDisplayTypeForB" Character="@('B')" />
+                    @for (int i = 0; i < Matrices.Count; i++)
+                    {
+                        int myInt = i;
+                        <MatrixInput Disabled="@(Finished.HasValue && !Finished.Value)" @bind-Matrix="@Matrices[myInt]" MatrixDisplayType="GetMatrixDisplayType(myInt)" Character="GetCharacter(myInt)" />
+                    }
                 </MudStack>
                 <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Execute" Ripple DropShadow>
@@ -73,14 +76,13 @@
 </MudStack>
 
 @code {
-    [SupplyParameterFromQuery]
-    public string? a { get; set; } = null;
+    private string _alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     [SupplyParameterFromQuery]
-    public string? b { get; set; } = null;
+    public string? matrices { get; set; } = null;
 
     [SupplyParameterFromQuery]
-    public bool? solution { get; set; } = null;
+    public bool? solve { get; set; } = null;
 
     private bool _isInitialized = false;
 
@@ -88,7 +90,7 @@
     public string NameOftheButton { get; set; } = "Execute";
 
     [Parameter]
-    public EventCallback<(Fraction[,], Fraction[,])> OnButtonClick { get; set; }
+    public EventCallback<Fraction[][,]> OnButtonClick { get; set; }
 
     [Parameter]
     public RenderFragment? Result { get; set; } = null;
@@ -97,36 +99,40 @@
     public RenderFragment? Steps { get; set; } = null;
 
     [Parameter]
-    public MatrixDisplayType MatrixDisplayTypeForA { get; set; } = MatrixDisplayType.Matrix;
+    public int MatricesCount { get; set; } = 1;
 
     [Parameter]
-    public MatrixDisplayType MatrixDisplayTypeForB { get; set; } = MatrixDisplayType.Matrix;
+    public List<MatrixDisplayType> MatrixDisplays { get; set; } = [];
 
     [Parameter]
     public bool Reverse { get; set; } = false;
 
     protected async override Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(a))
+        if (string.IsNullOrWhiteSpace(matrices) == false)
         {
-            var result = await a.ConvertStringToMatrixAsync(rowSeparator: "|");
-            if (result.IsSuccess)
+            var matricesStrings = matrices.Split('&') ?? [];
+            MatricesCount = matricesStrings.Length;
+            for (int i = 0; i < matricesStrings.Length; i++)
             {
-                MatrixA = result.Value!;
+                var result = await matricesStrings[i].ConvertStringToMatrixAsync(rowSeparator: "|", columnSeparator: ",");
+                if (result.IsSuccess)
+                {
+                    Matrices.Add(result.Value!);
+                }
             }
+        }
+        else
+        {
+            Matrices = Enumerable.Range(0, MatricesCount)
+               .Select(_ => new List<List<string>>())
+               .ToList();
         }
 
-        if (!string.IsNullOrWhiteSpace(b))
-        {
-            var result = await b.ConvertStringToMatrixAsync(rowSeparator: "|");
-            if (result.IsSuccess)
-            {
-                MatrixB = result.Value!;
-            }
-        }
+
         _isInitialized = true;
 
-        if (solution.HasValue && solution.Value && !string.IsNullOrWhiteSpace(a) && !string.IsNullOrWhiteSpace(b))
+        if (solve.HasValue && solve.Value && string.IsNullOrWhiteSpace(matrices) == false)
         {
             await Execute();
         }
@@ -134,8 +140,7 @@
         await base.OnInitializedAsync();
     }
 
-    public List<List<string>> MatrixA { get; set; }
-    public List<List<string>> MatrixB { get; set; }
+    public List<List<List<string>>> Matrices { get; set; } = [];
 
     public bool? Finished { get; set; } = null;
 
@@ -144,21 +149,20 @@
         try
         {
             Finished = false;
-            var resulta = MatrixA.ConvertToFraction();
-            if (resulta.IsFailure)
+            List<Fraction[,]> results = [];
+
+            for (int i = 0; i < Matrices.Count; i++)
             {
-                Snackbar.Add(resulta.Errors[0].ToString());
+                var result = Matrices[i].ConvertToFraction();
+                if (result.IsFailure)
+                {
+                    Snackbar.Add(result.Errors[0].ToString());
+                }
+                results.Add(result.IsFailure ? new Fraction[1, 1] : result.Value!);
             }
+            await OnButtonClick.InvokeAsync(results.ToArray());
 
-            var resultb = MatrixB.ConvertToFraction();
-            if (resultb.IsFailure)
-            {
-                Snackbar.Add(resultb.Errors[0].ToString());
-            }
-
-            await OnButtonClick.InvokeAsync((resulta.Value!, resultb.Value!));
-
-            solution = true;
+            solve = true;
             UpdateUrl();
         }
         catch (Exception ex)
@@ -211,13 +215,32 @@
     {
         var parameters = new Dictionary<string, string?>
             {
-                [nameof(a)] = MatrixA.ConvertMatrixToString(rowSeparator: "|"),
-                [nameof(b)] = MatrixB.ConvertMatrixToString(rowSeparator: "|"),
+                [nameof(matrices)] = string.Join('&', Matrices.Select(matrix => matrix.ConvertMatrixToString(rowSeparator: "|", columnSeparator: ",")))
             };
-        if (solution.HasValue && solution.Value)
+
+        if (solve.HasValue && solve.Value)
         {
-            parameters[nameof(solution)] = Convert.ToString(solution);
+            parameters[nameof(solve)] = Convert.ToString(solve);
         }
         return ShareService.GetUrl(parameters);
+    }
+
+    private MatrixDisplayType GetMatrixDisplayType(int index)
+    {
+        if (index >= MatrixDisplays.Count)
+        {
+            return MatrixDisplayType.Matrix;
+        }
+        return MatrixDisplays[index];
+    }
+
+    private char GetCharacter(int index)
+    {
+        if (index >= _alphabet.Length)
+        {
+            //Max Limit Exceeded
+            return ' ';
+        }
+        return _alphabet[index];
     }
 }

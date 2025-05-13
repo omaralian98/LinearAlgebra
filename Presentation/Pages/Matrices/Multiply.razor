@@ -4,7 +4,7 @@
 
 <MudPaper Elevation="10" Outlined Height="100%" Width="100%" Style="padding: 20px;">
     <h1>Multiply Two Matrices</h1>
-    <TwoMatricesPageComponent NameOftheButton="Multiply" OnButtonClick="Execute">
+    <MatricesPageComponent MatricesCount="@MatricesCount" NameOftheButton="Multiply" OnButtonClick="Execute">
         <Result>
             @if (result is not null)
             {
@@ -18,9 +18,14 @@
             @if (step is not null)
             {
                 <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
-                    <MatrixComponent Matrix="MatrixA" Display="Display.Inline" />
-                    <Equation Equation="\times" />
-                    <MatrixComponent Matrix="MatrixB" Display="Display.Inline" />
+                    @for (int i = 0; i < MatricesCount; i++)
+                    {
+                        <MatrixComponent Matrix="_matrices[i]" Display="Display.Inline" />
+                        if (i + 1 != MatricesCount)
+                        {
+                            <Equation Equation="\times" />
+                        }
+                    }
                     <Equation Equation="=" />
                     <MatrixComponent Matrix="step" Display="Display.Inline" />
                     <Equation Equation="=" />
@@ -28,32 +33,31 @@
                 </MudStack>
             }
         </Steps>
-    </TwoMatricesPageComponent>
+    </MatricesPageComponent>
 </MudPaper>
 
 
 @code {
-    private Fraction[,]? MatrixA;
-    private Fraction[,]? MatrixB;
+    public int MatricesCount { get; set; } = 2;
+    private Fraction[][,] _matrices = [];
 
     public Fraction[,]? result = null;
     public string[,]? step = null;
 
-    public async Task Execute((Fraction[,] a, Fraction[,] b) matrics)
+    public async Task Execute(Fraction[][,] matrices)
     {
         await Task.Run(() =>
         {
-            MatrixA = matrics.a;
-            MatrixB = matrics.b;
+            _matrices = matrices;
             if (Settings.ShowSteps)
             {
-                var result = Linear.MultiplyWithResult(matrics.a, matrics.b);
+                var result = Linear.MultiplyWithResult(matrices[0], matrices[1]);
                 step = result.Step;
                 this.result = result.Result;
             }
             else
             {
-                var result = Linear.Multiply<Fraction>(matrics.a, matrics.b);
+                var result = Linear.Multiply<Fraction>(matrices);
                 this.result = result;
             }
         });
