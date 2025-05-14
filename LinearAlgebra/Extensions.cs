@@ -220,6 +220,24 @@ public static class Extensions
         return result;
     }
 
+    public static string GetMatrix<T>(this T[][] matrix)
+    {
+        if (matrix.Length == 1 && matrix[0].Length == 1)
+        {
+            return matrix[0][0]?.ToString() ?? "";
+        }
+        string[] Lines = new string[matrix.Length + 2];
+        AddBeginningBrackets(Lines);
+        AddMatrix(matrix, Lines);
+        AddEndBrackets(Lines);
+        string result = "";
+        foreach (var it in Lines)
+        {
+            result += it + "\n";
+        }
+        return result;
+    }
+
     public static string GetMatrix<T, S>(this (T[,]? matrix, S[]? coefficient) c)
     {
         if (c.coefficient is null && c.matrix is not null) return GetMatrix(c.matrix);
@@ -265,7 +283,7 @@ public static class Extensions
         for (int j = 0; j < matrix.GetLength(1); j++)
         {
             index = 1;
-            int vart = GetPad(matrix.GetColumn(j)) + 2;
+            int vart = GetPad(matrix.GetColumn(j).ToArray()) + 2;
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i, j]);
@@ -274,6 +292,24 @@ public static class Extensions
         }
         return Lines;
     }
+
+    private static string[] AddMatrix<T>(this T[][] matrix, string[]? Lines = null, bool addLine = false)
+    {
+        Lines = Lines is null ? new string[matrix.Length] : Lines;
+        int index;
+        for (int j = 0; j < matrix[0].Length; j++)
+        {
+            index = 1;
+            int vart = GetPad(matrix.GetColumn(j).ToArray()) + 2;
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                Lines[index++] += String.Format(" {0, " + vart + "} ", matrix[i][j]);
+                if (j + 1 == matrix[0].Length && addLine) Lines[index - 1] += "|";
+            }
+        }
+        return Lines;
+    }
+
     private static string[] AddMatrix<T>(this T[] vector, string[]? Lines = null, bool addLine = false)
     {
         Lines = Lines is null ? new string[vector.Length] : Lines;
@@ -343,10 +379,22 @@ public static class Extensions
     /// <param name="columnIndex">The index of the required column</param>
     /// <param name="startFromIndex">The index of the start row</param>
     /// <returns>The required column as an array</returns>
-    public static T[] GetColumn<T>(this T[,] matrix, int columnIndex, int startFromIndex = 0) =>
+    public static IEnumerable<T> GetColumn<T>(this T[,] matrix, int columnIndex, int startFromIndex = 0) =>
         Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
-            .Select(x => matrix[x, columnIndex])
-             .ToArray();
+            .Select(x => matrix[x, columnIndex]);
+
+
+    /// <summary>
+    /// Get's a specific column from a 2d jagged array.
+    /// </summary>
+    /// <typeparam name="T">Any type of array</typeparam>
+    /// <param name="matrix">The original 2d jagged array</param>
+    /// <param name="columnIndex">The index of the required column</param>
+    /// <param name="startFromIndex">The index of the start row</param>
+    /// <returns>The required column as an array</returns>
+    public static IEnumerable<T> GetColumn<T>(this T[][] matrix, int columnIndex, int startFromIndex = 0) =>
+    Enumerable.Range(startFromIndex, matrix.GetLength(0) - startFromIndex)
+        .Select(x => matrix[x][columnIndex]);
 
     /// <summary>
     /// Get's a specific row from a 2d array.
@@ -356,10 +404,45 @@ public static class Extensions
     /// <param name="rowIndex">The index of the required row</param>
     /// <param name="startFromIndex">The index of the start column</param>
     /// <returns>The required row as an array</returns>
-    public static T[] GetRow<T>(this T[,] matrix, int rowIndex, int startFromIndex = 0) =>
+    public static IEnumerable<T> GetRow<T>(this T[,] matrix, int rowIndex, int startFromIndex = 0) =>
         Enumerable.Range(startFromIndex, matrix.GetLength(1) - startFromIndex)
-            .Select(y => matrix[rowIndex, y])
-             .ToArray();
+            .Select(y => matrix[rowIndex, y]);
+
+
+
+    public static (T[,], T[]) SliceColumn<T>(this T[,] matrix, int columnIndex)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+
+        if (columnIndex < 0 || columnIndex >= cols)
+        {
+            throw new ArgumentOutOfRangeException(nameof(columnIndex), "Column index is out of range.");
+        }
+
+        T[] slicedColumn = new T[rows];
+
+        T[,] newMatrix = new T[rows, cols - 1];
+
+        for (int i = 0; i < rows; i++)
+        {
+            slicedColumn[i] = matrix[i, columnIndex];
+
+            int newCol = 0;
+            for (int j = 0; j < cols; j++)
+            {
+                if (j == columnIndex)
+                {
+                    continue;
+                }
+
+                newMatrix[i, newCol++] = matrix[i, j];
+            }
+        }
+
+        return (newMatrix, slicedColumn);
+    }
+
 
     public static T[,] ConvertTo2D<T>(this T[] a, int columns = 0, int rows = 0)
     {

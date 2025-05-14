@@ -1,0 +1,369 @@
+﻿@inject ISnackbar Snackbar
+@inject ClipboardService ClipboardService
+
+<MudStack Style="@(MatrixDisplayType == MatrixDisplayType.None ? "display:none !important;" : "")" Row Spacing="0" Justify="Justify.FlexStart" StretchItems="StretchItems.None">
+    <MudPaper Class="matrix-input-card text" Elevation="10" Square>
+        @if (DisplayTools)
+        {
+            <MudPaper Style="background-color: #35d446; margin: 5px -5px 0px -5px;" Outlined Square Elevation="5">
+                <MudText Class="text" Align="Align.Center" Color="Color.Dark" Style="margin: 0 5px;" Typo="Typo.h5">
+                    Matrix @(Character) Input
+                </MudText>
+            </MudPaper>
+            <MudStack Style="width: fit-content;" Row="false" Justify="Justify.Center" AlignItems="AlignItems.Start">
+                <MudStack Style="width: 100%;" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                    <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
+                        Rows
+                    </MudText>
+                    <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Error">
+                        ×
+                    </MudText>
+                    <MudText Class="text" Typo="Typo.h6" Inline Color="Color.Tertiary">
+                        Columns
+                    </MudText>
+                </MudStack>
+                <MudStack Style="width: 100%;" Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                    <MudNumericField T="int" Value="CurrentRowsCount" ValueChanged="ChangeRow" Placeholder="Rows" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                    <MudNumericField T="int" Value="@(MatrixDisplayType == MatrixDisplayType.AugmentedMatrix ? CurrentColumnsCount - 1 : CurrentColumnsCount)" ValueChanged="ChangeColumn" Placeholder="Columns" Disabled="@Disabled" Class="matrix-input text" Style="color: black; background-color: white; width: 50px; height: 30px;" Immediate DebounceInterval="100" Variant="Variant.Outlined" Underline="false" InputMode="InputMode.numeric" />
+                </MudStack>
+            </MudStack>
+            <br />
+        }
+
+        <MudStack Row="false" Justify="Justify.FlexStart" AlignItems="AlignItems.Start">
+            @if (DisplayTools)
+            {
+                <MudSwitch Style="color: white !important;" ThumbIcon="@(EnterMatrixAsString ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" @bind-Value="@EnterMatrixAsString" Size="Size.Small" Color="Color.Tertiary" Ripple>Enter Matrix as Text</MudSwitch>
+                @if (EnterMatrixAsString)
+                {
+                    <MudTextField Class="matrix-input-area" Style="background-color: white !important;" @bind-Value="@MatrixAsString" Lines="3" FullWidth Immediate AutoGrow />
+                }
+                else
+                {
+                    <div align="center">
+                        <div class="matrix">
+                            @{
+                                int length = MatrixDisplayType == MatrixDisplayType.AugmentedMatrix ? CurrentColumnsCount - 1 : CurrentColumnsCount;
+                            }
+
+                            @for (int y = 0; y < length; y++)
+                            {
+                                int myY = y;
+                                <div class="column">
+                                    @for (int x = 0; x < CurrentRowsCount; x++)
+                                    {
+                                        int myX = x;
+                                        <div class="cell">
+                                            <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myX][myY]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <div class="matrix-line"></div>
+                            @if (MatrixDisplayType == MatrixDisplayType.AugmentedMatrix)
+                            {
+                                <div class="column">
+                                    @for (int i = 0; i < CurrentRowsCount; i++)
+                                    {
+                                        int myI = i;
+                                        <div class="cell">
+                                            <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px;" Class="matrix-input text" @bind-Value="@Matrix[myI][^1]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else if (MatrixDisplayType == MatrixDisplayType.Scalar)
+            {
+                <MudTextField Disabled="@Disabled" Style="background-color: white !important;height: 30px;width: 50px; margin: 20px 0;" Class="matrix-input text" @bind-Value="Matrix[0][0]" Variant="Variant.Filled" Underline="false" FullWidth="false" />
+            }
+        </MudStack>
+    </MudPaper>
+    @if (DisplayTools)
+    {
+        <MudStack Row="false" AlignItems="AlignItems.Start" Class="matrix-toolbox" Spacing="0">
+            <MudTooltip Delay="1000" Text="Copy" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="Copy" class="matrix-toolbox-button">
+                    <MudImage Src="images/Copy.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Paste" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="@(() => Paste())" class="matrix-toolbox-button">
+                    <MudImage Src="images/Paste.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Random" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="Random" class="matrix-toolbox-button">
+                    <MudImage Src="images/Random.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Clear" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="Clear" class="matrix-toolbox-button">
+                    <MudImage Src="images/Clear.png" />
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Set All 0" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="SetAllZeros" class="matrix-toolbox-button">
+                    0
+                </button>
+            </MudTooltip>
+            <MudTooltip Delay="1000" Text="Set All 1" Placement="Placement.Top" Color="Color.Success" Arrow>
+                <button disabled="@Disabled" @onclick="SetAllOnes" class="matrix-toolbox-button">
+                    1
+                </button>
+            </MudTooltip>
+        </MudStack>
+    }
+</MudStack>
+
+
+
+
+@code {
+    private int CurrentRowsCount { get; set; } = 3;
+    private int CurrentColumnsCount { get; set; } = 3;
+
+    public void ChangeRow(int newRowsCount)
+    {
+        if (newRowsCount == CurrentRowsCount)
+        {
+            return;
+        }
+        if (newRowsCount < 1)
+        {
+            newRowsCount = 1;
+        }
+        else if (newRowsCount > Settings.MaxRowsAllowed)
+        {
+            newRowsCount = Settings.MaxRowsAllowed;
+            if (Settings.ShowErrorMessageWhenExceedingMaxRowsOrColumnsAllowed)
+            {
+                Snackbar.Add($"The {nameof(Settings.MaxRowsAllowed)} is only: {Settings.MaxRowsAllowed}", Severity.Error);
+            }
+        }
+
+        CurrentRowsCount = newRowsCount;
+        Matrix.UpdateMatrixRows(CurrentRowsCount, CurrentColumnsCount);
+        ConvertMatrixToString();
+    }
+
+    public void ChangeColumn(int newColumnsCount)
+    {
+        int augmentedBouns = MatrixDisplayType == MatrixDisplayType.AugmentedMatrix ? 1 : 0;
+        newColumnsCount += augmentedBouns;
+        if (newColumnsCount == CurrentColumnsCount)
+        {
+            return;
+        }
+        if (newColumnsCount - augmentedBouns < 1)
+        {
+            newColumnsCount = 1 + augmentedBouns;
+        }
+        else if (newColumnsCount - augmentedBouns > Settings.MaxRowsAllowed)
+        {
+            newColumnsCount = Settings.MaxRowsAllowed + augmentedBouns;
+            if (Settings.ShowErrorMessageWhenExceedingMaxRowsOrColumnsAllowed)
+            {
+                Snackbar.Add($"The {nameof(Settings.MaxColumnsAllowed)} is only: {Settings.MaxColumnsAllowed}", Severity.Error);
+            }
+        }
+
+        CurrentColumnsCount = newColumnsCount;
+        Matrix.UpdateMatrixColumns(CurrentRowsCount, CurrentColumnsCount);
+        ConvertMatrixToString();
+    }
+
+    private bool _EnterMatrixAsString = false;
+    public bool EnterMatrixAsString
+    {
+        get => _EnterMatrixAsString;
+        set
+        {
+            if (value == _EnterMatrixAsString)
+            {
+                return;
+            }
+            else if (_EnterMatrixAsString)
+            {
+                Paste(MatrixAsString).Wait();
+            }
+            else
+            {
+                ConvertMatrixToString();
+            }
+            _EnterMatrixAsString = value;
+        }
+    }
+
+    [Parameter]
+    public List<List<string>> Matrix { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<List<List<string>>> MatrixChanged { get; set; }
+
+    [Parameter]
+    public char Character { get; set; } = ' ';
+
+    [Parameter]
+    public bool Disabled { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnContentChange { get; set; }
+
+    [Parameter]
+    public MatrixDisplayType MatrixDisplayType { get; set; } = MatrixDisplayType.Matrix;
+
+    public string MatrixAsString { get; set; } = string.Empty;
+
+    private bool DisplayTools => MatrixDisplayType == MatrixDisplayType.Matrix || MatrixDisplayType == MatrixDisplayType.AugmentedMatrix;
+
+
+    protected override void OnParametersSet()
+    {
+        if (Matrix is null || Matrix.Count == 0)
+        {
+            CreateDefualtMatrix();
+        }
+        else
+        {
+            CurrentRowsCount = Matrix.Count;
+            CurrentColumnsCount = Matrix[0].Count;
+        }
+        base.OnParametersSet();
+    }
+
+
+    private void CreateDefualtMatrix()
+    {
+        Matrix = new();
+        if (MatrixDisplayType == MatrixDisplayType.None)
+        {
+            return;
+        }
+
+        if (MatrixDisplayType == MatrixDisplayType.Scalar)
+        {
+            CurrentRowsCount = 1;
+            CurrentColumnsCount = 1;
+        }
+        else if (MatrixDisplayType == MatrixDisplayType.AugmentedMatrix)
+        {
+            CurrentColumnsCount++;
+        }
+
+        for (int i = 0; i < CurrentRowsCount; i++)
+        {
+            Matrix.Add(new List<string>(new string[CurrentColumnsCount]));
+        }
+        MatrixChanged.InvokeAsync(Matrix);
+    }
+
+    public async Task Copy()
+    {
+        ConvertMatrixToString();
+        var result = await ClipboardService.CopyAsync(MatrixAsString);
+        if (result.IsFailure)
+        {
+            Snackbar.Add(result.Errors[0].ToString(), Severity.Error);
+        }
+    }
+
+    public async Task Paste(string? text = null)
+    {
+        if (text is null)
+        {
+            var result = await ClipboardService.PasteAsync();
+            if (result.IsFailure)
+            {
+                Snackbar.Add(result.Errors[0].ToString(), Severity.Error);
+                return;
+            }
+            text = result.Value!;
+        }
+
+        try
+        {
+            List<List<string>> copiedMatrix = Matrix.Select(innerList => new List<string>(innerList)).ToList();
+
+            int oldRowsCount = CurrentRowsCount;
+            int oldColumnsCount = CurrentColumnsCount;
+
+            var lines = text.Split(Environment.NewLine);
+
+            oldRowsCount = lines.Length;
+            copiedMatrix.UpdateMatrixRows(oldRowsCount, oldColumnsCount);
+            for (int i = 0; i < oldRowsCount; i++)
+            {
+                var row = lines[i].Split(' ');
+                int newcolumnsCount = row.Length;
+                if (i == 0 || newcolumnsCount > oldColumnsCount)
+                {
+                    copiedMatrix.UpdateMatrixColumns(oldRowsCount, newcolumnsCount);
+                    oldColumnsCount = newcolumnsCount;
+                }
+                for (int j = 0; j < newcolumnsCount; j++)
+                {
+                    copiedMatrix[i][j] = row[j];
+                }
+            }
+            CurrentRowsCount = oldRowsCount;
+            CurrentColumnsCount = oldColumnsCount;
+            ConvertMatrixToString();
+            Matrix = copiedMatrix;
+            await MatrixChanged.InvokeAsync(Matrix);
+        }
+        catch
+        {
+            Snackbar.Add("The Pasted Matrix wasn't in the correct format", Severity.Error);
+        }
+    }
+
+    public void Clear()
+    {
+        SetAll(string.Empty);
+    }
+
+    public void Random()
+    {
+        Random rand = new();
+        for (int i = 0; i < Matrix.Count; i++)
+        {
+            for (int j = 0; j < Matrix[i].Count; j++)
+            {
+                Matrix[i][j] = rand.Next(Settings.Lowerbound, Settings.Upperbound).ToString();
+            }
+        }
+        ConvertMatrixToString();
+    }
+
+    public void SetAllZeros()
+    {
+        SetAll("0");
+    }
+
+    public void SetAllOnes()
+    {
+        SetAll("1");
+    }
+
+    private void SetAll(string value)
+    {
+        for (int i = 0; i < Matrix.Count; i++)
+        {
+            for (int j = 0; j < Matrix[i].Count; j++)
+            {
+                Matrix[i][j] = value;
+            }
+        }
+        ConvertMatrixToString();
+    }
+
+    public void ConvertMatrixToString()
+    {
+        OnContentChange.InvokeAsync();
+        MatrixAsString = Matrix.ConvertMatrixToString();
+    }
+}

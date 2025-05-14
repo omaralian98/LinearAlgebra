@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace LinearAlgebra.Classes;
+namespace LinearAlgebra.Classes.SolutionSteps;
 
 [Serializable]
 public record REF_Result<T, S> : REF_Result<T>

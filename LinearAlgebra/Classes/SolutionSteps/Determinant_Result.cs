@@ -1,4 +1,4 @@
-﻿namespace LinearAlgebra.Classes;
+﻿namespace LinearAlgebra.Classes.SolutionSteps;
 
 public record Determinant_Result<T>
 {

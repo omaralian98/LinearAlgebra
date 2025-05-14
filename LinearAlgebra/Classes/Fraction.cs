@@ -8,9 +8,9 @@ namespace LinearAlgebra.Classes;
 public struct Fraction : IConvertible, IXunitSerializable, ICoefficient, IEquatable<Fraction>, IComparable<Fraction>
 {
     [JsonPropertyName("numerator")]
-    public double Numerator {  get; set; }
+    public double Numerator { get; set; }
     [JsonPropertyName("denominator")]
-    public double Denominator{  get; set; }
+    public double Denominator{ get; set; }
     [JsonIgnore]
     public readonly decimal Quotient
     {
@@ -87,6 +87,27 @@ public struct Fraction : IConvertible, IXunitSerializable, ICoefficient, IEquata
     private const decimal Min = -9;
     private const decimal Max = 9;
 
+    public static Fraction[] GenerateRandomVector(int row, RandomFractionGenerationType randomFraction = RandomFractionGenerationType.Simplified)
+    {
+        return GenerateRandomVector(row, Min, Max, randomFraction);
+    }
+
+    public static Fraction[] GenerateRandomVector(int row, decimal min, decimal max, RandomFractionGenerationType randomFraction = RandomFractionGenerationType.Simplified)
+    {
+        if (max - min < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(min), "Shouldn't be greater than max");
+        }
+
+        Fraction[] matrix = new Fraction[row];
+        for (int i = 0; i < row; i++)
+        {
+            matrix[i] = GenerateRandomFraction(min, max, randomFraction);
+        }
+        return matrix;
+    }
+
+
     public static Fraction[,] GenerateRandomMatrix(int row, int column, RandomFractionGenerationType randomFraction = RandomFractionGenerationType.Simplified)
     {
         return GenerateRandomMatrix(row, column, Min, Max, randomFraction);
@@ -105,6 +126,30 @@ public struct Fraction : IConvertible, IXunitSerializable, ICoefficient, IEquata
             for (int j = 0; j < column; j++)
             {
                 matrix[i, j] = GenerateRandomFraction(min, max, randomFraction);
+            }
+        }
+        return matrix;
+    }
+
+    public static Fraction[][] GenerateRandomMatrixJagged(int row, int column, RandomFractionGenerationType randomFraction = RandomFractionGenerationType.Simplified)
+    {
+        return GenerateRandomMatrixJagged(row, column, Min, Max, randomFraction);
+    }
+
+    public static Fraction[][] GenerateRandomMatrixJagged(int row, int column, decimal min, decimal max, RandomFractionGenerationType randomFraction = RandomFractionGenerationType.Simplified)
+    {
+        if (max - min < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(min), "Shouldn't be greater than max");
+        }
+
+        Fraction[][] matrix = new Fraction[row][];
+        for (int i = 0; i < row; i++)
+        {
+            matrix[i] = new Fraction[column];
+            for (int j = 0; j < column; j++)
+            {
+                matrix[i][j] = GenerateRandomFraction(min, max, randomFraction);
             }
         }
         return matrix;
@@ -214,6 +259,21 @@ public struct Fraction : IConvertible, IXunitSerializable, ICoefficient, IEquata
                 identity[i, j] = 0;
             }
             identity[i, i] = 1;
+        }
+        return identity;
+    }
+
+    public static Fraction[][] GenerateIdentityMatrixJagged(int n)
+    {
+        var identity = new Fraction[n][];
+        for (int i = 0; i < n; i++)
+        {
+            identity[i] = new Fraction[n];
+            for (int j = 0; j < n; j++)
+            {
+                identity[i][j] = 0;
+            }
+            identity[i][i] = 1;
         }
         return identity;
     }
@@ -491,6 +551,7 @@ public struct Fraction : IConvertible, IXunitSerializable, ICoefficient, IEquata
     public object ToType(Type conversionType, IFormatProvider? provider)
     {
         if (conversionType == typeof(string)) return this.ToString();
+        if (conversionType == typeof(Fraction)) return this;
         return Convert.ChangeType(Quotient, conversionType, provider);
     }
 

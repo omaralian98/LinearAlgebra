@@ -1,4 +1,6 @@
 ﻿// Ignore Spelling: cancellationoken
+using LinearAlgebra.Classes.SolutionSteps;
+
 namespace LinearAlgebra;
 
 public partial class Linear

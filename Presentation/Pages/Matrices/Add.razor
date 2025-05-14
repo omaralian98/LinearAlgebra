@@ -1,0 +1,65 @@
+﻿@page "/add"
+
+<PageTitle>Add Two Matrices</PageTitle>
+
+<MudPaper Elevation="10" Outlined Height="100%" Width="100%" Style="padding: 20px;">
+    <h1>Add Two Matrices</h1>
+    <MatricesPageComponent MatricesCount="2" NameOftheButton="Add" OnButtonClick="Execute">
+        <Result>
+            @if (result is not null)
+            {
+                <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
+                    <Equation Equation="A + B = " />
+                    <MatrixComponent Matrix="result" Display="Display.Inline" />
+                </MudStack>
+            }
+        </Result>
+        <Steps>
+            @if (step is not null)
+            {
+                <MudStack Class="math-content block" Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Wrap="@(Settings.EquationSettings.ForceBreakMatrices ? Wrap.Wrap : Wrap.NoWrap)">
+                    @for (int i = 0; i < MatricesCount; i++)
+                    {
+                        <MatrixComponent Matrix="_matrices[i]" Display="Display.Inline" />
+                        if (i + 1 != MatricesCount)
+                        {
+                            <Equation Equation="+" />
+                        }
+                    }
+                    <Equation Equation="=" />
+                    <MatrixComponent Matrix="step" Display="Display.Inline" />
+                    <Equation Equation="=" />
+                    <MatrixComponent Matrix="result" Display="Display.Inline" />
+                </MudStack>
+            }
+        </Steps>
+    </MatricesPageComponent>
+</MudPaper>
+
+
+@code {
+    public int MatricesCount { get; set; } = 2;
+    private Fraction[,]?[] _matrices = [];
+
+    public Fraction[,]? result = null;
+    public string[,]? step = null;
+
+    public async Task Execute(MatrixInputDto[] matrices)
+    {
+        await Task.Run(() =>
+        {
+            _matrices = matrices.Select(x => x.Matrix).ToArray() ?? [];
+            if (Settings.ShowSteps)
+            {
+                var result = Linear.AddWithResult(_matrices[0], _matrices[1]);
+                step = result.Step;
+                this.result = result.Result;
+            }
+            else
+            {
+                var result = Linear.Add<Fraction>(_matrices);
+                this.result = result;
+            }
+        });
+    }
+}

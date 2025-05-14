@@ -1,5 +1,7 @@
 ﻿// Ignore Spelling: cancellationToken RREF
 
+using LinearAlgebra.Classes.SolutionSteps;
+
 namespace LinearAlgebra;
 
 public partial class Linear

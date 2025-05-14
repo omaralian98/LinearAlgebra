@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "cdnjs",
+      "library": "mathjax@3.2.2",
+      "destination": "wwwroot/MathJax/mathjax/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "KaTeX@0.16.9",
+      "destination": "wwwroot/katex/"
+    }
+  ]
+}

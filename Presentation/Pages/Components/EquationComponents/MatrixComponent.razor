@@ -1,0 +1,73 @@
+﻿@typeparam TMatrix
+@inject IJSRuntime JS
+
+@if(_forceBreak)
+{
+    <div class="@(Display == Display.Block ? "block" : "matrix-grid-wrapper")">
+        <div class="matrix-grid">
+            <div class="left-bracket"></div>
+            @for (int y = 0; y < _columnsCount; y++)
+            {
+                <div class="column">
+                    @for (int x = 0; x < _rowsCount; x++)
+                    {
+                        <div class="cell" id="@CellId(x, y)"></div>
+                    }
+                </div>
+            }
+            <div class="right-bracket"></div>
+        </div>
+    </div>
+
+}
+else
+{
+    <Equation Display="Display" Equation="@matrixAsString" />
+}
+
+
+@code {
+    [Parameter]
+    public TMatrix[,] Matrix { get; set; }
+
+    [Parameter]
+    public Display Display { get; set; } = Display.Block;
+
+    private int _rowsCount => Matrix.GetLength(0);
+    private int _columnsCount => Matrix.GetLength(1);
+
+    private bool _forceBreak => Settings.EquationSettings.ForceBreakMatrices;
+
+    private string matrixId = $"matrix{Guid.NewGuid():N}";
+
+    private string CellId(int i, int j) => $"{matrixId}_cell_{i}_{j}";
+    private string matrixAsString { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (_forceBreak && first)
+        {
+            for (int y = 0; y < _columnsCount; y++)
+            {
+                for (int x = 0; x < _rowsCount; x++)
+                {
+                    await JS.InvokeVoidAsync
+                    (
+                        "Render",
+                         CellId(x, y),
+                         Matrix[x, y].ConvertToLaTeX(),
+                         false
+                    );
+                }
+            }
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (_forceBreak == false)
+        {
+            matrixAsString = Matrix.ConvertMatrixToLaTeX();
+        }
+    }
+}

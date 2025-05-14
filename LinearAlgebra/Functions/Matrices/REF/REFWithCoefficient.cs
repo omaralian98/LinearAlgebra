@@ -1,4 +1,6 @@
-﻿namespace LinearAlgebra;
+﻿using LinearAlgebra.Classes.SolutionSteps;
+
+namespace LinearAlgebra;
 
 public partial class Linear
 {
