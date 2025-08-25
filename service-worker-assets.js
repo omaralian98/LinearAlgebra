@@ -45,7 +45,7 @@
       "url": "images\/Random.png"
     },
     {
-      "hash": "sha256-2NUue3jLKExGOVo4hndJfFooAh6QENJsq3GGz7HTc6E=",
+      "hash": "sha256-25pW67WpNhwd5W+Q72O+D0FL0Qo+QHvLZRGCBJecInw=",
       "url": "index.html"
     },
     {
@@ -733,5 +733,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "9oBMQtpq"
+  "version": "HzzAyON5"
 };
